@@ -1,0 +1,9 @@
+FROM node:latest
+
+WORKDIR /db_data
+
+COPY . .
+
+RUN npm install knex pg
+
+CMD npm start

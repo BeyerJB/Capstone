@@ -22,6 +22,12 @@ services:
       DB_CONNECTION_STRING: postgres://postgres:docker@db:5432/schedule
     depends_on:
       - db
+  db_data:
+    build: ./db_data
+    environment:
+          DB_CONNECTION_STRING: "postgres://postgres:docker@db:5432/business_db"
+    depends_on:
+          - frontend
 
   db:
     image: postgres:latest
