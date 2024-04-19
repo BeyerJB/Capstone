@@ -7,7 +7,6 @@ exports.up = function(knex) {
     table.date('end_date');
     table.time('start_time');
     table.time('end_time');
-    table.string('description');
     table.integer('team_id').unsigned();
     table.foreign('team_id').references('calendar_teams.team_id');
     table.integer('user_id').unsigned();
