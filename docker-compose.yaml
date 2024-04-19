@@ -2,10 +2,10 @@ version: "3"
 
 services:
   frontend:
-    build: ./front-end
+    build: ./frontend
     container_name: frontend_container
     volumes:
-      - "./front-end:/front-end"
+      - "./frontend:/frontend"
     ports:
       - "3000:3000"
     depends_on:
