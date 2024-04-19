@@ -1,7 +1,8 @@
 {
   "dependencies": {
     "bcrypt": "^5.1.1",
-    "knex": "^3.1.0"
+    "knex": "^3.1.0",
+    "pg": "^8.11.5"
   },
   "name": "db_data",
   "version": "1.0.0",
