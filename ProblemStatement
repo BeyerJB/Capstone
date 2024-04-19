@@ -3,4 +3,18 @@ Problem Statement:
 Many Space Force units currently lack a uniform method of centralized scheduling thus impacting mission readiness and organizational efficiency. Our project intends to act as a one-stop-shop to improve the organization and efficiency of scheduling by providing features such as version control and centralized scheduling. 
 
 
-
+Detailed Problem Statement:
+In our squadron, we currently face challenges with disparate files and programs used to track schedules, resulting in inefficiencies and miscommunications among members. The absence of a centralized platform leads to confusion, as different versions of schedules exist and updates are not communicated effectively to all members. This lack of cohesion often results in missed events and misunderstandings within the squadron.
+Solution Overview:
+To address these challenges, we propose the development of a comprehensive application that serves as a one-stop solution for all squadron members to access a consolidated and official schedule. This application will streamline the scheduling process by providing a centralized platform for viewing, managing, and tracking squadron events and activities.
+Key Features:
+Consolidated Schedule: The application will offer a consolidated view of all squadron events, eliminating the need for members to refer to multiple files or programs.
+Official Schedule: By providing an official schedule, the application ensures that all members have access to the most up-to-date information, reducing confusion and discrepancies.
+Notification System: A built-in notification system will alert users to schedule changes or new events in real-time, ensuring that members are promptly informed of any updates.
+Event Management: Users will have the ability to view, accept, and track events created by their command or supervisors, enhancing transparency and accountability within the squadron.
+Benefits:
+Efficiency: The centralized platform streamlines the scheduling process, saving time and effort for both administrators and members.
+Improved Communication: Real-time notifications ensure that all members stay informed of schedule changes, reducing the risk of miscommunication.
+Enhanced Accountability: The ability to track and accept events promotes accountability among members and supervisors, fostering a culture of responsibility within the squadron.
+Conclusion:
+By developing an application with a consolidated schedule and a robust notification system, we aim to address the inefficiencies and communication challenges present in our current scheduling process. Our solution will provide a seamless experience for squadron members, enabling them to access, manage, and track events efficiently while promoting transparency and accountability across the organization.
