@@ -1,9 +1,4 @@
 Problem Statement:
-
-Many Space Force units currently lack a uniform method of centralized scheduling thus impacting mission readiness and organizational efficiency. Our project intends to act as a one-stop-shop to improve the organization and efficiency of scheduling by providing features such as version control and centralized scheduling. 
-
-
-Detailed Problem Statement:
 In our squadron, we currently face challenges with disparate files and programs used to track schedules, resulting in inefficiencies and miscommunications among members. The absence of a centralized platform leads to confusion, as different versions of schedules exist and updates are not communicated effectively to all members. This lack of cohesion often results in missed events and misunderstandings within the squadron.
 Solution Overview:
 To address these challenges, we propose the development of a comprehensive application that serves as a one-stop solution for all squadron members to access a consolidated and official schedule. This application will streamline the scheduling process by providing a centralized platform for viewing, managing, and tracking squadron events and activities.
