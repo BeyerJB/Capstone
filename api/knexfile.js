@@ -11,7 +11,7 @@ module.exports = {
       host: 'db',
       user: 'postgres',
       password: 'docker',
-      database: 'business_db'
+      database: 'schedule'
     }
   },
 
