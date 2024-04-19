@@ -1,0 +1,17 @@
+{
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "knex": "^3.1.0"
+  },
+  "name": "db_data",
+  "version": "1.0.0",
+  "main": "knexfile.js",
+  "scripts": {
+    "start": "knex migrate:latest && knex seed:run",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
