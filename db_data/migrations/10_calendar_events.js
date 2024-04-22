@@ -3,10 +3,9 @@ exports.up = function(knex) {
     table.increments('event_id').primary();
     table.string('title');
     table.string('description');
-    table.date('start_date');
-    table.date('end_date');
-    table.time('start_time');
-    table.time('end_time');
+    table.datetime('start_datetime');
+    table.datetime('end_datetime');
+    table.boolean('all_day').defaultTo(false);
     table.integer('team_id').unsigned();
     table.foreign('team_id').references('calendar_teams.team_id');
     table.integer('user_id').unsigned();

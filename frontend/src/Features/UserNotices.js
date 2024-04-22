@@ -1,56 +1,42 @@
-import React, {useContext, useState, useEffect } from 'react';
-// import { AuthContext } from './AugtContext'; #change to eventual authority context
+import React, { useState, useEffect } from 'react';
+import { useCookies } from 'react-cookie';
 
-function UserNotices() {
-  //const { userID, supervisorID, isSupervisor } = useContext(AuthContext);
-
-  // Begin dummy states to test out notices
-
-  const [isSupervisor, setIsSupervisor] = useState(false);
-  const [userID, setUserID] = useState();
-  const [supervisorID, setSupervisorID] = useState();
-
-
-  useEffect(() => {
-    if (!isSupervisor){
-      setUserID(20);
-      setSupervisorID(3);
-      setIsSupervisor(true);
-    } else {
-      setUserID(3);
-      setSupervisorID(null);
-      setIsSupervisor(false);
-    }
-  }, []);
-
-  // End dummy states to test out notices
-
+export const UserNotices = () => {
+  const [cookies] = useCookies(['userID', 'firstName', 'lastName', 'rank']);
   const [submittedNotices, setSubmittedNotices] = useState([]);
   const [supervisorNotices, setSupervisorNotices] = useState([]);
-  const [newNoticeData, setNewNoticeData] = useState({ submitter_id: userID, supervisor_id: supervisorID, body: '', notice_type: '' });
-  const [noticeUpdateData, setNoticeUpdateData] = useState( { request_id: '', choice: '' } );
+  const [newNoticeData, setNewNoticeData] = useState({ submitter_id: cookies.userID, supervisor_id: cookies.supervisorID, body: '', notice_type: '' });
+  const [noticeUpdateData, setNoticeUpdateData] = useState({});
 
-  useEffect(() => {
-    if (supervisorID !== undefined) {
-      fetch(`http://localhost:8080/api/notices/supervisor/${supervisorID}`)
+  const fetchSupervisorNotices = () => {
+    if (cookies.userID !== undefined) {
+      fetch(`http://localhost:8080/api/notices/supervisor/${cookies.userID}`)
         .then(response => response.json())
         .then(data => {
           setSupervisorNotices(data);
         })
         .catch(error => console.error('Error fetching supervisor notices:', error));
     }
-  }, [supervisorID]);
+  };
 
-  useEffect(() => {
-    if (userID !== undefined) {
-      fetch(`http://localhost:8080/api/notices/submitter/${userID}`)
+  const fetchSubmittedNotices = () => {
+    if (cookies.userID !== undefined) {
+      fetch(`http://localhost:8080/api/notices/submitter/${cookies.userID}`)
         .then(response => response.json())
         .then(data => {
           setSubmittedNotices(data);
         })
         .catch(error => console.error('Error fetching submitted notices:', error));
     }
-  }, [userID]);
+  };
+
+  useEffect(() => {
+    fetchSupervisorNotices();
+  }, []);
+
+  useEffect(() => {
+    fetchSubmittedNotices();
+  }, []);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -67,53 +53,60 @@ function UserNotices() {
       headers: {
         'Content-Type': 'application/json',
       },
-        body: JSON.stringify(newNoticeData),
+      body: JSON.stringify(newNoticeData),
     })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      setNewNoticeData({ body: '', notice_type: '' });
-    })
-    .catch(error => {
-      console.error('Error adding new notice:', error);
-      alert('Error adding new notice. Please try again.');
-    });
-  }
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        setNewNoticeData({ body: '', notice_type: '' });
+      })
+      .catch(error => {
+        console.error('Error adding new notice:', error);
+        alert('Error adding new notice. Please try again.');
+      });
+  };
 
-  const handleUpdateNotice = (event) => {
+  const handleAcceptNotice = (noticeId) => {
+    setNoticeUpdateData({ request_id: noticeId, choice: 2 });
+    fetchSupervisorNotices();
+  };
+
+  const handleRejectNotice = (noticeId) => {
+    setNoticeUpdateData({ request_id: noticeId, choice: 3 });
+    fetchSupervisorNotices();
+  };
+
+  const handleArchiveNotice = (noticeId) => {
+    setNoticeUpdateData({ request_id: noticeId, choice: 4 });
+    fetchSubmittedNotices();
+  };
+
+  useEffect(() => {
+    if (noticeUpdateData.request_id !== undefined && noticeUpdateData.choice !== undefined) {
+      handleUpdateNotice();
+      fetchSupervisorNotices();
+    }
+  }, [noticeUpdateData]);
+
+  const handleUpdateNotice = () => {
     fetch('http://localhost:8080/api/notices', {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
-        body: JSON.stringify(noticeUpdateData),
+      body: JSON.stringify(noticeUpdateData),
     })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      setNoticeUpdateData({ request_id: '', choice: '' });
-    })
-    .catch(error => {
-      console.error('Error updating notice:', error);
-      alert('Error updating notice. Please try again.');
-    });
-  }
-
-  const handleAcceptNotice = (noticeId) => {
-    setNoticeUpdateData({ request_id: noticeId, choice: 2 });
-    handleUpdateNotice();
-  };
-
-  const handleRejectNotice = (noticeId) => {
-    setNoticeUpdateData({ request_id: noticeId, choice: 3 });
-    handleUpdateNotice();
-  };
-
-  const handleArchiveNotice = (noticeId) => {
-    setNoticeUpdateData({ request_id: noticeId, choice: 4 });
-    handleUpdateNotice();
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        setNoticeUpdateData({});
+      })
+      .catch(error => {
+        console.error('Error updating notice:', error);
+        alert('Error updating notice. Please try again.');
+      });
   };
 
   return (
@@ -124,23 +117,22 @@ function UserNotices() {
         <h2>Submitted Notices</h2>
         <ul>
           {submittedNotices.map(notice => (
-            <li key={notice.id}>{notice.body}</li>
+            <li key={notice.user_notice_id}>
+              {notice.body}
+              <button onClick={() => handleArchiveNotice(notice.user_notice_id)}>Archive</button>
+            </li>
           ))}
         </ul>
 
         <h2>Supervisor Notices</h2>
         <ul>
           {supervisorNotices.map(notice => (
-            <li key={notice.id}>
+            <li key={notice.user_notice_id}>
               {notice.body}
-              {isSupervisor ? (
-                <div>
-                  <button onClick={() => handleAcceptNotice(notice.id)}>Accept</button>
-                  <button onClick={() => handleRejectNotice(notice.id)}>Reject</button>
-                </div>
-              ) : (
-                <button onClick={() => handleArchiveNotice(notice.id)}>Archive</button>
-              )}
+              <div>
+                <button onClick={() => handleAcceptNotice(notice.user_notice_id)}>Accept</button>
+                <button onClick={() => handleRejectNotice(notice.user_notice_id)}>Reject</button>
+              </div>
             </li>
           ))}
         </ul>
@@ -162,7 +154,4 @@ function UserNotices() {
       </div>
     </div>
   );
-
-}
-
-export default UserNotices;
+};
