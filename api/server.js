@@ -45,6 +45,8 @@ app.post('/api/login', async (req, res) => {
       lastName: user.last_name,
       rank: user.rank
     });
+  }
+});
 
 // Create notice
 app.post('/api/notices', async (req, res) => {
