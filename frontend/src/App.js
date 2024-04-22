@@ -22,8 +22,10 @@ function App() {
           <li style={{marginRight: '10px'}} ><Link to="/">Home</Link></li>
           {!cookies.userID ?
           <li style={{marginRight: '10px' }} ><Link to="/Login">Login</Link></li>
-          : [] }
+          :
           <li style={{marginRight: '10px' }} ><Link to="/mycalendar">My Calendar</Link></li>
+          }
+
       </ul>
       </div>
     </nav>

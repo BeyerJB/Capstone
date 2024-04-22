@@ -9,6 +9,7 @@ export const Calendar = () => {
 
   return(
     <>
+    <div className="calendar">
     <h1>My Calendar</h1>
     <Fullcalendar
       plugins = {[dayGridPlugin, timeGridPlugin, interactionPlugin, multiMonthPlugin]}
@@ -19,9 +20,10 @@ export const Calendar = () => {
         end: 'timeGridDay,timeGridWeek,dayGridMonth,multiMonthYear'
       }}
       handleWindowResize = 'true'
-      aspectRatio = '2.2'
+      aspectRatio = '2'
       multiMonthMaxColumns= '12'
     />
+    </div>
     </>
   )
 
