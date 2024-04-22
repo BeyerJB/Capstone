@@ -1,17 +1,19 @@
 import './App.css';
 import { useContext } from "react"
-import { Routes, Route, Link, useNavigate } from "react-router-dom";
+import { Routes, Route, Link } from "react-router-dom";
 import { Home } from './Features/Home'
 import Login from './Features/Login'
 import { Calendar } from './Features/Calendar'
 import { AuthContext } from './Features/AuthContext';
 import {useCookies} from 'react-cookie'
+import { SubordinateView } from './Features/SubordinateView'
 
 
 function App() {
   const { logout } = useContext(AuthContext)
-  const [cookies, setCookie, removeCookie] = useCookies(['userID', 'firstName', 'lastName', 'rank']);
-  const navigate = useNavigate()
+  const [cookies] = useCookies(['userID', 'firstName', 'lastName', 'rank']);
+
+
   return (
     <>
     <div className="App">
@@ -23,7 +25,10 @@ function App() {
           {!cookies.userID ?
           <li style={{marginRight: '10px' }} ><Link to="/Login">Login</Link></li>
           :
-          <li style={{marginRight: '10px' }} ><Link to="/mycalendar">My Calendar</Link></li>
+          <>
+            <li style={{marginRight: '10px' }} ><Link to="/mycalendar">My Calendar</Link></li>
+            <li style={{marginRight: '10px' }} ><Link to="/Subordinateview">Subordinate Calendar</Link></li>
+          </>
           }
 
       </ul>
@@ -33,6 +38,7 @@ function App() {
       <Route path='/' element={<Home />} />
       <Route path='/login' element={<Login />} />
       <Route path='/mycalendar' element={<Calendar />} />
+      <Route path='/SubordinateView' element={<SubordinateView/>} />
     </Routes>
   </div>
   <footer>
