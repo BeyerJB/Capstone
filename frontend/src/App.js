@@ -3,6 +3,7 @@ import { useContext } from "react"
 import { Routes, Route, Link, useNavigate } from "react-router-dom";
 import { Home } from './Features/Home'
 import Login from './Features/Login'
+import { Calendar } from './Features/Calendar'
 import { AuthContext } from './Features/AuthContext';
 import {useCookies} from 'react-cookie'
 
@@ -23,14 +24,13 @@ function App() {
           <li style={{marginRight: '10px' }} ><Link to="/Login">Login</Link></li>
           : [] }
           <li style={{marginRight: '10px' }} ><Link to="/mycalendar">My Calendar</Link></li>
-
       </ul>
       </div>
     </nav>
     <Routes>
       <Route path='/' element={<Home />} />
       <Route path='/login' element={<Login />} />
-      <Route path='/mycalendar' element={<p>Calendar</p>} />
+      <Route path='/mycalendar' element={<Calendar />} />
     </Routes>
   </div>
   <footer>
