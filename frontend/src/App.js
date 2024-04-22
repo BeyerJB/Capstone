@@ -6,6 +6,7 @@ import Login from './Features/Login'
 import { Calendar } from './Features/Calendar'
 import { AuthContext } from './Features/AuthContext';
 import {useCookies} from 'react-cookie'
+import { UserHome } from './Features/UserHome';
 
 
 function App() {
@@ -23,7 +24,7 @@ function App() {
           {!cookies.userID ?
           <li style={{marginRight: '10px' }} ><Link to="/Login">Login</Link></li>
           :
-          <li style={{marginRight: '10px' }} ><Link to="/mycalendar">My Calendar</Link></li>
+            <li style={{marginRight: '10px' }} ><Link to="/mycalendar">My Calendar</Link></li>
           }
 
       </ul>
@@ -33,6 +34,7 @@ function App() {
       <Route path='/' element={<Home />} />
       <Route path='/login' element={<Login />} />
       <Route path='/mycalendar' element={<Calendar />} />
+      <Route path='/userhome' element={<UserHome />} />
     </Routes>
   </div>
   <footer>
