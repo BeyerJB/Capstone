@@ -34,7 +34,8 @@ exports.seed = async function(knex) {
   await knex('notice_status').insert([
     { name: 'Pending', description: 'Notice is pending' },
     { name: 'Approved', description: 'Notice is approved' },
-    { name: 'Rejected', description: 'Notice is rejected' }
+    { name: 'Rejected', description: 'Notice is rejected' },
+    { name: 'Archived', description: 'Notice is archived' }
   ]);
 
   // Seed notice_type table
