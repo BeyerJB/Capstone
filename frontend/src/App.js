@@ -5,9 +5,8 @@ import { Home } from './Features/Home'
 import Login from './Features/Login'
 import { Calendar } from './Features/Calendar'
 import { AuthContext } from './Features/AuthContext';
-import {useCookies} from 'react-cookie'
-import { SubordinateView } from './Features/SubordinateView'
-
+import { useCookies } from 'react-cookie'
+import { UserNotices } from './Features/UserNotices';
 
 function App() {
   const { logout } = useContext(AuthContext)
@@ -27,8 +26,10 @@ function App() {
           :
           <>
             <li style={{marginRight: '10px' }} ><Link to="/mycalendar">My Calendar</Link></li>
-            <li style={{marginRight: '10px' }} ><Link to="/Subordinateview">Subordinate Calendar</Link></li>
+            <li style={{marginRight: '10px' }} ><Link to="/notices">Notices</Link></li>
+            <button onClick={() => logout()} >Log out</button>
           </>
+
           }
 
       </ul>
@@ -38,16 +39,9 @@ function App() {
       <Route path='/' element={<Home />} />
       <Route path='/login' element={<Login />} />
       <Route path='/mycalendar' element={<Calendar />} />
-      <Route path='/SubordinateView' element={<SubordinateView/>} />
+      <Route path='/notices' element={<UserNotices />} />
     </Routes>
   </div>
-  <footer>
-    {cookies.userID ?
-    <button onClick={() => logout()} >Log out</button>
-  :
-  []
-  }
-  </footer>
   </>
   );
 }

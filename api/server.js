@@ -14,6 +14,7 @@ app.use(
     origin: "http://localhost:3000",
   })
 );
+
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
@@ -27,6 +28,8 @@ app.use((req, res, next) => {
 //   res.status(200).send({message: 'server is running'})
 // }
 
+
+// Login API
 app.post('/api/login', async (req, res) => {
   const { username, password } = req.body;
   try {
@@ -38,12 +41,78 @@ app.post('/api/login', async (req, res) => {
     if (!passwordMatch) {
       return res.status(401).json({ error: 'Invalid username or password' });
     }
+
+    // Join with chain_of_command table to get supervisor_id
+    const chainOfCommand = await knex('calendar_users')
+      .join('chain_of_command', 'calendar_users.user_id', 'chain_of_command.subordinate_id')
+      .select('*')
+      .where('calendar_users.user_id', user.user_id)
+      .first();
+
+    const supervisorID = chainOfCommand ? chainOfCommand.supervisor_id : null;
+
     res.status(200).json({
       userID: user.user_id,
       firstName: user.first_name,
       lastName: user.last_name,
-      rank: user.rank
+      rank: user.rank,
+      supervisorID: supervisorID
     });
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Create notice
+app.post('/api/notices', async (req, res) => {
+  const { submitter_id, supervisor_id, body, notice_type } = req.body;
+  try {
+    await knex('user_notice').insert({ submitter_id, supervisor_id, body, notice_type });
+    res.status(201).json({ message: 'Notice created successfully' });
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Update notice status
+app.put('/api/notices', async (req, res) => {
+  const { request_id, choice } = req.body;
+  try {
+    await knex('user_notice').where({ user_notice_id: request_id }).update({ notice_status: choice });
+    res.status(200).json({ message: 'User notice updated successfully' });
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Get notices submitted to user
+app.get('/api/notices/supervisor/:userId', async (req, res) => {
+  const userId = req.params.userId;
+  try {
+    const notices = await knex('user_notice').select('*').where({ recipient_id: userId, notice_status: 1 });
+    res.status(200).json(notices);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Get notices submitted by user
+app.get('/api/notices/submitter/:userId', async (req, res) => {
+  const userId = req.params.userId;
+  try {
+    const notices = await knex('user_notice').select('*').where({ submitter_id: userId});
+    res.status(200).json(notices);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Get supervisor's ID
+app.get('/api/supervisor/:userId', async (req, res) => {
+  const userId = req.params.userId;
+  try {
+    const supervisorID = await knex('chain_of_command').select('supervisor_id').where({ subordinate_id: userId});
+    res.status(200).json(supervisorID);
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });
   }
