@@ -1,11 +1,11 @@
 import './App.css';
 import { useContext } from "react"
 import { Routes, Route, Link, useNavigate } from "react-router-dom";
-import { Home } from './Features/Home';
-import Login from './Features/Login';
-import { Calendar } from './Features/Calendar';
+import { Home } from './Features/Home'
+import Login from './Features/Login'
+import { Calendar } from './Features/Calendar'
 import { AuthContext } from './Features/AuthContext';
-import {useCookies} from 'react-cookie';
+import {useCookies} from 'react-cookie'
 import { UserHome } from './Features/UserHome';
 
 
@@ -24,10 +24,7 @@ function App() {
           {!cookies.userID ?
           <li style={{marginRight: '10px' }} ><Link to="/Login">Login</Link></li>
           :
-          <>
             <li style={{marginRight: '10px' }} ><Link to="/mycalendar">My Calendar</Link></li>
-            <li style={{marginRight: '10px' }} ><Link to="/userhome">UserHome</Link></li>
-          </>
           }
 
       </ul>
