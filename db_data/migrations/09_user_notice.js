@@ -1,7 +1,7 @@
 exports.up = function(knex) {
   return knex.schema.createTable('user_notice', table => {
     table.increments('user_notice_id').primary();
-    table.integer('notice_status').unsigned();
+    table.integer('notice_status').unsigned().defaultTo(1);
     table.foreign('notice_status').references('notice_status.status_id');
     table.integer('submitter_id').unsigned();
     table.foreign('submitter_id').references('calendar_users.user_id');
