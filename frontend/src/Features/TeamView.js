@@ -5,7 +5,7 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import resourceTimelinePlugin from "@fullcalendar/resource-timeline";
 
-export const SubordinateView = () => {
+export const TeamView = () => {
   return (
     <div className="calendar">
       <h1>My Calendar</h1>
