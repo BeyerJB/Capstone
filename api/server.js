@@ -65,9 +65,9 @@ app.post('/api/login', async (req, res) => {
 
 // Create notice
 app.post('/api/notices', async (req, res) => {
-  const { submitter_id, supervisor_id, body, notice_type } = req.body;
+  const { submitter_id, recipient_id, body, notice_type } = req.body;
   try {
-    await knex('user_notice').insert({ submitter_id, supervisor_id, body, notice_type });
+    await knex('user_notice').insert({ submitter_id, recipient_id, body, notice_type });
     res.status(201).json({ message: 'Notice created successfully' });
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });

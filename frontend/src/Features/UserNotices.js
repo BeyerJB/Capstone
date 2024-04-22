@@ -5,8 +5,14 @@ export const UserNotices = () => {
   const [cookies] = useCookies(['userID', 'firstName', 'lastName', 'rank']);
   const [submittedNotices, setSubmittedNotices] = useState([]);
   const [supervisorNotices, setSupervisorNotices] = useState([]);
-  const [newNoticeData, setNewNoticeData] = useState({ submitter_id: cookies.userID, supervisor_id: cookies.supervisorID, body: '', notice_type: '' });
+  const [newNoticeData, setNewNoticeData] = useState({ submitter_id: cookies.userID, recipient_id: cookies.supervisorID, body: '', notice_type: 0 });
   const [noticeUpdateData, setNoticeUpdateData] = useState({});
+
+  const [noticeTypeOptions] = useState([
+    { value: 1, label: 'General' },
+    { value: 2, label: 'Urgent' },
+    { value: 3, label: 'Reminder' },
+  ]);
 
   const fetchSupervisorNotices = () => {
     if (cookies.userID !== undefined) {
@@ -40,13 +46,15 @@ export const UserNotices = () => {
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
+    const newValue = name === 'notice_type' ? parseInt(value, 10) : value;
     setNewNoticeData(prevData => ({
       ...prevData,
-      [name]: value
+      [name]: newValue
     }));
   };
 
   const handleNewNotice = (event) => {
+    console.log(newNoticeData);
     event.preventDefault();
     fetch('http://localhost:8080/api/notices', {
       method: 'POST',
@@ -59,7 +67,7 @@ export const UserNotices = () => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-        setNewNoticeData({ body: '', notice_type: '' });
+        setNewNoticeData({ body: '', notice_type: 0 });
       })
       .catch(error => {
         console.error('Error adding new notice:', error);
@@ -146,7 +154,11 @@ export const UserNotices = () => {
           <br />
           <label>
             Notice Type:
-            <input type="text" name="notice_type" value={newNoticeData.notice_type} onChange={handleInputChange} />
+            <select name="notice_type" value={newNoticeData.notice_type} onChange={handleInputChange}>
+              {noticeTypeOptions.map(option => (
+                <option key={option.value} value={option.value}>{option.label}</option>
+              ))}
+            </select>
           </label>
           <br />
           <button type="submit">Submit</button>
