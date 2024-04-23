@@ -53,8 +53,18 @@ export const CreateEvent = () => {
 
     //PUSH USER VALUES TO API
     async function sendData() {
-      console.log("TEAM DATA IS: ", teamFormData);
-      console.log("EVENT TYPE DATA IS: ", eventTypeData);
+      //console.log("TEAM DATA IS: ", teamFormData);
+      //console.log("EVENT TYPE DATA IS: ", eventTypeData);
+
+      //NULLIFY teamFormData.team_id IF SELECTED FEILD IS "Just Me"
+      //console.log("TEAM ID: ", teamFormData.team_id);
+      if(teamFormData.team_id == "Just Me"){
+        setTeamFormData({
+          ...teamFormData.team_id = null
+        });
+        //console.log("NULLIFIED VALUE: ", teamFormData.team_id);
+      }
+
 
       const res = await fetch("http://localhost:8080/create_event", {
         method: "POST",
@@ -71,8 +81,11 @@ export const CreateEvent = () => {
           creator_id: cookies.userID
         }),
       });
+      window.location.href="http://localhost:3000/mycalendar"
+
     }
     sendData();
+    
   };
 
   useEffect(() => {
@@ -192,6 +205,7 @@ export const CreateEvent = () => {
             name="team_id">
 
             <option>Select a Team</option>
+            <option>Just Me</option>
             {teamOptions}
           </Form.Select>
         </Col>
