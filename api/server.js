@@ -185,7 +185,7 @@ app.post("/calendar_team/userid", (req, res) => {
 //THIS CALL CREATES A CALENDAR EVENT, YOU MUST PASS IT A USERS ID IN ADDITION TO ALL RELEVANT EVENT FIELDS
 app.post("/create_event", (req, res) => {
   let event_data = req.body;
-  console.log("ATTEMPTING TO CREATE EVENT WITH: ", event_data.title);
+  console.log("ATTEMPTING TO CREATE EVENT WITH: ", event_data);
   // //DIAGNOSTIC RETURN OF ALL EVENTS
   // knex("calendar_events")
   //   .select("*")
@@ -194,13 +194,12 @@ app.post("/create_event", (req, res) => {
   knex("calendar_events")
     .insert({
       title: event_data.title,
-      start_date: event_data.start_date,
-      end_date: event_data.end_date,
-      start_time: event_data.start_time,
-      end_time: event_data.end_time,
+      description: event_data.description,
+      start_datetime: event_data.start_datetime,
+      end_datetime: event_data.end_datetime,
+      all_day: event_data.all_day,
       team_id: event_data.team_id,
       user_id: event_data.user_id,
-      description: event_data.description,
       event_type: event_data.event_type,
       creator_id: event_data.creator_id
     })
@@ -214,6 +213,13 @@ app.post("/create_event", (req, res) => {
 //THIS CALL RETURNS ALL EVENT TYPES AND THIER ASSOSIATED DATA
 app.get("/event_type", (req, res) => {
   knex("event_type")
+    .select("*")
+    .then((data) => res.status(200).json(data));
+})
+
+//THIS CALL RETURNS ALL CALANDAR EVENTS
+app.get("/events", (req, res) => {
+  knex("calendar_events")
     .select("*")
     .then((data) => res.status(200).json(data));
 })
