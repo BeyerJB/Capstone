@@ -10,6 +10,7 @@ exports.up = function(knex) {
     table.integer('notice_type').unsigned();
     table.foreign('notice_type').references('notice_type.notice_type_id');
     table.string('body');
+    table.boolean('archived').defaultTo(0);
   });
 };
 
