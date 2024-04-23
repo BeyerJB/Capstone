@@ -183,6 +183,12 @@ app.get("/api/teamview:teamId", async (req, res) => {
     );
 });
 
+app.get('/aaa', (req,res) => {
+  knex('calendar_events')
+   .select('*')
+   .then((data) => res.status(200).json(data))
+})
+
 app.listen(port, () => {
   console.log("It is running");
 });

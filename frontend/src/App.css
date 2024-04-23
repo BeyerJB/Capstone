@@ -38,9 +38,9 @@
 }
 
 .calendar {
-  height: 75vh;
+  /* height: 75vh;
   overflow: hidden;
-  margin-left: 300px; 
+  margin-left: 300px; */
 }
 
 
@@ -48,16 +48,16 @@
   position: fixed;
   top: 0;
   left: -300px;
-  width: 300px; 
+  width: 300px;
   height: 100vh;
   background-color: #fff;
-  z-index: 1000; 
+  z-index: 1000;
   transition: left 0.3s ease;
   padding: 20px;
 }
 
 .sidebar.open {
-  left: 0; 
+  left: 0;
 }
 
 .toggle-sidebar-button {
