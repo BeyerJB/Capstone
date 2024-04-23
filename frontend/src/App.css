@@ -40,7 +40,7 @@
 .calendar {
   /* height: 75vh;
   overflow: hidden;
-  margin-left: 300px; */
+  margin-left: 300px;
 }
 
 
@@ -70,3 +70,43 @@
   padding: 10px 20px;
   cursor: pointer;
 }
+
+.navbarcontainer {
+  display: flex;
+  justify-content: center;
+  background-color: #333;
+  padding: 10px 0;
+}
+
+.navbar {
+  display: flex;
+  justify-content: center;
+  list-style-type: none;
+  padding: 0;
+}
+
+.navbar li {
+  margin-right: 10px;
+}
+
+.navbar a {
+  color: white;
+  text-decoration: none;
+  padding: 10px 15px;
+}
+
+.navbar a:hover {
+  background-color: #555;
+  border-radius: 5px;
+}
+=======
+}
+
+.modal-content div#tcal {
+  position: absolute;
+  visibility: hidden;
+  z-index: 12001;
+  width: 158px;
+  padding: 2px 0 0 0;
+}
+
