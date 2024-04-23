@@ -6,6 +6,7 @@ import SlidingPane from "react-sliding-pane";
 import { Home } from './Features/Home'
 import Login from './Features/Login'
 import { Calendar } from './Features/Calendar'
+import { CreateEvent } from './Features/CreateEvent'
 import { AuthContext } from './Features/AuthContext';
 import { useCookies } from 'react-cookie'
 import { UserNotices } from './Features/UserNotices';
@@ -34,6 +35,7 @@ function App() {
                 <>
                   <li><Link to="/mycalendar">My Calendar</Link></li>
                   <li><Link to="/TeamView">Team View</Link></li>
+                  <li><Link to="/createevent">Create Event</Link></li>
                   <li><a onClick={handleOpenNotices}>Notices</a></li>
                   <li><a onClick={() => logout()}>Log out</a></li>
                 </>
@@ -46,11 +48,12 @@ function App() {
           <Route path='/login' element={<Login />} />
           <Route path='/mycalendar' element={<Calendar />} />
           <Route path='/TeamView' element={<TeamView /> } />
+          <Route path='/createevent' element={<CreateEvent />} />
         </Routes>
         <SlidingPane isOpen={noticePaneOpened} onRequestClose={handleOpenNotices} width="800px" title="User Notices" >
           <UserNotices />
         </SlidingPane>
-      </div>
+     </div>
   </>
   );
 }
