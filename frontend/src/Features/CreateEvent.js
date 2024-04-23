@@ -15,6 +15,9 @@ export const CreateEvent = () => {
   const [teamFormData, setTeamFormData] = useState({ team_id: '' });
   const [teamOptions, setTeamOptions] = useState([]);
 
+  const [eventTypeData, setEventTypeData] = useState ({ event_type: ''});
+  const [eventTypeOptions, setEventTypeOptions] = useState([]);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -22,6 +25,7 @@ export const CreateEvent = () => {
       [name]: value
     });
     setTeamFormData({ ...formData, [e.target.name]: e.target.value });
+    setEventTypeData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = (e) => {
@@ -48,6 +52,27 @@ export const CreateEvent = () => {
           <option key={index} value={team.event_id}>{team.name}</option>
         ));
         setTeamOptions(additionalOptions);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    }
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const user_id = 3;
+        const res = await fetch("http://localhost:8080/event_type");
+        const eventType = await res.json();
+        console.log("RETRIEVED EVENTS ARE: ", eventType);
+
+        //GENERATE DROPDOWN BOX OPTIONS BASED ON RETRIEVED EVENTS
+        const additionalOptions = eventType.map((event, index) => (
+          <option key={index} value={event.event_id}>{event.name}</option>
+        ));
+        setEventTypeOptions(additionalOptions);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -161,20 +186,20 @@ export const CreateEvent = () => {
         onChange={handleInputChange} />
     </Form.Group>
 
-    {/* Paola MEDDLING */}
-{/* <Form.Group as={Row} className="mb-3">
+  {/* Paola MEDDLING */ }
+    <Form.Group as={Row} className="mb-3">
       <Form.Label column sm="2"> Event Type </Form.Label>
       <Col sm="10">
         <Form.Select
-          value={eventTypeFormData.eam_}
+          value={eventTypeData.event_id}
           onChange={handleInputChange}
-          name="team_id">
+          name="event_id">
 
           <option>Select an Event</option>
           {eventTypeOptions}
         </Form.Select>
       </Col>
-    </Form.Group> */}
+    </Form.Group> 
 {/* END OF PAOLA MEDDLING */}
 
     {/* <Form.Group as={Row} className="mb-3">
