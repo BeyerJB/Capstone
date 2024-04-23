@@ -3,7 +3,7 @@ exports.up = function(knex) {
     table.increments('event_id').primary();
     table.string('title');
     table.string('description');
-    table.datetime('start_datetime',{ useTz: false });
+    table.datetime('start_datetime', { useTz: false });
     table.datetime('end_datetime', { useTz: false });
     table.boolean('all_day').defaultTo(false);
     table.integer('team_id').unsigned();
