@@ -6,6 +6,7 @@ const AuthContext = createContext();
 const AuthProvider = ({ children }) => {
   const [cookies, setCookie, removeCookie] = useCookies(['userID', 'firstName', 'lastName', 'rank', 'supervisorID']);
   const navigate = useNavigate()
+
   const login = (res) => {
     setCookie('userID', res.userID);
     setCookie('firstName', res.firstName);
