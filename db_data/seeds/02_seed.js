@@ -35,7 +35,6 @@ exports.seed = async function(knex) {
     { name: 'Pending', description: 'Notice is pending' },
     { name: 'Approved', description: 'Notice is approved' },
     { name: 'Rejected', description: 'Notice is rejected' },
-    { name: 'Archived', description: 'Notice is archived' }
   ]);
 
   // Seed notice_type table

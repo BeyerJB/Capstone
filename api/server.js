@@ -30,8 +30,15 @@ app.get(`/mycalendar`, function(req,res){
   knex('calendar_events')
     .where('user_id', userId)
     .select('*')
-    .then(data => res.status(200).json(data))
-    .catch(err => res.status(202).json({message: 'The data you are looking for could not be found.'}))
+    .then(data => {
+      console.log('it works')
+      res.status(200).json(data)
+    })
+    .catch(err => {
+
+      res.status(202).json({message: 'The data you are looking for could not be found.', err})
+    }
+      )
 })
 
 // All Calendar data
@@ -102,16 +109,11 @@ app.post("/api/login", async (req, res) => {
 });
 
 // Create notice
-app.post("/api/notices", async (req, res) => {
-  const { submitter_id, supervisor_id, body, notice_type } = req.body;
+app.post('/api/notices', async (req, res) => {
+  const { submitter_id, recipient_id, body, notice_type } = req.body;
   try {
-    await knex("user_notice").insert({
-      submitter_id,
-      supervisor_id,
-      body,
-      notice_type,
-    });
-    res.status(201).json({ message: "Notice created successfully" });
+    await knex('user_notice').insert({ submitter_id, recipient_id, body, notice_type });
+    res.status(201).json({ message: 'Notice created successfully' });
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
   }
@@ -130,12 +132,35 @@ app.put("/api/notices", async (req, res) => {
   }
 });
 
+// Archive notice
+app.put('/api/notices/:noticeID', async (req, res) => {
+  const noticeID = req.params.noticeID;
+  try {
+    await knex('user_notice').where({ user_notice_id: noticeID }).update({ archived: true });
+    res.status(200).json({ message: 'User notice archived successfully' });
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Archive notice
+app.put('/api/notices/:noticeID', async (req, res) => {
+  const noticeID = req.params.noticeID;
+  try {
+    await knex('user_notice').where({ user_notice_id: noticeID }).update({ archived: true });
+    res.status(200).json({ message: 'User notice archived successfully' });
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // Get notices submitted to user
 app.get("/api/notices/supervisor/:userId", async (req, res) => {
   const userId = req.params.userId;
   try {
-    const notices = await knex("user_notice")
-      .select("*")
+    const notices = await knex('user_notice')
+      .select('*')
+      .join('notice_status', 'status_id', 'user_notice.notice_status')
       .where({ recipient_id: userId, notice_status: 1 });
     res.status(200).json(notices);
   } catch (error) {
@@ -147,9 +172,11 @@ app.get("/api/notices/supervisor/:userId", async (req, res) => {
 app.get("/api/notices/submitter/:userId", async (req, res) => {
   const userId = req.params.userId;
   try {
-    const notices = await knex("user_notice")
-      .select("*")
-      .where({ submitter_id: userId });
+    const notices = await knex('user_notice')
+    .select('*')
+    .join('notice_status', 'status_id', 'user_notice.notice_status')
+    .where({ submitter_id: userId});
+
     res.status(200).json(notices);
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });

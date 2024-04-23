@@ -5,8 +5,15 @@ export const UserNotices = () => {
   const [cookies] = useCookies(['userID', 'firstName', 'lastName', 'rank']);
   const [submittedNotices, setSubmittedNotices] = useState([]);
   const [supervisorNotices, setSupervisorNotices] = useState([]);
-  const [newNoticeData, setNewNoticeData] = useState({ submitter_id: cookies.userID, supervisor_id: cookies.supervisorID, body: '', notice_type: '' });
+  const [newNoticeData, setNewNoticeData] = useState({ submitter_id: cookies.userID, recipient_id: cookies.supervisorID, body: '', notice_type: 1 });
   const [noticeUpdateData, setNoticeUpdateData] = useState({});
+  const [showArchived, setShowArchived] = useState(false);
+
+  const [noticeTypeOptions] = useState([
+    { value: 1, label: 'General' },
+    { value: 2, label: 'Urgent' },
+    { value: 3, label: 'Reminder' },
+  ]);
 
   const fetchSupervisorNotices = () => {
     if (cookies.userID !== undefined) {
@@ -40,9 +47,10 @@ export const UserNotices = () => {
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
+    const newValue = name === 'notice_type' ? parseInt(value, 10) : value;
     setNewNoticeData(prevData => ({
       ...prevData,
-      [name]: value
+      [name]: newValue
     }));
   };
 
@@ -59,7 +67,8 @@ export const UserNotices = () => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-        setNewNoticeData({ body: '', notice_type: '' });
+        setNewNoticeData({ submitter_id: cookies.userID, recipient_id: cookies.supervisorID, body: '', notice_type: 1 });
+        fetchSubmittedNotices();
       })
       .catch(error => {
         console.error('Error adding new notice:', error);
@@ -75,11 +84,6 @@ export const UserNotices = () => {
   const handleRejectNotice = (noticeId) => {
     setNoticeUpdateData({ request_id: noticeId, choice: 3 });
     fetchSupervisorNotices();
-  };
-
-  const handleArchiveNotice = (noticeId) => {
-    setNoticeUpdateData({ request_id: noticeId, choice: 4 });
-    fetchSubmittedNotices();
   };
 
   useEffect(() => {
@@ -109,19 +113,48 @@ export const UserNotices = () => {
       });
   };
 
+  const handleArchiveNotice = (noticeID) => {
+    fetch(`http://localhost:8080/api/notices/${noticeID}`, {
+      method: 'PUT',
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        fetchSubmittedNotices();
+      })
+      .catch(error => {
+        console.error('Error archiving notice:', error);
+        alert('Error archiving notice. Please try again.');
+      });
+  };
+
   return (
     <div className="modal">
       <div className="modal-content">
         <h1>User Home</h1>
 
-        <h2>Submitted Notices</h2>
+        <h2>Notices</h2>
+        <button onClick={() => setShowArchived(!showArchived)}>
+          {showArchived ? "View Current Notices" : "View Archived Notices"}
+        </button>
         <ul>
-          {submittedNotices.map(notice => (
-            <li key={notice.user_notice_id}>
-              {notice.body}
-              <button onClick={() => handleArchiveNotice(notice.user_notice_id)}>Archive</button>
-            </li>
-          ))}
+          {showArchived ? (
+            submittedNotices.filter(notice => notice.archived === true).map(notice => (
+              <li key={notice.user_notice_id}>
+                {notice.name}
+                {notice.body}
+              </li>
+            ))
+          ) : (
+            submittedNotices.filter(notice => notice.archived === false).map(notice => (
+              <li key={notice.user_notice_id}>
+                {notice.name}
+                {notice.body}
+                <button onClick={() => handleArchiveNotice(notice.user_notice_id)}>Archive</button>
+              </li>
+            ))
+          )}
         </ul>
 
         <h2>Supervisor Notices</h2>
@@ -146,7 +179,11 @@ export const UserNotices = () => {
           <br />
           <label>
             Notice Type:
-            <input type="text" name="notice_type" value={newNoticeData.notice_type} onChange={handleInputChange} />
+            <select name="notice_type" value={newNoticeData.notice_type} onChange={handleInputChange}>
+              {noticeTypeOptions.map(option => (
+                <option key={option.value} value={option.value}>{option.label}</option>
+              ))}
+            </select>
           </label>
           <br />
           <button type="submit">Submit</button>
