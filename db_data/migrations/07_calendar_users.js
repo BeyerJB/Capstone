@@ -3,7 +3,7 @@ exports.up = function(knex) {
     table.increments('user_id').primary();
     table.string('first_name');
     table.string('last_name');
-    table.string('rank');
+    table.integer('rank');
     table.string('username');
     table.string('password');
     table.integer('user_type').unsigned();

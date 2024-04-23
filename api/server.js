@@ -93,12 +93,17 @@ app.post('/api/login', async (req, res) => {
 
     const supervisorID = chainOfCommand ? chainOfCommand.supervisor_id : null;
 
+    const isSupervisor = await knex('chain_of_command')
+    .where('supervisor_id', user.user_id)
+    .first();
+
     res.status(200).json({
       userID: user.user_id,
       firstName: user.first_name,
       lastName: user.last_name,
       rank: user.rank,
-      supervisorID: supervisorID
+      supervisorID: supervisorID,
+      isSupervisor: !!isSupervisor
     });
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });
@@ -143,8 +148,19 @@ app.get('/api/notices/supervisor/:userId', async (req, res) => {
   const userId = req.params.userId;
   try {
     const notices = await knex('user_notice')
-      .select('*')
+      .select(
+        'user_notice.*',
+        'notice_status.name as status_name',
+        'notice_type.name as notice_name',
+        'calendar_users.rank',
+        'calendar_users.first_name',
+        'calendar_users.last_name',
+        'ranks.name as rank_name'
+      )
       .join('notice_status', 'status_id', 'user_notice.notice_status')
+      .join('notice_type', 'notice_type_id', 'user_notice.notice_type')
+      .join('calendar_users', 'submitter_id', 'user_id')
+      .join('ranks', 'rank_id', 'calendar_users.rank')
       .where({ recipient_id: userId, notice_status: 1 });
     res.status(200).json(notices);
   } catch (error) {
