@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Row, Col, Button } from "react-bootstrap";
 import Form from 'react-bootstrap/Form';
+import { useCookies } from 'react-cookie'
 
 export const CreateEvent = () => {
   const [formData, setFormData] = useState({
@@ -15,11 +16,10 @@ export const CreateEvent = () => {
   });
   const [teamFormData, setTeamFormData] = useState({ team_id: '' });
   const [teamOptions, setTeamOptions] = useState([]);
-
   const [eventTypeData, setEventTypeData] = useState({ event_type: '' });
   const [eventTypeOptions, setEventTypeOptions] = useState([]);
-
   const [checkedBox, setCheckedBox] = useState(false);
+  const [cookies] = useCookies(['userID', 'firstName', 'lastName', 'rank']);
 
   const handleCheckbox = () =>
     setCheckedBox(!checkedBox);
@@ -53,11 +53,6 @@ export const CreateEvent = () => {
 
     //PUSH USER VALUES TO API
     async function sendData() {
-
-      // console.log('USING THE FOLLOWING DATA FOR SUBMISSION:', formData);
-      // console.log("CONCAT START STRING: ", startDateTime);
-      // console.log("CONCAT END STRING: ", endDateTime);
-      // console.log("ALLDAY FLAG: ", checkedBox);
       console.log("TEAM DATA IS: ", teamFormData);
       console.log("EVENT TYPE DATA IS: ", eventTypeData);
 
@@ -71,15 +66,13 @@ export const CreateEvent = () => {
           end_datetime: endDateTime,
           all_day: checkedBox,
           team_id: teamFormData.team_id,
-          user_id: 3,
+          user_id: cookies.userID,
           event_type: eventTypeData.event_id,
-          creator_id: 3
+          creator_id: cookies.userID
         }),
       });
     }
     sendData();
-
-
   };
 
   useEffect(() => {
@@ -103,7 +96,6 @@ export const CreateEvent = () => {
         console.error("Error fetching data:", error);
       }
     }
-
     fetchData();
   }, []);
 
@@ -180,17 +172,6 @@ export const CreateEvent = () => {
         </Col>
       </Form.Group>
 
-      {/* <Form.Group as={Row} className="mb-3">
-        <Form.Label column sm="2"></Form.Label>
-        <Col sm="10">
-          <Form.Check
-            type="switch"
-            id="custom-switch"
-            label="Event Lasts All Day?"
-          />
-        </Col>
-      </Form.Group> */}
-
       <Form.Group as={Row} className="mb-3">
         <Col sm="10">
           <Form.Check
@@ -201,22 +182,6 @@ export const CreateEvent = () => {
             onChange={handleCheckbox} />
         </Col>
       </Form.Group>
-
-
-      {/* <Form.Group as={Row} className="mb-3">
-      <Form.Label column sm ="2"> Team </Form.Label>
-      <Col sm="10">
-        <Form.Select
-          value={formData.team_id}
-          onChange={handleInputChange}
-          name="team_id">
-
-         <option>Select a Team</option>
-         <option value ="Team A"> Team A </option>
-         <option value ="Team B"> Team B </option>
-        </Form.Select>
-      </Col>
-    </Form.Group> */}
 
       <Form.Group as={Row} className="mb-3">
         <Form.Label column sm="2"> Team </Form.Label>
@@ -257,31 +222,11 @@ export const CreateEvent = () => {
         </Col>
       </Form.Group>
 
-      {/* <Form.Group as={Row} className="mb-3">
-      <Form.Label column sm ="2"> Event Type</Form.Label>
-      <Col sm="10">
-        <Form.Select
-          value={formData.event_type}
-          onChange={handleInputChange}
-          name="event_type">
-
-         <option>Select an Event </option>
-         <option value ="Meeting"> Meeting</option>
-         <option value ="Training"> Training</option>
-         <option value ="Holiday"> Holiday</option>
-         <option value ="Leave"> Leave</option>
-         <option value ="Other"> Other</option>
-        </Form.Select>
-      </Col>
-    </Form.Group> */}
-
       <Col xs="auto">
         <Button type="submit" className="mb-2">
           Submit
         </Button>
       </Col>
-
-
     </Form>
   );
 }
