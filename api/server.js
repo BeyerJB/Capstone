@@ -30,8 +30,15 @@ app.get(`/mycalendar`, function(req,res){
   knex('calendar_events')
     .where('user_id', userId)
     .select('*')
-    .then(data => res.status(200).json(data))
-    .catch(err => res.status(202).json({message: 'The data you are looking for could not be found.'}))
+    .then(data => {
+      console.log('it works')
+      res.status(200).json(data)
+    })
+    .catch(err => {
+
+      res.status(202).json({message: 'The data you are looking for could not be found.', err})
+    }
+      )
 })
 
 // All Calendar data

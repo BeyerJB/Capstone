@@ -27,8 +27,8 @@ export const Calendar = () => {
         setAllData(data);
         const formattedEvents = data.map(event => ({
           title: event.title,
-          start: event.start_date + 'T' + event.start_time,
-          end: event.end_date + 'T' + event.end_time,
+          start: event.start_datetime,
+          end: event.end_datetime,
         }));
         setEvents(formattedEvents);
       })
