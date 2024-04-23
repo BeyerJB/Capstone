@@ -1,17 +1,19 @@
 import './App.css';
 import { useContext } from "react"
-import { Routes, Route, Link, useNavigate } from "react-router-dom";
+import { Routes, Route, Link } from "react-router-dom";
 import { Home } from './Features/Home'
 import Login from './Features/Login'
 import { Calendar } from './Features/Calendar'
 import { AuthContext } from './Features/AuthContext';
 import { useCookies } from 'react-cookie'
 import { UserNotices } from './Features/UserNotices';
+import { TeamView } from './Features/TeamView'
 
 function App() {
   const { logout } = useContext(AuthContext)
-  const [cookies, setCookie, removeCookie] = useCookies(['userID', 'firstName', 'lastName', 'rank']);
-  const navigate = useNavigate()
+  const [cookies] = useCookies(['userID', 'firstName', 'lastName', 'rank']);
+
+
   return (
     <>
     <div className="App">
@@ -25,6 +27,7 @@ function App() {
           :
           <>
             <li style={{marginRight: '10px' }} ><Link to="/mycalendar">My Calendar</Link></li>
+            <li style={{marginRight: '10px' }} ><Link to="/TeamView">Team View</Link></li>
             <li style={{marginRight: '10px' }} ><Link to="/notices">Notices</Link></li>
             <button onClick={() => logout()} >Log out</button>
           </>
@@ -38,6 +41,7 @@ function App() {
       <Route path='/' element={<Home />} />
       <Route path='/login' element={<Login />} />
       <Route path='/mycalendar' element={<Calendar />} />
+      <Route path='/TeamView' element={<TeamView /> } />
       <Route path='/notices' element={<UserNotices />} />
     </Routes>
   </div>

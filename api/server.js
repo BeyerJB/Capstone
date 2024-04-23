@@ -23,6 +23,48 @@ app.use((req, res, next) => {
   next();
 });
 
+// // All Calendar data
+app.get(`/mycalendar`, function(req,res){
+  var userId = req.query.userId;
+  console.log(req, res)
+  knex('calendar_events')
+    .where('user_id', userId)
+    .select('*')
+    .then(data => {
+      console.log('it works')
+      res.status(200).json(data)
+    })
+    .catch(err => {
+
+      res.status(202).json({message: 'The data you are looking for could not be found.', err})
+    }
+      )
+})
+
+// All Calendar data
+// app.get(`/mycalendar/:userId`, async function(req, res){
+//   try {
+//     console.log(req);
+//     const userId = req.params.userId;
+//     const data = await knex('calendar_events')
+//                       .where('user_id', userId)
+//                       .select('*');
+//     res.status(200).json(data);
+//   } catch (error) {
+//     console.error('Error fetching calendar data:', error);
+//     res.status(500).json({message: 'Internal server error'});
+//   }
+// });
+
+
+
+// Calendar data for a specific user
+// app.get('/mycalendar', function(req,res){
+//   knex('calendar_events')
+//     .select('*')
+//     .then(data => res.status(200).json(data))
+//     .catch(err => res.status(202).json({message: 'The data you are looking for could not be found.'}))
+// })
 
 // app.get('/', req, res) {
 //   res.status(200).send({message: 'server is running'})
