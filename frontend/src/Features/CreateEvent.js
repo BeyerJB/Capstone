@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Col, Button, Form} from "react-bootstrap";
+import { Row, Col, Button, Form } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { useCookies } from 'react-cookie'
 
@@ -149,13 +149,13 @@ export const CreateEvent = () => {
   }, []);
 
   return (
+    <Form onSubmit={handleSubmit} style={{ marginTop: '15px' }}>
 
-    
-    <Form onSubmit={handleSubmit}>
-
-      <Row>
-        <Form.Label column sm="2"> Event Title & Type</Form.Label>
-        <Col xs={2}>
+      <Row className="mb-2">
+        <Col xs={{ span: 1, offset: 3 }}>
+          <Form.Label style={{ marginTop: '10px' }}> Event Title & Type</Form.Label>
+        </Col>
+        <Col xs={{ span: 2, offset: 0 }}>
           <Form.Control
             type="text"
             placeholder="Enter event title"
@@ -174,25 +174,22 @@ export const CreateEvent = () => {
             {eventTypeOptions}
           </Form.Select>
         </Col>
-        </Row>
+      </Row>
 
-
-
-
-
-
-      <Row>
-      <Form.Label column sm="2">Start Date & Time</Form.Label>
-        <Col xs={2}>
+      <Row className = "mb-2">
+        <Col xs={{ span: 1, offset: 3 }}>
+          <Form.Label style={{ marginTop: '10px' }}>Start Date & Time</Form.Label>
+        </Col>
+        <Col xs={{ span: 2, offset: 0 }}>
           <Form.Control
             type="date"
-            placeholder="YYYY-MM-DD"
+            placeholder="start"
             name="start_date"
             value={formData.start_date}
             onChange={handleInputChange} />
-            </Col>
+        </Col>
 
-            <Col xs={2}>
+        <Col xs={2}>
           <Form.Control
             type="time"
             placeholder="Start Time"
@@ -202,16 +199,18 @@ export const CreateEvent = () => {
         </Col>
       </Row>
 
-      <Row>
-        <Form.Label column sm="2">End Date & Time</Form.Label>
-        <Col xs={2}>
+      <Row className = "mb-2">
+        <Col xs={{ span: 1, offset: 3 }}>
+          <Form.Label style={{ marginTop: '10px' }}>End Date & Time</Form.Label>
+        </Col>
+        <Col xs={{ span: 2, offset: 0 }}>
           <Form.Control
             type="date"
             placeholder="YYYY-MM-DD"
             name="end_date"
             value={formData.end_date}
             onChange={handleInputChange} />
-            </Col>
+        </Col>
 
         <Col xs={2}>
           <Form.Control
@@ -223,9 +222,11 @@ export const CreateEvent = () => {
         </Col>
       </Row>
 
- <Row>
-        <Form.Label column sm="2"> Team </Form.Label>
-        <Col xs={2}>
+      <Row>
+        <Col xs={{span:1, offset:3}}>   
+        <Form.Label style={{ marginTop: '10px' }}> Team </Form.Label>
+        </Col>
+        <Col xs={{ span: 2, offset: 0 }}>
           <Form.Select
             value={teamFormData.team_id}
             onChange={handleInputChange}
@@ -245,9 +246,15 @@ export const CreateEvent = () => {
             checked={checkedBox}
             onChange={handleCheckbox} />
         </Col>
-        </Row>
+      </Row>
 
-      <Form.Group className="mb-3">
+      <Row>
+      <Col xs={{ span: 1, offset: 3 }}>
+        <Button style={{ marginTop: '50px' }} type="submit" className="mb-2">
+          Submit
+        </Button>
+      </Col>
+      <Col xs={{ span: 4, offset: 0 }}>
         <Form.Label>Description</Form.Label>
         <br />
         <Form.Control
@@ -256,13 +263,11 @@ export const CreateEvent = () => {
           name="description"
           value={formData.description}
           onChange={handleInputChange} />
-      </Form.Group>
-
-      <Col xs="auto">
-        <Button type="submit" className="mb-2">
-          Submit
-        </Button>
       </Col>
+      </Row>
+
+
+      
     </Form>
   );
 }
