@@ -2,14 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'react-tabs/style/react-tabs.css';
+import Button from 'react-bootstrap/Button';
 import { useCookies } from 'react-cookie';
 
 export const UserNotices = () => {
-  const [cookies] = useCookies(['userID', 'firstName', 'lastName', 'rank', 'isSupervisor']);
+  const [cookies] = useCookies(['userID', 'firstName', 'lastName', 'rank', 'isSupervisor', 'isManager']);
   const [submittedNotices, setSubmittedNotices] = useState([]);
   const [supervisorNotices, setSupervisorNotices] = useState([]);
+  const [pendingEvents, setPendingEvents] = useState([]);
   const [newNoticeData, setNewNoticeData] = useState({ submitter_id: cookies.userID, recipient_id: cookies.supervisorID, body: '', notice_type: 1 });
   const [noticeUpdateData, setNoticeUpdateData] = useState({});
+  const [eventUpdateData, setEventUpdateData] = useState({});
 
   const [noticeTypeOptions] = useState([
     { value: 1, label: 'General' },
@@ -39,6 +42,17 @@ export const UserNotices = () => {
     }
   };
 
+  const fetchPendingEvents = () => {
+    if (cookies.userID !== undefined) {
+      fetch(`http://localhost:8080/api/events/pending`)
+        .then(response => response.json())
+        .then(data => {
+          setPendingEvents(data);
+        })
+        .catch(error => console.error('Error fetching submitted notices:', error));
+    }
+  };
+
   useEffect(() => {
     fetchSupervisorNotices();
     console.log(submittedNotices);
@@ -46,6 +60,10 @@ export const UserNotices = () => {
 
   useEffect(() => {
     fetchSubmittedNotices();
+  }, []);
+
+  useEffect(() => {
+    fetchPendingEvents();
   }, []);
 
   const handleInputChange = (event) => {
@@ -89,6 +107,16 @@ export const UserNotices = () => {
     fetchSupervisorNotices();
   };
 
+  const handleRejectEvent = (eventId) => {
+    setEventUpdateData({ request_id: eventId, choice: false });
+    fetchPendingEvents();
+  };
+
+  const handleAcceptEvent = (eventId) => {
+    setEventUpdateData({ request_id: eventId, choice: true });
+    fetchPendingEvents();
+  };
+
   useEffect(() => {
     if (noticeUpdateData.request_id !== undefined && noticeUpdateData.choice !== undefined) {
       handleUpdateNotice();
@@ -116,6 +144,26 @@ export const UserNotices = () => {
       });
   };
 
+  const handleUpdateEvent = () => {
+    fetch('http://localhost:8080/api/events/choice', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(eventUpdateData),
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        setEventUpdateData({});
+      })
+      .catch(error => {
+        console.error('Error updating event:', error);
+        alert('Error updating event. Please try again.');
+      });
+  };
+
   const handleArchiveNotice = (noticeID) => {
     fetch(`http://localhost:8080/api/notices/${noticeID}`, {
       method: 'PUT',
@@ -134,6 +182,43 @@ export const UserNotices = () => {
 
   return (
     <>
+      {cookies.isManager && (
+        <>
+          <h2>Pending Event Request</h2>
+          <div className="notice-form">
+            {pendingEvents.length === 0 ? (
+              <p>No Pending Events</p>
+            ) : (
+              <table>
+                <thead>
+                  <tr>
+                    <th>User</th>
+                    <th>Request</th>
+                    <th>Type</th>
+                    <th className="text-center">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {supervisorNotices.map(notice => (
+                    <tr key={notice.user_notice_id}>
+                      <td>{notice.rank_name} {notice.first_name} {notice.last_name}</td>
+                      <td>{notice.body}</td>
+                      <td>{notice.notice_name}</td>
+                      <td>
+                        <div className="button-container text-center">
+                          <Button variant="dark" style={{ margin: '5px' }} onClick={() => handleAcceptNotice(notice.user_notice_id), handleAcceptEvent(notice.event_id)} class="btn btn-primary">Approve</Button>
+                          <Button variant="dark" style={{ margin: '5px' }} onClick={() => handleRejectNotice(notice.user_notice_id), handleRejectEvent(notice.event_id)} class="btn btn-primary">Deny</Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+        </>
+      )}
+
       <h2>Submitted Notices</h2>
       <div className="notice-form">
         <Tabs>
@@ -159,7 +244,7 @@ export const UserNotices = () => {
                       <td>{notice.body}</td>
                       <td>
                         <div className="button-container text-center">
-                          <button onClick={() => handleArchiveNotice(notice.user_notice_id)} class="btn btn-primary">Archive</button>
+                          <Button variant="dark" onClick={() => handleArchiveNotice(notice.user_notice_id)} class="btn btn-primary">Archive</Button>
                         </div>
                       </td>
                     </tr>
@@ -222,8 +307,8 @@ export const UserNotices = () => {
                       <td>{notice.notice_name}</td>
                       <td>
                         <div className="button-container text-center">
-                          <button style={{ margin: '5px' }} onClick={() => handleAcceptNotice(notice.user_notice_id)} class="btn btn-primary">Approve</button>
-                          <button style={{ margin: '5px' }} onClick={() => handleRejectNotice(notice.user_notice_id)} class="btn btn-primary">Deny</button>
+                          <Button variant="dark" style={{ margin: '5px' }} onClick={() => handleAcceptNotice(notice.user_notice_id)} class="btn btn-primary">Approve</Button>
+                          <Button variant="dark" style={{ margin: '5px' }} onClick={() => handleRejectNotice(notice.user_notice_id)} class="btn btn-primary">Deny</Button>
                         </div>
                       </td>
                     </tr>
@@ -252,6 +337,7 @@ export const UserNotices = () => {
         <div className="form-group">
           <label htmlFor="notice_type">Notice Type:</label>
           <select
+            data-bs-theme="dark"
             id="notice_type"
             name="notice_type"
             value={newNoticeData.notice_type}
@@ -265,7 +351,7 @@ export const UserNotices = () => {
             ))}
           </select>
         </div>
-        <button type="submit" className="btn btn-primary">Submit</button>
+        <Button variant="dark" type="submit" className="btn btn-primary">Submit</Button>
       </form>
     </>
   );

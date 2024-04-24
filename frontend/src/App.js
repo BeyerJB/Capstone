@@ -14,11 +14,17 @@ import { TeamView } from './Features/TeamView'
 
 function App() {
   const { logout } = useContext(AuthContext)
-  const [cookies] = useCookies(['userID', 'firstName', 'lastName', 'rank']);
+  const [cookies] = useCookies(['userID', 'firstName', 'lastName', 'rank', 'isManager']);
   const [noticePaneOpened, setNoticePaneOpened] = useState(false);
+  const [eventPaneOpened, setEventPaneOpened] = useState(false);
+
 
   const handleOpenNotices = () => {
     setNoticePaneOpened(!noticePaneOpened);
+  }
+
+  const handleOpenEvents = () => {
+    setEventPaneOpened(!eventPaneOpened);
   }
 
   return (
@@ -35,8 +41,8 @@ function App() {
                 <>
                   <li><Link to="/mycalendar">My Calendar</Link></li>
                   <li><Link to="/TeamView">Team View</Link></li>
-                  <li><Link to="/createevent">Create Event</Link></li>
                   <li><a onClick={handleOpenNotices}>Notices</a></li>
+                  <li><a onClick={handleOpenEvents}>Create Event</a></li>
                   <li><a onClick={() => logout()}>Log out</a></li>
                 </>
               )}
@@ -52,6 +58,9 @@ function App() {
         </Routes>
         <SlidingPane isOpen={noticePaneOpened} onRequestClose={handleOpenNotices} width="1000px" title="User Notices">
           <UserNotices />
+        </SlidingPane>
+        <SlidingPane isOpen={eventPaneOpened} onRequestClose={handleOpenEvents} width="1000px" title="Create Event">
+          <CreateEvent />
         </SlidingPane>
       </div>
     </>
