@@ -40,8 +40,9 @@
 .calendar {
   height: 75vh;
   overflow: hidden;
-  margin-left: 300px;
+  text-decoration: none;
 }
+
 
 
 .sidebar {
@@ -100,4 +101,5 @@
   border-radius: 5px;
   cursor: pointer;
 }
+
 
