@@ -112,6 +112,25 @@ app.post("/api/login", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+//get teams for account creation
+app.get("/api/teams", (req, res) => {
+  knex("calendar_teams")
+  .select("name", "team_id")
+  .then(dbres => res.status(200).json(dbres))
+  .catch(err => res.status(500).json({ error: "Internal server error"}))
+})
+
+//get ranks for account creation
+app.get("/api/ranks", (req, res) => {
+  knex("ranks")
+  .select("name", "rank_id")
+  .then(dbres => res.status(200).json(dbres))
+  .catch(err => res.status(500).json({ error: "Internal server error"}))
+})
+//user account request
+app.post("/api/newuser", async (req, res) => {
+
+})
 
 // Create notice
 app.post("/api/notices", async (req, res) => {

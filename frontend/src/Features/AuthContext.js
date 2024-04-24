@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect } from 'react';
+import { createContext } from 'react';
 import {useCookies} from 'react-cookie'
 import {useNavigate} from "react-router-dom";
 const AuthContext = createContext();
