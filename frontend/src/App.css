@@ -41,7 +41,9 @@
 
   height: 85vh;
   overflow: hidden;
+  text-decoration: none;
 }
+
 
 
 .sidebar {
@@ -87,6 +89,7 @@
 
 .navbar li {
   margin-right: 10px;
+  color: white;
 }
 
 .navbar a {
@@ -100,4 +103,5 @@
   border-radius: 5px;
   cursor: pointer;
 }
+
 
