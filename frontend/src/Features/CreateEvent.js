@@ -43,8 +43,23 @@ export const CreateEvent = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const startDateTime = `${formData.start_date}T${formData.start_time}:00`;
-    const endDateTime = `${formData.end_date}T${formData.end_time}:00`;
+
+    //IF THE TIME IS EMPTY, CONCAT ZEROS INTO THE DATETIME
+    var startDateTime;
+    var endDateTime;
+    if (formData.start_time == "") {
+      startDateTime = `${formData.start_date}T06:00:00`;
+      endDateTime = `${formData.end_date}T06:00:00`;
+
+    } else {
+      startDateTime = `${formData.start_date}T${formData.start_time}:00`;
+      endDateTime = `${formData.end_date}T${formData.end_time}:00`;
+    }
+
+
+
+
+
     //DIAGNOSTIC LOGGING TO CHECK USER INPUT VARIABLES
     // console.log('USING THE FOLLOWING DATA FOR SUBMISSION:', formData);
     // console.log("CONCAT START STRING: ",startDateTime);
@@ -58,7 +73,7 @@ export const CreateEvent = () => {
 
       //NULLIFY teamFormData.team_id IF SELECTED FEILD IS "Just Me"
       //console.log("TEAM ID: ", teamFormData.team_id);
-      if(teamFormData.team_id == "Just Me"){
+      if (teamFormData.team_id == "Just Me") {
         setTeamFormData({
           ...teamFormData.team_id = null
         });
@@ -81,11 +96,11 @@ export const CreateEvent = () => {
           creator_id: cookies.userID
         }),
       });
-      window.location.href="http://localhost:3000/mycalendar"
+      window.location.href = "http://localhost:3000/mycalendar"
 
     }
     sendData();
-    
+
   };
 
   useEffect(() => {
