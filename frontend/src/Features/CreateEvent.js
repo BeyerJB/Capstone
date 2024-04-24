@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Row, Col, Button, Form } from "react-bootstrap";
-<<<<<<< HEAD
 import 'bootstrap/dist/css/bootstrap.min.css'
-=======
->>>>>>> origin/main
 import { useCookies } from 'react-cookie'
 
 export const CreateEvent = () => {
@@ -152,8 +149,9 @@ export const CreateEvent = () => {
   }, []);
 
   return (
-    <Form onSubmit={handleSubmit} style={{ marginTop: '15px' }}>
 
+    <Form onSubmit={handleSubmit} style={{ marginTop: '15px' }}>
+  <h2>Create Event Request</h2> 
       <Row className="mb-2">
         <Col xs={{ span: 1, offset: 3 }}>
           <Form.Label style={{ marginTop: '10px' }}> Event Title & Type</Form.Label>
