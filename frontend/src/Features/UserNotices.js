@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+//import 'bootstrap/dist/css/bootstrap.css';
+import 'react-tabs/style/react-tabs.css';
 import { useCookies } from 'react-cookie';
 
 export const UserNotices = () => {
-  const [cookies] = useCookies(['userID', 'firstName', 'lastName', 'rank']);
+  const [cookies] = useCookies(['userID', 'firstName', 'lastName', 'rank', 'isSupervisor']);
   const [submittedNotices, setSubmittedNotices] = useState([]);
   const [supervisorNotices, setSupervisorNotices] = useState([]);
   const [newNoticeData, setNewNoticeData] = useState({ submitter_id: cookies.userID, recipient_id: cookies.supervisorID, body: '', notice_type: 1 });
   const [noticeUpdateData, setNoticeUpdateData] = useState({});
-  const [showArchived, setShowArchived] = useState(false);
 
   const [noticeTypeOptions] = useState([
     { value: 1, label: 'General' },
@@ -39,6 +41,7 @@ export const UserNotices = () => {
 
   useEffect(() => {
     fetchSupervisorNotices();
+    console.log(submittedNotices);
   }, []);
 
   useEffect(() => {
@@ -130,65 +133,139 @@ export const UserNotices = () => {
   };
 
   return (
-    <div className="modal">
-      <div className="modal-content">
-        <h1>User Home</h1>
+    <>
+      <h2>Submitted Notices</h2>
+      <div className="notice-form">
+        <Tabs>
+          <TabList>
+            <Tab>Current</Tab>
+            <Tab>Archived</Tab>
+          </TabList>
 
-        <h2>Notices</h2>
-        <button onClick={() => setShowArchived(!showArchived)}>
-          {showArchived ? "View Current Notices" : "View Archived Notices"}
-        </button>
-        <ul>
-          {showArchived ? (
-            submittedNotices.filter(notice => notice.archived === true).map(notice => (
-              <li key={notice.user_notice_id}>
-                {notice.name}
-                {notice.body}
-              </li>
-            ))
-          ) : (
-            submittedNotices.filter(notice => notice.archived === false).map(notice => (
-              <li key={notice.user_notice_id}>
-                {notice.name}
-                {notice.body}
-                <button onClick={() => handleArchiveNotice(notice.user_notice_id)}>Archive</button>
-              </li>
-            ))
-          )}
-        </ul>
+          <TabPanel>
+            {submittedNotices.filter(notice => notice.archived === false).length > 0 && (
+              <table>
+                <thead>
+                  <tr>
+                    <th>Status</th>
+                    <th>Request</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {submittedNotices.filter(notice => notice.archived === false).map(notice => (
+                    <tr key={notice.user_notice_id}>
+                      <td>Current</td>
+                      <td>{notice.body}</td>
+                      <td>
+                        <div className="button-container">
+                          <button onClick={() => handleArchiveNotice(notice.user_notice_id)} class="btn btn-primary">Archive</button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+            {submittedNotices.filter(notice => notice.archived === false).length === 0 && (
+              <p>No Pending Notices</p>
+            )}
+          </TabPanel>
 
-        <h2>Supervisor Notices</h2>
-        <ul>
-          {supervisorNotices.map(notice => (
-            <li key={notice.user_notice_id}>
-              {notice.body}
-              <div>
-                <button onClick={() => handleAcceptNotice(notice.user_notice_id)}>Accept</button>
-                <button onClick={() => handleRejectNotice(notice.user_notice_id)}>Reject</button>
-              </div>
-            </li>
-          ))}
-        </ul>
-
-        <h2>Create New Notice</h2>
-        <form onSubmit={handleNewNotice}>
-          <label>
-            Body:
-            <input type="text" name="body" value={newNoticeData.body} onChange={handleInputChange} />
-          </label>
-          <br />
-          <label>
-            Notice Type:
-            <select name="notice_type" value={newNoticeData.notice_type} onChange={handleInputChange}>
-              {noticeTypeOptions.map(option => (
-                <option key={option.value} value={option.value}>{option.label}</option>
-              ))}
-            </select>
-          </label>
-          <br />
-          <button type="submit">Submit</button>
-        </form>
+          <TabPanel>
+            {submittedNotices.filter(notice => notice.archived === true).length > 0 && (
+              <table>
+                <thead>
+                  <tr>
+                    <th>Status</th>
+                    <th>Request</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {submittedNotices.filter(notice => notice.archived === true).map(notice => (
+                    <tr key={notice.user_notice_id}>
+                      <td>Archived</td>
+                      <td>{notice.body}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+            {submittedNotices.filter(notice => notice.archived === true).length === 0 && (
+              <p>No Archived Notices</p>
+            )}
+          </TabPanel>
+        </Tabs>
       </div>
-    </div>
+
+      {cookies.isSupervisor && (
+        <>
+          <h2>Supervisor Notices</h2>
+          <div className="notice-form">
+            {supervisorNotices.length === 0 ? (
+              <p>No Pending Notices</p>
+            ) : (
+              <table>
+                <thead>
+                  <tr>
+                    <th>User</th>
+                    <th>Request</th>
+                    <th>Type</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {supervisorNotices.map(notice => (
+                    <tr key={notice.user_notice_id}>
+                      <td>{notice.rank_name} {notice.first_name} {notice.last_name}</td>
+                      <td>{notice.body}</td>
+                      <td>{notice.notice_name}</td>
+                      <td>
+                        <div className="button-container">
+                          <button onClick={() => handleAcceptNotice(notice.user_notice_id)} class="btn btn-primary">Approve</button>
+                          <button onClick={() => handleRejectNotice(notice.user_notice_id)} class="btn btn-primary">Deny</button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+        </>
+      )}
+
+      <h2>Create New Notice</h2>
+      <form className="notice-form" onSubmit={handleNewNotice}>
+        <div className="form-group">
+          <label htmlFor="body">Body:</label>
+          <textarea
+            id="body"
+            name="body"
+            value={newNoticeData.body}
+            onChange={handleInputChange}
+            className="form-control"
+            rows="4"
+          ></textarea>
+        </div>
+        <div className="form-group">
+          <label htmlFor="notice_type">Notice Type:</label>
+          <select
+            id="notice_type"
+            name="notice_type"
+            value={newNoticeData.notice_type}
+            onChange={handleInputChange}
+            className="form-control"
+          >
+            {noticeTypeOptions.map(option => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </div>
+        <button type="submit" className="btn btn-primary">Submit</button>
+      </form>
+    </>
   );
 };
