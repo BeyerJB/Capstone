@@ -179,7 +179,7 @@ app.get("/api/notices/supervisor/:userId", async (req, res) => {
         'calendar_users.rank',
         'calendar_users.first_name',
         'calendar_users.last_name',
-        'ranks.name as rank_name'
+        'ranks.name as rank_name',
       )
       .join('notice_status', 'status_id', 'user_notice.notice_status')
       .join('notice_type', 'notice_type_id', 'user_notice.notice_type')
@@ -221,7 +221,7 @@ app.get("/api/supervisor/:userId", async (req, res) => {
 });
 
 //Get Team Calendar Events
-app.get("/api/teamview:userId", async (req, res) => {
+app.get("/api/teamview/:userId", async (req, res) => {
   const userId = req.params.userId;
   knex("calendar_users")
     .select(
@@ -235,26 +235,27 @@ app.get("/api/teamview:userId", async (req, res) => {
       "end_datetime",
       "all_day",
       "creator_id",
-      "ranks.name AS rank"
+      "ranks.name AS rank",
+      "calendar_teams.name AS team_name"
     )
-    .join(
-      "calendar_events",
-      "calendar_users.user_id",
-      "=",
-      "calendar_events.user_id"
-    )
+    .join("calendar_events","calendar_users.user_id","=","calendar_events.user_id")
     .join("ranks", "calendar_users.rank", "=", "ranks.rank_id")
     .join("event_type", "calendar_events.event_type", "=", "event_type.event_id")
-    .where("calendar_users.supervisor_id", userId)
+    .join("calendar_teams", "calendar_teams.team_id", "calendar_users.team_id")
+    //.where("calendar_users.supervisor_id", userId)
     .then((dbres) => res.status(200).json(dbres))
-    .catch((err) => res.status(500).json({ err: "Internal server error" }));
+    .catch((err) => res.status(500).json({ err: "Internal server error : ", err }));
 });
 
-app.get("/aaa", (req, res) => {
-  knex("calendar_events")
-    .select("*")
-    .then((data) => res.status(200).json(data));
-});
+
+
+
+
+// app.get("/aaa", (req, res) => {
+//   knex("calendar_events")
+//     .select("*")
+//     .then((data) => res.status(200).json(data));
+// });
 
 app.listen(port, () => {
   console.log("It is running");

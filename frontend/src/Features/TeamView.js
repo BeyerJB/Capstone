@@ -11,8 +11,8 @@ export const TeamView = () => {
   const [ teamEvents, setTeamEvents ] = useState([])
 
   useEffect(() => {
-    console.log("cookie id", `http://localhost:8080/api/teamview${cookies.userID}`)
-    fetch(`http://localhost:8080/api/teamview${cookies.userID}`)
+    console.log("cookie id", `http://localhost:8080/api/teamview/${cookies.userID}`)
+    fetch(`http://localhost:8080/api/teamview/${cookies.userID}`)
       .then(res => res.json())
       .then(jsonRes => setTeamEvents(jsonRes))
   }, [cookies.userID])
@@ -21,7 +21,7 @@ export const TeamView = () => {
 
   return (
     <div className="calendar">
-      <h1>My Calendar</h1>
+      <h1>Team Calendar</h1>
       <FullCalendar
 
         plugins={[
@@ -51,11 +51,18 @@ export const TeamView = () => {
             type: 'resourceTimeline',
             duration: { days: 10 },
             buttonText: '10 days',
-            slotDuration: {days : 1},
-            slotLabelFormat:{
+            slotDuration: '06:00',
+            slotLabelFormat:[
+              {
               weekday: 'short',
               day: 'numeric',
-            }
+              },{
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+              }
+            ]
+
           }
         }}
         schedulerLicenseKey="CC-Attribution-NonCommercial-NoDerivatives"
@@ -63,15 +70,17 @@ export const TeamView = () => {
         height="60vh"
         scrollTime="00:00"
         aspectRatio={2}
-
-        editable={true}
+        nowIndicator = {true}
+        editable={false}
         resourceAreaHeaderContent="Guardians"
-        resourceAreaWidth = "10vw"
+        resourceAreaWidth = "15vw"
+        resourceGroupField= 'team_name'
         resources={
             teamEvents.map(user => {
               return ({
                 id: user.user_id,
-                title: `${user.rank} ${user.first_name} ${user.last_name}`
+                title: `${user.rank} ${user.first_name} ${user.last_name}`,
+                team_name : user.team_name
               })
             })
         }
@@ -79,12 +88,13 @@ export const TeamView = () => {
           teamEvents.map(user => {
             return ({
               resourceId: user.user_id,
-              title: `${user.title}`,
-              start: `${user.start_datetime}`,
-              end: `${user.end_datetime}`,
+              title: user.title,
+              start: user.start_datetime,
+              end: user.end_datetime,
               allDay: user.all_day,
-              description: `${user.description}`,
-              event_type: `${user.event_type}`
+              description: user.description,
+              event_type: user.event_type,
+
             })
           })
       }
