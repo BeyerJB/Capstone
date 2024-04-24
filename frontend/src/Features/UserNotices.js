@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+//import 'bootstrap/dist/css/bootstrap.css';
 import 'react-tabs/style/react-tabs.css';
 import { useCookies } from 'react-cookie';
 
@@ -9,7 +10,6 @@ export const UserNotices = () => {
   const [supervisorNotices, setSupervisorNotices] = useState([]);
   const [newNoticeData, setNewNoticeData] = useState({ submitter_id: cookies.userID, recipient_id: cookies.supervisorID, body: '', notice_type: 1 });
   const [noticeUpdateData, setNoticeUpdateData] = useState({});
-  const [showArchived, setShowArchived] = useState(false);
 
   const [noticeTypeOptions] = useState([
     { value: 1, label: 'General' },
@@ -133,73 +133,75 @@ export const UserNotices = () => {
   };
 
   return (
-    <div className="modal">
-    <div className="modal-content">
+    <>
       <h2>Submitted Notices</h2>
-      <Tabs>
-        <TabList>
-          <Tab>Current</Tab>
-          <Tab>Archived</Tab>
-        </TabList>
+      <div className="notice-form">
+        <Tabs>
+          <TabList>
+            <Tab>Current</Tab>
+            <Tab>Archived</Tab>
+          </TabList>
 
-        <TabPanel>
-          {submittedNotices.filter(notice => notice.archived === false).length > 0 && (
-            <table>
-              <thead>
-                <tr>
-                  <th>Status</th>
-                  <th>Request</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {submittedNotices.filter(notice => notice.archived === false).map(notice => (
-                  <tr key={notice.user_notice_id}>
-                    <td>Current</td>
-                    <td>{notice.body}</td>
-                    <td>
-                      <div className="button-container">
-                        <button onClick={() => handleArchiveNotice(notice.user_notice_id)}>Archive</button>
-                      </div>
-                    </td>
+          <TabPanel>
+            {submittedNotices.filter(notice => notice.archived === false).length > 0 && (
+              <table>
+                <thead>
+                  <tr>
+                    <th>Status</th>
+                    <th>Request</th>
+                    <th>Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-          {submittedNotices.filter(notice => notice.archived === false).length === 0 && (
-            <p>No Pending Notices</p>
-          )}
-        </TabPanel>
+                </thead>
+                <tbody>
+                  {submittedNotices.filter(notice => notice.archived === false).map(notice => (
+                    <tr key={notice.user_notice_id}>
+                      <td>Current</td>
+                      <td>{notice.body}</td>
+                      <td>
+                        <div className="button-container">
+                          <button onClick={() => handleArchiveNotice(notice.user_notice_id)} class="btn btn-primary">Archive</button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+            {submittedNotices.filter(notice => notice.archived === false).length === 0 && (
+              <p>No Pending Notices</p>
+            )}
+          </TabPanel>
 
-        <TabPanel>
-          {submittedNotices.filter(notice => notice.archived === true).length > 0 && (
-            <table>
-              <thead>
-                <tr>
-                  <th>Status</th>
-                  <th>Request</th>
-                </tr>
-              </thead>
-              <tbody>
-                {submittedNotices.filter(notice => notice.archived === true).map(notice => (
-                  <tr key={notice.user_notice_id}>
-                    <td>Archived</td>
-                    <td>{notice.body}</td>
+          <TabPanel>
+            {submittedNotices.filter(notice => notice.archived === true).length > 0 && (
+              <table>
+                <thead>
+                  <tr>
+                    <th>Status</th>
+                    <th>Request</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-          {submittedNotices.filter(notice => notice.archived === true).length === 0 && (
-            <p>No Archived Notices</p>
-          )}
-        </TabPanel>
-      </Tabs>
+                </thead>
+                <tbody>
+                  {submittedNotices.filter(notice => notice.archived === true).map(notice => (
+                    <tr key={notice.user_notice_id}>
+                      <td>Archived</td>
+                      <td>{notice.body}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+            {submittedNotices.filter(notice => notice.archived === true).length === 0 && (
+              <p>No Archived Notices</p>
+            )}
+          </TabPanel>
+        </Tabs>
+      </div>
 
-        {cookies.isSupervisor && (
-          <>
-            <h2>Supervisor Notices</h2>
+      {cookies.isSupervisor && (
+        <>
+          <h2>Supervisor Notices</h2>
+          <div className="notice-form">
             {supervisorNotices.length === 0 ? (
               <p>No Pending Notices</p>
             ) : (
@@ -220,8 +222,8 @@ export const UserNotices = () => {
                       <td>{notice.notice_name}</td>
                       <td>
                         <div className="button-container">
-                          <button onClick={() => handleAcceptNotice(notice.user_notice_id)}>Approve</button>
-                          <button onClick={() => handleRejectNotice(notice.user_notice_id)}>Deny</button>
+                          <button onClick={() => handleAcceptNotice(notice.user_notice_id)} class="btn btn-primary">Approve</button>
+                          <button onClick={() => handleRejectNotice(notice.user_notice_id)} class="btn btn-primary">Deny</button>
                         </div>
                       </td>
                     </tr>
@@ -229,28 +231,41 @@ export const UserNotices = () => {
                 </tbody>
               </table>
             )}
-          </>
-        )}
+          </div>
+        </>
+      )}
 
-        <h2>Create New Notice</h2>
-        <form onSubmit={handleNewNotice}>
-          <label>
-            Body:
-            <input type="text" name="body" value={newNoticeData.body} onChange={handleInputChange} />
-          </label>
-          <br />
-          <label>
-            Notice Type:
-            <select name="notice_type" value={newNoticeData.notice_type} onChange={handleInputChange}>
-              {noticeTypeOptions.map(option => (
-                <option key={option.value} value={option.value}>{option.label}</option>
-              ))}
-            </select>
-          </label>
-          <br />
-          <button type="submit">Submit</button>
-        </form>
-      </div>
-    </div>
+      <h2>Create New Notice</h2>
+      <form className="notice-form" onSubmit={handleNewNotice}>
+        <div className="form-group">
+          <label htmlFor="body">Body:</label>
+          <textarea
+            id="body"
+            name="body"
+            value={newNoticeData.body}
+            onChange={handleInputChange}
+            className="form-control"
+            rows="4"
+          ></textarea>
+        </div>
+        <div className="form-group">
+          <label htmlFor="notice_type">Notice Type:</label>
+          <select
+            id="notice_type"
+            name="notice_type"
+            value={newNoticeData.notice_type}
+            onChange={handleInputChange}
+            className="form-control"
+          >
+            {noticeTypeOptions.map(option => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </div>
+        <button type="submit" className="btn btn-primary">Submit</button>
+      </form>
+    </>
   );
 };

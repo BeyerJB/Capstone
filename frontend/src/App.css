@@ -98,15 +98,6 @@
 .navbar a:hover {
   background-color: #555;
   border-radius: 5px;
-}
-=======
-}
-
-.modal-content div#tcal {
-  position: absolute;
-  visibility: hidden;
-  z-index: 12001;
-  width: 158px;
-  padding: 2px 0 0 0;
+  cursor: pointer;
 }
 
