@@ -94,6 +94,7 @@ app.post("/api/login", async (req, res) => {
       .first();
 
     const supervisorID = chainOfCommand ? chainOfCommand.supervisor_id : null;
+    const isManager = user.user_type === 1 ? false : true;
 
     const isSupervisor = await knex('chain_of_command')
     .where('supervisor_id', user.user_id)
@@ -105,7 +106,8 @@ app.post("/api/login", async (req, res) => {
       lastName: user.last_name,
       rank: user.rank,
       supervisorID: supervisorID,
-      isSupervisor: !!isSupervisor
+      isSupervisor: !!isSupervisor,
+      isManager: isManager
     });
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
@@ -326,4 +328,25 @@ app.get("/events", (req, res) => {
   knex("calendar_events")
     .select("*")
     .then((data) => res.status(200).json(data));
+})
+
+// Get all pending calendar events
+app.get("/api/events/pending", async (req, res) => {
+  try {
+    const pendingEvents = await knex("calendar_events").select("*").where("pending", true)
+    res.status(200).json(pendingEvents);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+})
+
+// Approve/Deny calendar events
+app.put("/api/events/choice", async (req, res) => {
+  const { event_id, choice } = req.body;
+  try {
+    const pendingEvents = await knex("calendar_events").where("event_id", event_id).update({pending: false, approved: choice});
+    res.status(200).json(pendingEvents);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
 })
