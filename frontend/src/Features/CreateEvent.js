@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Col, Button } from "react-bootstrap";
-import Form from 'react-bootstrap/Form';
+import { Row, Col, Button, Form} from "react-bootstrap";
+import 'bootstrap/dist/css/bootstrap.min.css'
 import { useCookies } from 'react-cookie'
 
 export const CreateEvent = () => {
@@ -149,10 +149,13 @@ export const CreateEvent = () => {
   }, []);
 
   return (
+
+    
     <Form onSubmit={handleSubmit}>
-      <Form.Group as={Row} className="mb-3">
-        <Form.Label column sm="2"> Event Title</Form.Label>
-        <Col sm="10">
+
+      <Row>
+        <Form.Label column sm="2"> Event Title & Type</Form.Label>
+        <Col xs={2}>
           <Form.Control
             type="text"
             placeholder="Enter event title"
@@ -160,18 +163,36 @@ export const CreateEvent = () => {
             value={formData.title}
             onChange={handleInputChange} />
         </Col>
-      </Form.Group>
+
+        <Col xs={2}>
+          <Form.Select
+            value={eventTypeData.event_id}
+            onChange={handleInputChange}
+            name="event_id">
+
+            <option>Event type</option>
+            {eventTypeOptions}
+          </Form.Select>
+        </Col>
+        </Row>
+
+
+
+
+
 
       <Row>
-        <Form.Label column sm="2">Start Date & Time</Form.Label>
-        <Col sm="10">
+      <Form.Label column sm="2">Start Date & Time</Form.Label>
+        <Col xs={2}>
           <Form.Control
             type="date"
             placeholder="YYYY-MM-DD"
             name="start_date"
             value={formData.start_date}
             onChange={handleInputChange} />
+            </Col>
 
+            <Col xs={2}>
           <Form.Control
             type="time"
             placeholder="Start Time"
@@ -181,16 +202,18 @@ export const CreateEvent = () => {
         </Col>
       </Row>
 
-      <Form.Group as={Row} className="mb-3">
+      <Row>
         <Form.Label column sm="2">End Date & Time</Form.Label>
-        <Col sm="10">
+        <Col xs={2}>
           <Form.Control
             type="date"
             placeholder="YYYY-MM-DD"
             name="end_date"
             value={formData.end_date}
             onChange={handleInputChange} />
+            </Col>
 
+        <Col xs={2}>
           <Form.Control
             type="time"
             placeholder="End Time"
@@ -198,22 +221,11 @@ export const CreateEvent = () => {
             value={formData.end_time}
             onChange={handleInputChange} />
         </Col>
-      </Form.Group>
+      </Row>
 
-      <Form.Group as={Row} className="mb-3">
-        <Col sm="10">
-          <Form.Check
-            type="checkbox"
-            label="Click here if event lasts all day"
-            name="all_day"
-            checked={checkedBox}
-            onChange={handleCheckbox} />
-        </Col>
-      </Form.Group>
-
-      <Form.Group as={Row} className="mb-3">
+ <Row>
         <Form.Label column sm="2"> Team </Form.Label>
-        <Col sm="10">
+        <Col xs={2}>
           <Form.Select
             value={teamFormData.team_id}
             onChange={handleInputChange}
@@ -224,7 +236,16 @@ export const CreateEvent = () => {
             {teamOptions}
           </Form.Select>
         </Col>
-      </Form.Group>
+
+        <Col xs={1}>
+          <Form.Check
+            type="checkbox"
+            label="All Day"
+            name="all_day"
+            checked={checkedBox}
+            onChange={handleCheckbox} />
+        </Col>
+        </Row>
 
       <Form.Group className="mb-3">
         <Form.Label>Description</Form.Label>
@@ -235,20 +256,6 @@ export const CreateEvent = () => {
           name="description"
           value={formData.description}
           onChange={handleInputChange} />
-      </Form.Group>
-
-      <Form.Group as={Row} className="mb-3">
-        <Form.Label column sm="2"> Event Type </Form.Label>
-        <Col sm="10">
-          <Form.Select
-            value={eventTypeData.event_id}
-            onChange={handleInputChange}
-            name="event_id">
-
-            <option>Select an Event</option>
-            {eventTypeOptions}
-          </Form.Select>
-        </Col>
       </Form.Group>
 
       <Col xs="auto">
