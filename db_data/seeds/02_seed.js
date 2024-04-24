@@ -112,9 +112,9 @@ exports.seed = async function(knex) {
     { notice_status: 1, submitter_id: 7, recipient_id: 1, body: 'Test notice 3', notice_type: 3 },
     { notice_status: 1, submitter_id: 17, recipient_id: 3, body: 'Test notice 4', notice_type: 1 },
     { notice_status: 1, submitter_id: 20, recipient_id: 3, body: 'Test notice 5', notice_type: 2 },
-    { notice_status: 1, submitter_id: 20, body: 'Event Creation', notice_type: 4 },
-    { notice_status: 1, submitter_id: 17, body: 'Event Creation', notice_type: 4 },
-    { notice_status: 1, submitter_id: 18, body: 'Event Creation', notice_type: 4 }
+    { notice_status: 1, submitter_id: 20, body: 'Event Creation', notice_type: 4, event_id: 30 },
+    { notice_status: 1, submitter_id: 17, body: 'Event Creation', notice_type: 4, event_id: 31 },
+    { notice_status: 1, submitter_id: 18, body: 'Event Creation', notice_type: 4, event_id: 32 }
   ]);
 
   // Seed calendar_events table

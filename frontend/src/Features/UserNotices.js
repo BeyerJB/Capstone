@@ -199,15 +199,39 @@ export const UserNotices = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {supervisorNotices.map(notice => (
+                  {pendingEvents.map(notice => (
                     <tr key={notice.user_notice_id}>
                       <td>{notice.rank_name} {notice.first_name} {notice.last_name}</td>
-                      <td>{notice.body}</td>
-                      <td>{notice.notice_name}</td>
+                      <td>
+                        Description: {notice.description} <br/>
+                        Start: {notice.start_datetime} <br/>
+                        End:  {notice.end_datetime}
+                      </td>
+                      <td>{notice.event_type_name}</td>
                       <td>
                         <div className="button-container text-center">
-                          <Button variant="dark" style={{ margin: '5px' }} onClick={() => handleAcceptNotice(notice.user_notice_id), handleAcceptEvent(notice.event_id)} class="btn btn-primary">Approve</Button>
-                          <Button variant="dark" style={{ margin: '5px' }} onClick={() => handleRejectNotice(notice.user_notice_id), handleRejectEvent(notice.event_id)} class="btn btn-primary">Deny</Button>
+                          <Button
+                            variant="dark"
+                            style={{ margin: '5px' }}
+                            onClick={() => {
+                              handleAcceptNotice(notice.user_notice_id);
+                              handleAcceptEvent(notice.event_id);
+                            }}
+                            className="btn btn-primary"
+                          >
+                            Approve
+                          </Button>
+                          <Button
+                            variant="dark"
+                            style={{ margin: '5px' }}
+                            onClick={() => {
+                              handleRejectNotice(notice.user_notice_id);
+                              handleRejectEvent(notice.event_id);
+                            }}
+                            className="btn btn-primary"
+                          >
+                            Deny
+                          </Button>
                         </div>
                       </td>
                     </tr>
