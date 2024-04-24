@@ -40,14 +40,5 @@
 .calendar {
   height: 75vh;
   overflow: hidden;
+  text-decoration: none;
 }
-
-.modal-content div#tcal {
-  position: absolute;
-  visibility: hidden;
-  z-index: 12001;
-  width: 158px;
-  padding: 2px 0 0 0;
-}
-
-
