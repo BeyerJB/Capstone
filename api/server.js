@@ -340,13 +340,11 @@ app.get("/api/events/pending", async (req, res) => {
         'calendar_users.first_name',
         'calendar_users.last_name',
         'ranks.name as rank_name',
-        'event_type.name as event_type_name',
-        'user_notice.event_id as notice_id'
+        'event_type.name as event_type_name'
       )
       .join('calendar_users', 'creator_id', 'calendar_users.user_id')
       .join('ranks', 'rank_id', 'calendar_users.rank')
       .join('event_type', 'calendar_events.event_type', 'event_type.event_id')
-      .join('user_notice', 'calendar_events.event_id', 'user_notice.event_id')
       .where("pending", true)
     res.status(200).json(pendingEvents);
   } catch (error) {
