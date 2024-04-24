@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Col, Button } from "react-bootstrap";
-import Form from 'react-bootstrap/Form';
+import { Row, Col, Button, Form } from "react-bootstrap";
 import { useCookies } from 'react-cookie'
 
 export const CreateEvent = () => {
@@ -85,7 +84,7 @@ export const CreateEvent = () => {
 
     }
     sendData();
-    
+
   };
 
   useEffect(() => {
