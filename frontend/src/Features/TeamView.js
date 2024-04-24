@@ -1,14 +1,27 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import resourceTimelinePlugin from "@fullcalendar/resource-timeline";
+import { useCookies } from 'react-cookie'
 
 export const TeamView = () => {
+  const [cookies] = useCookies(['userID', 'firstName', 'lastName', 'rank']);
+  const [ teamEvents, setTeamEvents ] = useState([])
+
+  useEffect(() => {
+    console.log("cookie id", `http://localhost:8080/api/teamview/${cookies.userID}`)
+    fetch(`http://localhost:8080/api/teamview/${cookies.userID}`)
+      .then(res => res.json())
+      .then(jsonRes => setTeamEvents(jsonRes))
+  }, [cookies.userID])
+
+  console.log(teamEvents)
+
   return (
     <div className="calendar">
-      <h1>My Calendar</h1>
+      <h1>Team Calendar</h1>
       <FullCalendar
 
         plugins={[
@@ -38,11 +51,18 @@ export const TeamView = () => {
             type: 'resourceTimeline',
             duration: { days: 10 },
             buttonText: '10 days',
-            slotDuration: {days : 1},
-            slotLabelFormat:{
+            slotDuration: '06:00',
+            slotLabelFormat:[
+              {
               weekday: 'short',
               day: 'numeric',
-            }
+              },{
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+              }
+            ]
+
           }
         }}
         schedulerLicenseKey="CC-Attribution-NonCommercial-NoDerivatives"
@@ -50,102 +70,65 @@ export const TeamView = () => {
         height="60vh"
         scrollTime="00:00"
         aspectRatio={2}
-
-        editable={true}
+        nowIndicator = {true}
+        editable={false}
         resourceAreaHeaderContent="Guardians"
-        resourceAreaWidth = "10vw"
-        resources={[
-            {id: "a",
-            title: "Team A",
-            children:[
-              {
-                id: "a1",
-                title: "my Guardian 1",
-              },
-              {
-                id: "a2",
-                title: "my Guardian 2",
-              },
-              {
-                id: "a3",
-                title: "my Guardian 3",
-              },
-              {
-                id: "a4",
-                title: "my Guardian 4",
-              },
-              {
-                id: "a5",
-                title: "my Guardian 5",
-              },
-              {
-                id: "a6",
-                title: "my Guardian 6",
-              },
-              {
-                id: "a7",
-                title: "my Guardian 7",
-              },
-              {
-                id: "a8",
-                title: "my Guardian 8",
-              },
-              {
-                id: "a9",
-                title: "my Guardian 9",
-              }
-            ],
-          },
-          {id: "b",
-          title: "Team B",
-          children:[
-            {
-              id: "b1",
-              title: "my Guardian 10",
-            },
-            {
-              id: "b2",
-              title: "my Guardian 11",
-            },
-            {
-              id: "b3",
-              title: "my Guardian 12",
-            },
-            {
-              id: "b4",
-              title: "my Guardian 13",
-            },
-            {
-              id: "b5",
-              title: "my Guardian 14",
-            },
-            {
-              id: "b6",
-              title: "my Guardian 15",
-            },
-            {
-              id: "b7",
-              title: "my Guardian 16",
-            },
-          ]
+        resourceAreaWidth = "15vw"
+        resourceGroupField= 'team_name'
+        resources={
+            teamEvents.map(user => {
+              return ({
+                id: user.user_id,
+                title: `${user.rank} ${user.first_name} ${user.last_name}`,
+                team_name : user.team_name
+              })
+            })
         }
+        events={
+          teamEvents.map(user => {
+            return ({
+              resourceId: user.user_id,
+              title: user.title,
+              start: user.start_datetime,
+              end: user.end_datetime,
+              allDay: user.all_day,
+              description: user.description,
+              event_type: user.event_type,
 
-        ]}
-        events={[
-          {
-            title: 'Leave',
-            start: '2024-04-22T10:00:00',
-            end: '2024-04-25T14:00:00',
-            resourceId: 'a1'
-          },
-          {
-            title: 'SupraCoders',
-            start: '2024-04-25T09:00:00',
-            end: '2024-04-28T17:00:00',
-            resourceId: 'a2'
-          },
-        ]}
+            })
+          })
+      }
       />
     </div>
   );
 };
+
+/*
+{
+    "id": "a",
+    "title": "1st Squad",
+    "children": [
+      {
+        "id": "a1",
+        "title": "Room D1"
+      },
+      {
+        "id": "a2",
+        "title": "Room D2"
+        "eventColor": "orange"
+      }
+    ]
+  },
+
+
+  const teams = {
+    teamname: knex(calendar_teams)
+    .select('name')
+    members: {
+      knex(calendar_users)
+      .select("name rank kdalkkjld")
+      .where("")
+    }
+  }
+
+*/

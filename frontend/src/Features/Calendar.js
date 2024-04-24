@@ -36,13 +36,11 @@ export const Calendar = () => {
       .catch(error => console.error('Error fetching events: ', error));
   }, [userId]);
 
-  //handle open modal
   const openModal = (event) => {
     setSelectedEvent(event);
     setIsModalOpen(true);
   };
 
-  //handle close modal
   const closeModal = () => {
     setIsModalOpen(false);
   };
@@ -59,8 +57,8 @@ export const Calendar = () => {
 
   return (
     <>
-      <div className="calendar">
-        <h1>My Calendar</h1>
+      <div className="calendar" style={{ paddingInline: '50px' }}>
+        <h1> {cookies.firstName} {cookies.lastName}'s Calendar</h1>
         <Fullcalendar
           plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, multiMonthPlugin, bootstrap5Plugin]}
           initialView={'dayGridMonth'}
@@ -69,7 +67,6 @@ export const Calendar = () => {
             center: 'title',
             end: 'timeGridDay,timeGridWeek,dayGridMonth,multiMonthYear'
           }}
-          // textDecoration= 'none'
           themeSystem= 'bootstrap5'
           eventClick={openModal}
           backgroundColor= '#646567'
