@@ -105,7 +105,8 @@ app.post("/api/login", async (req, res) => {
       lastName: user.last_name,
       rank: user.rank,
       supervisorID: supervisorID,
-      isSupervisor: !!isSupervisor
+      isSupervisor: !!isSupervisor,
+      enabled: user.enabled
     });
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });

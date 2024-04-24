@@ -26,9 +26,12 @@ function Login() {
     .then(async (res) => {
       if (res.status === 200) {
         const response = await res.json();
+        if(response.enabled === false){
+          alert("Your account has not been created or is disabled please contact your system administrator")
+        }else{
         login(response);
-
         navigate('/mycalendar');
+        }
       } else {
         const errorMessage = await res.text();
         alert(`${errorMessage}`);
@@ -46,6 +49,10 @@ function Login() {
       </form>
     </div>
   );
+}
+
+const CreateAccount = () => {
+
 }
 
 export default Login;
