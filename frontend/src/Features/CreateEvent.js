@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Row, Col, Button, Form } from "react-bootstrap";
+<<<<<<< HEAD
 import 'bootstrap/dist/css/bootstrap.min.css'
+=======
+>>>>>>> origin/main
 import { useCookies } from 'react-cookie'
 
 export const CreateEvent = () => {
