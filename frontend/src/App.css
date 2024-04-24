@@ -38,10 +38,12 @@
 }
 
 .calendar {
-  height: 75vh;
+
+  height: 85vh;
   overflow: hidden;
-  margin-left: 300px;
+  text-decoration: none;
 }
+
 
 
 .sidebar {
@@ -87,6 +89,7 @@
 
 .navbar li {
   margin-right: 10px;
+  color: white;
 }
 
 .navbar a {
@@ -100,4 +103,5 @@
   border-radius: 5px;
   cursor: pointer;
 }
+
 

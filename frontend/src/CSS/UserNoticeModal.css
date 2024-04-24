@@ -149,32 +149,5 @@ button {
   margin-bottom: 20px;
 }
 
-.notice-form textarea{
-  width: 95%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  resize: none;
-}
 
-.notice-form select {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  resize: none;
-  color: white;
-  background-color: #333;
-}
 
-.notice-form button {
-  background-color: #333;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.notice-form button:hover {
-  background-color: #555;
-}
