@@ -94,7 +94,7 @@ app.post("/api/login", async (req, res) => {
       .first();
 
     const supervisorID = chainOfCommand ? chainOfCommand.supervisor_id : null;
-    const isManager = user_type === 1 ? false : true;
+    const isManager = user.user_type === 1 ? false : true;
 
     const isSupervisor = await knex('chain_of_command')
     .where('supervisor_id', user.user_id)
