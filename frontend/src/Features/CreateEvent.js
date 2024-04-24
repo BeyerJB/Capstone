@@ -43,6 +43,33 @@ export const CreateEvent = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    //CHECK TO SEE IF CRITICAL VALUES HAVE BEEN LEFT BLANK, IF SO, RETURN WITH AN ALERT
+
+    // console.log("STARTING CHECK WITH EVENT TYP: ", );
+    // if(formData.title == ''){
+    //   alert("Please enter an event title");
+    //   return
+    // } else if(formData.description == ''){
+    //   alert("Please enter an event description");
+    //   return
+    // } else if(eventTypeData.event_id == ''){
+    //   alert("Please select an event type");
+    //   return
+    // } else if(formData.start_date = ''){
+    //   alert("Please enter a starting date");
+    //   return
+    // } else if(formData.start_time = ''){
+    //   alert("Please enter a starting time");
+    //   return
+    // } else if(formData.team_id == ''){
+    //   alert("Please specify the participants");
+    //   return
+    // } //else if(formData.start_date > formData.end_date){
+    //   alert("Please set the end date later than the start date.");
+    //   return
+    // }
+      
+    
 
     //IF THE TIME IS EMPTY, CONCAT ZEROS INTO THE DATETIME
     var startDateTime;
@@ -149,14 +176,15 @@ export const CreateEvent = () => {
   }, []);
 
   return (
-
-    <Form onSubmit={handleSubmit} style={{ marginTop: '15px' }}>
+    <Form onSubmit={handleSubmit} >
+      
   <h2>Create Event Request</h2> 
-      <Row className="mb-2">
-        <Col xs={{ span: 1, offset: 3 }}>
-          <Form.Label style={{ marginTop: '10px' }}> Event Title & Type</Form.Label>
-        </Col>
-        <Col xs={{ span: 2, offset: 0 }}>
+      <Row>
+        {/* <Col xs={{ span: 1, offset: 3 }}> */}
+        <h6 style={{ marginTop: '15px' }}>Event Title & Type </h6>
+          {/* <Form.Label style={{ marginTop: '10px' }}> Event Title & Type</Form.Label> */}
+        {/* </Col> */}
+        <Col xs={{ span: 4, offset: 0 }}>
           <Form.Control
             type="text"
             placeholder="Enter event title"
@@ -165,7 +193,7 @@ export const CreateEvent = () => {
             onChange={handleInputChange} />
         </Col>
 
-        <Col xs={2}>
+        <Col xs={4}>
           <Form.Select
             value={eventTypeData.event_id}
             onChange={handleInputChange}
@@ -177,11 +205,12 @@ export const CreateEvent = () => {
         </Col>
       </Row>
 
-      <Row className = "mb-2">
-        <Col xs={{ span: 1, offset: 3 }}>
-          <Form.Label style={{ marginTop: '10px' }}>Start Date & Time</Form.Label>
-        </Col>
-        <Col xs={{ span: 2, offset: 0 }}>
+      <Row>
+        {/* <Col xs={{ span: 1, offset: 3 }}> */}
+        <h6 style={{ marginTop: '15px' }}>Start Date & Time</h6>
+          {/* <Form.Label style={{ marginTop: '10px' }}>Start Date & Time</Form.Label> */}
+        {/* </Col> */}
+        <Col xs={{ span: 4, offset: 0 }}>
           <Form.Control
             type="date"
             placeholder="start"
@@ -190,7 +219,7 @@ export const CreateEvent = () => {
             onChange={handleInputChange} />
         </Col>
 
-        <Col xs={2}>
+        <Col xs={4}>
           <Form.Control
             type="time"
             placeholder="Start Time"
@@ -200,11 +229,12 @@ export const CreateEvent = () => {
         </Col>
       </Row>
 
-      <Row className = "mb-2">
-        <Col xs={{ span: 1, offset: 3 }}>
-          <Form.Label style={{ marginTop: '10px' }}>End Date & Time</Form.Label>
-        </Col>
-        <Col xs={{ span: 2, offset: 0 }}>
+      <Row>
+        {/* <Col xs={{ span: 1, offset: 3 }}> */}
+        <h6 style={{ marginTop: '15px' }}>End Date & Time </h6>
+          {/* <Form.Label style={{ marginTop: '10px' }}>End Date & Time</Form.Label> */}
+        {/* </Col> */}
+        <Col xs={{ span: 4, offset: 0 }}>
           <Form.Control
             type="date"
             placeholder="YYYY-MM-DD"
@@ -213,7 +243,7 @@ export const CreateEvent = () => {
             onChange={handleInputChange} />
         </Col>
 
-        <Col xs={2}>
+        <Col xs={4}>
           <Form.Control
             type="time"
             placeholder="End Time"
@@ -224,10 +254,11 @@ export const CreateEvent = () => {
       </Row>
 
       <Row>
-        <Col xs={{span:1, offset:3}}>   
-        <Form.Label style={{ marginTop: '10px' }}> Team </Form.Label>
-        </Col>
-        <Col xs={{ span: 2, offset: 0 }}>
+        {/* <Col xs={{span:1, offset:3}}>    */}
+        <h6 style={{ marginTop: '15px' }}>Team </h6>
+        {/* <Form.Label style={{ marginTop: '10px' }}> Team </Form.Label> */}
+        {/* </Col> */}
+        <Col xs={{ span: 4, offset: 0 }}>
           <Form.Select
             value={teamFormData.team_id}
             onChange={handleInputChange}
@@ -239,17 +270,41 @@ export const CreateEvent = () => {
           </Form.Select>
         </Col>
 
-        <Col xs={1}>
+        <Col>
           <Form.Check
             type="checkbox"
             label="All Day"
             name="all_day"
             checked={checkedBox}
-            onChange={handleCheckbox} />
-        </Col>
+            onChange={handleCheckbox}/>      
+            </Col>
       </Row>
 
-      <Row>
+
+
+  
+<Row>
+      <h6 style={{ marginTop: '15px' }}>Description </h6>
+        {/* <Form.Label style={{ marginTop: '10px' }}>Description</Form.Label> */}
+        <Col xs={{ span: 8, offset: 0 }} >
+        <Form.Control
+          as="textarea"
+          rows={3}
+          name="description"
+          value={formData.description}
+          onChange={handleInputChange} />
+      </Col>
+</Row>
+
+<Row>
+      <Col xs={{ span: 1, offset: 0 }}>
+        <Button style={{ marginTop: '20px' }} variant="dark" type="submit">
+          Submit
+        </Button>
+      </Col>
+      </Row>
+
+      {/* <Row>
       <Col xs={{ span: 1, offset: 3 }}>
         <Button style={{ marginTop: '50px' }} type="submit" className="mb-2">
           Submit
@@ -265,7 +320,7 @@ export const CreateEvent = () => {
           value={formData.description}
           onChange={handleInputChange} />
       </Col>
-      </Row>
+      </Row> */}
 
 
       
