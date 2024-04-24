@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
-//import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap/dist/css/bootstrap.css';
 import 'react-tabs/style/react-tabs.css';
 import { useCookies } from 'react-cookie';
 
@@ -149,7 +149,7 @@ export const UserNotices = () => {
                   <tr>
                     <th>Status</th>
                     <th>Request</th>
-                    <th>Actions</th>
+                    <th className="text-center">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -158,7 +158,7 @@ export const UserNotices = () => {
                       <td>Current</td>
                       <td>{notice.body}</td>
                       <td>
-                        <div className="button-container">
+                        <div className="button-container text-center">
                           <button onClick={() => handleArchiveNotice(notice.user_notice_id)} class="btn btn-primary">Archive</button>
                         </div>
                       </td>
@@ -211,7 +211,7 @@ export const UserNotices = () => {
                     <th>User</th>
                     <th>Request</th>
                     <th>Type</th>
-                    <th>Actions</th>
+                    <th className="text-center">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -221,9 +221,9 @@ export const UserNotices = () => {
                       <td>{notice.body}</td>
                       <td>{notice.notice_name}</td>
                       <td>
-                        <div className="button-container">
-                          <button onClick={() => handleAcceptNotice(notice.user_notice_id)} class="btn btn-primary">Approve</button>
-                          <button onClick={() => handleRejectNotice(notice.user_notice_id)} class="btn btn-primary">Deny</button>
+                        <div className="button-container text-center">
+                          <button style={{ margin: '5px' }} onClick={() => handleAcceptNotice(notice.user_notice_id)} class="btn btn-primary">Approve</button>
+                          <button style={{ margin: '5px' }} onClick={() => handleRejectNotice(notice.user_notice_id)} class="btn btn-primary">Deny</button>
                         </div>
                       </td>
                     </tr>
@@ -246,6 +246,7 @@ export const UserNotices = () => {
             onChange={handleInputChange}
             className="form-control"
             rows="4"
+            required="true"
           ></textarea>
         </div>
         <div className="form-group">
