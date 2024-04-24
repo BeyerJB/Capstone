@@ -333,7 +333,19 @@ app.get("/events", (req, res) => {
 // Get all pending calendar events
 app.get("/api/events/pending", async (req, res) => {
   try {
-    const pendingEvents = await knex("calendar_events").select("*").where("pending", true)
+    const pendingEvents = await knex("calendar_events")
+      .select(
+        "calendar_events.*",
+        'calendar_users.rank',
+        'calendar_users.first_name',
+        'calendar_users.last_name',
+        'ranks.name as rank_name',
+        'event_type.name as event_type_name'
+      )
+      .join('calendar_users', 'creator_id', 'calendar_users.user_id')
+      .join('ranks', 'rank_id', 'calendar_users.rank')
+      .join('event_type', 'calendar_events.event_type', 'event_type.event_id')
+      .where("pending", true)
     res.status(200).json(pendingEvents);
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });
