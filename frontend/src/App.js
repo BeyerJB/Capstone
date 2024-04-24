@@ -53,9 +53,6 @@ function App() {
         <SlidingPane isOpen={noticePaneOpened} onRequestClose={handleOpenNotices} width="1000px" title="User Notices">
           <UserNotices />
         </SlidingPane>
-        <SlidingPane isOpen={noticePaneOpened} onRequestClose={handleOpenNotices} width="1000px" title="User Notices">
-          <UserNotices />
-        </SlidingPane>
       </div>
     </>
   );
