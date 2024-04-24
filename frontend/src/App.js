@@ -50,11 +50,11 @@ function App() {
           <Route path='/TeamView' element={<TeamView /> } />
           <Route path='/createevent' element={<CreateEvent />} />
         </Routes>
-        <SlidingPane isOpen={noticePaneOpened} onRequestClose={handleOpenNotices} width="800px" title="User Notices" >
+        <SlidingPane isOpen={noticePaneOpened} onRequestClose={handleOpenNotices} width="1000px" title="User Notices">
           <UserNotices />
         </SlidingPane>
-     </div>
-  </>
+      </div>
+    </>
   );
 }
 

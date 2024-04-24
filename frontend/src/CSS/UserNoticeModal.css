@@ -42,14 +42,17 @@
 .slide-pane_from_bottom.content-before-close {
   transform: translateY(100%);
 }
+
 .slide-pane__overlay {
   position: fixed;
   top: 0px;
   left: 0px;
   right: 0px;
   bottom: 0px;
-  background-color: rgba(0, 0, 0, 0);
+  background-color: rgba(0, 0, 0, .5);
+  z-index: 1000;
 }
+
 .slide-pane__overlay.overlay-after-open {
   background-color: rgba(0, 0, 0, 0.3);
   transition: background-color 0.5s;
@@ -121,8 +124,57 @@ th {
 
 button {
   margin-right: 10px;
+  margin-bottom: 5px;
+  margin-top: 5px;
 }
 
 .button-container {
   text-align: center;
+}
+
+.notice-form {
+  background-color: #ebebeb;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.notice-form label {
+  font-weight: bold;
+  display: block; /* Ensures label text appears above the input */
+  margin-bottom: 5px; /* Adds spacing between label and input */
+}
+
+.notice-form .form-group {
+  margin-bottom: 20px;
+}
+
+.notice-form textarea{
+  width: 95%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: none;
+}
+
+.notice-form select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: none;
+  color: white;
+  background-color: #333;
+}
+
+.notice-form button {
+  background-color: #333;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.notice-form button:hover {
+  background-color: #555;
 }
