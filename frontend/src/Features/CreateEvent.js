@@ -84,9 +84,6 @@ export const CreateEvent = () => {
     }
 
 
-
-
-
     //DIAGNOSTIC LOGGING TO CHECK USER INPUT VARIABLES
     // console.log('USING THE FOLLOWING DATA FOR SUBMISSION:', formData);
     // console.log("CONCAT START STRING: ",startDateTime);
