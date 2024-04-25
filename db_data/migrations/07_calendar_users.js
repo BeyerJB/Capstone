@@ -11,6 +11,7 @@ exports.up = function(knex) {
     table.integer('team_id').unsigned();
     table.foreign('team_id').references('calendar_teams.team_id');
     table.integer('supervisor_id').unsigned();
+    table.boolean('enabled').defaultTo(false);
   });
 };
 

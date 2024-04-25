@@ -38,7 +38,9 @@
 }
 
 .calendar {
+
   height: 100vh;
+
   overflow: hidden;
   text-decoration: none;
 }
@@ -88,6 +90,7 @@
 
 .navbar li {
   margin-right: 10px;
+  color: white;
 }
 
 .navbar a {
