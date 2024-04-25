@@ -94,6 +94,7 @@ app.post("/api/login", async (req, res) => {
       .first();
 
     const supervisorID = chainOfCommand ? chainOfCommand.supervisor_id : null;
+    const isManager = user.user_type === 1 ? false : true;
 
     const isSupervisor = await knex('chain_of_command')
     .where('supervisor_id', user.user_id)
@@ -106,7 +107,7 @@ app.post("/api/login", async (req, res) => {
       rank: user.rank,
       supervisorID: supervisorID,
       isSupervisor: !!isSupervisor,
-      enabled: user.enabled
+      isManager: isManager
     });
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
@@ -346,4 +347,39 @@ app.get("/events", (req, res) => {
   knex("calendar_events")
     .select("*")
     .then((data) => res.status(200).json(data));
+})
+
+// Get all pending calendar events
+app.get("/api/events/pending", async (req, res) => {
+  try {
+    const pendingEvents = await knex("calendar_events")
+      .select(
+        "calendar_events.*",
+        'calendar_users.rank',
+        'calendar_users.first_name',
+        'calendar_users.last_name',
+        'ranks.name as rank_name',
+        'event_type.name as event_type_name',
+        'user_notice.user_notice_id'
+      )
+      .join('calendar_users', 'creator_id', 'calendar_users.user_id')
+      .join('ranks', 'rank_id', 'calendar_users.rank')
+      .join('event_type', 'calendar_events.event_type', 'event_type.event_id')
+      .join('user_notice', 'calendar_events.event_id', 'user_notice.event_id')
+      .where("pending", true)
+    res.status(200).json(pendingEvents);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+})
+
+// Approve/Deny calendar events
+app.put("/api/events/choice", async (req, res) => {
+  const { event_id, choice } = req.body;
+  try {
+    const pendingEvents = await knex("calendar_events").where("event_id", event_id).update({pending: false, approved: choice});
+    res.status(200).json(pendingEvents);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
 })

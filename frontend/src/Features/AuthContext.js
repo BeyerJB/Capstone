@@ -4,7 +4,7 @@ import {useNavigate} from "react-router-dom";
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
-  const [cookies, setCookie, removeCookie] = useCookies(['userID', 'firstName', 'lastName', 'rank', 'supervisorID', 'isSupervisor']);
+  const [cookies, setCookie, removeCookie] = useCookies(['userID', 'firstName', 'lastName', 'rank', 'supervisorID', 'isSupervisor', 'isManager']);
   const navigate = useNavigate()
 
   const login = (res) => {
@@ -14,6 +14,7 @@ const AuthProvider = ({ children }) => {
     setCookie('supervisorID', res.supervisorID);
     setCookie('rank', res.rank);
     setCookie('isSupervisor', res.isSupervisor);
+    setCookie('isManager', res.isManager);
   };
 
   const logout = () => {
@@ -23,6 +24,7 @@ const AuthProvider = ({ children }) => {
     removeCookie('rank', { maxAge: 1 });
     removeCookie('supervisorID', { maxAge: 1 });
     removeCookie('isSupervisor', { maxAge: 1 });
+    removeCookie('isManager', { maxAge: 1 });
     navigate('/')
   };
 
