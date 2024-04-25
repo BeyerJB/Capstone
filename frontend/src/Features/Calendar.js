@@ -25,10 +25,11 @@ export const Calendar = () => {
   ///
   const [isEditing, setIsEditing] = useState(false);
   const [editedEvent, setEditedEvent] = useState(null)
-  const [startDateTime, setStartDateTime] = useState(null);
+  const [startDateTime, setStartDateTime] = useState('');
   const [endDateTime, setEndDateTime] = useState(null);
   const [title, setTitle] = useState(null);
   const [description, setDescription] = useState(null);
+  const [eventId, setEventId] = useState(null)
   ///
 
   useEffect(() => {
@@ -38,20 +39,23 @@ export const Calendar = () => {
         setAllData(data);
         const formattedEvents = data.map(event => ({
           title: event.title,
-          start: event.start_datetime,
-          end: event.end_datetime,
-          description: event.description
+          start: new Date(event.start_datetime),
+          end: new Date(event.end_datetime),
+          description: event.description,
+          id: event.event_id
         }));
         setEvents(formattedEvents);
         // setDescription(formattedEvents.description)
       })
       .catch(error => console.error('Error fetching events: ', error));
   }, [userId, editedEvent]);
-
+ console.log('all data: ', allData)
 
   const openModal = (event) => {
     setSelectedEvent(event);
     setIsModalOpen(true);
+    console.log('event: ', event)
+    console.log('event id: ', selectedEvent.event.id)
   };
 
   const closeModal = () => {
@@ -66,11 +70,12 @@ export const Calendar = () => {
     setDescription(selectedEvent.event.extendedProps.description)
     setStartDateTime(selectedEvent.event.start)
     setEndDateTime(selectedEvent.event.end)
+    setEventId( selectedEvent.event.id)
   };
 
   const handleSaveClick = () => {
     const editedEventData = {
-      // event_id: 
+      id: eventId,
       title: title,
       start: startDateTime,
       end: endDateTime,
@@ -115,26 +120,30 @@ export const Calendar = () => {
     console.log('button 2 clicked');
   };
 
-  // const handleStartDateChange = (date) => {
-  //   setStartDateTime(date);
-  // };
-
-  // const handleEndDateChange = (date) => {
-  //   setEndDateTime(date);
-  // };
-
   const handleStartDateChange = (date) => {
-    // Convert the selected date to UTC
+    console.log(date)
     const utcStartDate = date.toISOString();
-    setStartDateTime(utcStartDate);
-    console.log(utcStartDate)
+    console.log('utc time: ', utcStartDate)
+    setStartDateTime(date);
+    console.log('start date time: ',startDateTime)
   };
 
   const handleEndDateChange = (date) => {
-    // Convert the selected date to UTC
-    const utcEndDate = date.toISOString();
-    setEndDateTime(utcEndDate);
+    setEndDateTime(date);
   };
+
+  // const handleStartDateChange = (date) => {
+  //   // Convert the selected date to UTC
+  //   const utcStartDate = date.toISOString();
+  //   setStartDateTime(utcStartDate);
+  //   console.log(utcStartDate)
+  // };
+
+  // const handleEndDateChange = (date) => {
+  //   // Convert the selected date to UTC
+  //   const utcEndDate = date.toISOString();
+  //   setEndDateTime(utcEndDate);
+  // };
 
   return (
     <>
