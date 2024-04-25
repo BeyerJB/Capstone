@@ -37,6 +37,13 @@
   }
 }
 
+.calendar {
+
+  height: 100vh;
+
+  overflow: hidden;
+  text-decoration: none;
+}
 
 
 

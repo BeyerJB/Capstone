@@ -61,26 +61,26 @@ exports.seed = async function(knex) {
 
   // Seed calendar_users table
   await knex('calendar_users').insert([
-    { first_name: 'John', last_name: 'Doe', rank: 8, username: 'johndoe', user_type: 2, team_id: 1, password: await bcrypt.hash('password', 10) },
-    { first_name: 'Alice', last_name: 'Smith', rank: 7, username: 'alicesmith', user_type: 2, team_id: 2, password: await bcrypt.hash('password', 10) },
-    { first_name: 'Bob', last_name: 'Johnson', rank: 7, username: 'bobjohnson', user_type: 2, team_id: 1, password: await bcrypt.hash('password', 10) },
-    { first_name: 'Jane', last_name: 'Brown', rank: 1, username: 'janebrown', user_type: 1, team_id: 2, password: await bcrypt.hash('password', 10) },
-    { first_name: 'Michael', last_name: 'Davis', rank: 2, username: 'michaeldavis', user_type: 1, team_id: 1, password: await bcrypt.hash('password', 10) },
-    { first_name: 'Emily', last_name: 'Wilson', rank: 3, username: 'emilywilson', user_type: 1, team_id: 2, password: await bcrypt.hash('password', 10) },
-    { first_name: 'David', last_name: 'Martinez', rank: 4, username: 'davidmartinez', user_type: 1, team_id: 1, password: await bcrypt.hash('password', 10) },
-    { first_name: 'Sarah', last_name: 'Taylor', rank: 5, username: 'sarahtaylor', user_type: 1, team_id: 2, password: await bcrypt.hash('password', 10) },
-    { first_name: 'Matthew', last_name: 'Anderson', rank: 6, username: 'matthewanderson', user_type: 1, team_id: 2, password: await bcrypt.hash('password', 10) },
-    { first_name: 'Olivia', last_name: 'Thomas', rank: 1, username: 'oliviathomas', user_type: 1, team_id: 2, password: await bcrypt.hash('password', 10) },
-    { first_name: 'Daniel', last_name: 'Hernandez', rank: 2, username: 'danielhernandez', user_type: 1, team_id: 1, password: await bcrypt.hash('password', 10) },
-    { first_name: 'Sophia', last_name: 'Moore', rank: 3, username: 'sophiamoore', user_type: 1, team_id: 2, password: await bcrypt.hash('password', 10) },
-    { first_name: 'James', last_name: 'Clark', rank: 4, username: 'jamesclark', user_type: 1, team_id: 1, password: await bcrypt.hash('password', 10) },
-    { first_name: 'Emma', last_name: 'White', rank: 5, username: 'emmawhite', user_type: 1, team_id: 2, password: await bcrypt.hash('password', 10) },
-    { first_name: 'Alexander', last_name: 'Lee', rank: 6, username: 'alexanderlee', user_type: 1, team_id: 1, password: await bcrypt.hash('password', 10) },
-    { first_name: 'Ava', last_name: 'Garcia', rank: 1, username: 'avagarcia', user_type: 1, team_id: 2, password: await bcrypt.hash('password', 10) },
-    { first_name: 'William', last_name: 'Wang', rank: 2, username: 'williamwang', user_type: 1, team_id: 1, password: await bcrypt.hash('password', 10) },
-    { first_name: 'Isabella', last_name: 'Martinez', rank: 3, username: 'isabellamartinez', user_type: 1, team_id: 2, password: await bcrypt.hash('password', 10) },
-    { first_name: 'Ethan', last_name: 'Lopez', rank: 4, username: 'ethanlopez', user_type: 1, team_id: 1, password: await bcrypt.hash('password', 10) },
-    { first_name: 'Mia', last_name: 'Harris', rank: 5, username: 'miaharris', user_type: 1, team_id: 2, password: await bcrypt.hash('password', 10) }
+    { first_name: 'John', last_name: 'Doe', rank: 8, username: 'johndoe', user_type: 2, team_id: 1, password: await bcrypt.hash('password', 10), enabled: true },
+    { first_name: 'Alice', last_name: 'Smith', rank: 7, username: 'alicesmith', user_type: 2, team_id: 2, password: await bcrypt.hash('password', 10), enabled: true },
+    { first_name: 'Bob', last_name: 'Johnson', rank: 7, username: 'bobjohnson', user_type: 2, team_id: 1, password: await bcrypt.hash('password', 10), enabled: true },
+    { first_name: 'Jane', last_name: 'Brown', rank: 1, username: 'janebrown', user_type: 1, team_id: 2, password: await bcrypt.hash('password', 10), enabled: true },
+    { first_name: 'Michael', last_name: 'Davis', rank: 2, username: 'michaeldavis', user_type: 1, team_id: 1, password: await bcrypt.hash('password', 10), enabled: true },
+    { first_name: 'Emily', last_name: 'Wilson', rank: 3, username: 'emilywilson', user_type: 1, team_id: 2, password: await bcrypt.hash('password', 10), enabled: true },
+    { first_name: 'David', last_name: 'Martinez', rank: 4, username: 'davidmartinez', user_type: 1, team_id: 1, password: await bcrypt.hash('password', 10), enabled: true },
+    { first_name: 'Sarah', last_name: 'Taylor', rank: 5, username: 'sarahtaylor', user_type: 1, team_id: 2, password: await bcrypt.hash('password', 10), enabled: true },
+    { first_name: 'Matthew', last_name: 'Anderson', rank: 6, username: 'matthewanderson', user_type: 1, team_id: 2, password: await bcrypt.hash('password', 10), enabled: true },
+    { first_name: 'Olivia', last_name: 'Thomas', rank: 1, username: 'oliviathomas', user_type: 1, team_id: 2, password: await bcrypt.hash('password', 10), enabled: true },
+    { first_name: 'Daniel', last_name: 'Hernandez', rank: 2, username: 'danielhernandez', user_type: 1, team_id: 1, password: await bcrypt.hash('password', 10), enabled: true },
+    { first_name: 'Sophia', last_name: 'Moore', rank: 3, username: 'sophiamoore', user_type: 1, team_id: 2, password: await bcrypt.hash('password', 10), enabled: true },
+    { first_name: 'James', last_name: 'Clark', rank: 4, username: 'jamesclark', user_type: 1, team_id: 1, password: await bcrypt.hash('password', 10), enabled: true },
+    { first_name: 'Emma', last_name: 'White', rank: 5, username: 'emmawhite', user_type: 1, team_id: 2, password: await bcrypt.hash('password', 10), enabled: true },
+    { first_name: 'Alexander', last_name: 'Lee', rank: 6, username: 'alexanderlee', user_type: 1, team_id: 1, password: await bcrypt.hash('password', 10), enabled: true },
+    { first_name: 'Ava', last_name: 'Garcia', rank: 1, username: 'avagarcia', user_type: 1, team_id: 2, password: await bcrypt.hash('password', 10), enabled: true },
+    { first_name: 'William', last_name: 'Wang', rank: 2, username: 'williamwang', user_type: 1, team_id: 1, password: await bcrypt.hash('password', 10), enabled: true },
+    { first_name: 'Isabella', last_name: 'Martinez', rank: 3, username: 'isabellamartinez', user_type: 1, team_id: 2, password: await bcrypt.hash('password', 10), enabled: true },
+    { first_name: 'Ethan', last_name: 'Lopez', rank: 4, username: 'ethanlopez', user_type: 1, team_id: 1, password: await bcrypt.hash('password', 10), enabled: true },
+    { first_name: 'Mia', last_name: 'Harris', rank: 5, username: 'miaharris', user_type: 1, team_id: 2, password: await bcrypt.hash('password', 10), enabled: true }
   ]);
 
   // Seed chain_of_command table
