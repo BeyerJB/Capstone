@@ -156,19 +156,6 @@ app.put("/api/notices/:noticeID", async (req, res) => {
   }
 });
 
-// Archive notice
-app.put("/api/notices/:noticeID", async (req, res) => {
-  const noticeID = req.params.noticeID;
-  try {
-    await knex("user_notice")
-      .where({ user_notice_id: noticeID })
-      .update({ archived: true });
-    res.status(200).json({ message: "User notice archived successfully" });
-  } catch (error) {
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-
 // Get notices submitted to user
 app.get("/api/notices/supervisor/:userId", async (req, res) => {
   const userId = req.params.userId;
@@ -311,7 +298,12 @@ app.post("/create_event", (req, res) => {
       pending: true,
       approved: false
     })
-    .then(res.status(201).json({ status: "INSERTED" }))
+    .returning('event_id')
+    .then((newID) => {
+      const calendar_event_id = newID[0];
+      res.status(201).json({ status: "INSERTED", new_event_id: calendar_event_id })
+    })
+
     .catch((error) => {
       console.error(error);
       res.status(500).json({ error: "EVENT CREATION FAILED" });
@@ -366,3 +358,19 @@ app.put("/api/events/choice", async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 })
+
+// Create auto generated notice for during event creation
+app.post("/api/notices/auto", async (req, res) => {
+  const { submitter_id, body, notice_type, event_id } = req.body;
+  try {
+    await knex("user_notice").insert({
+      submitter_id,
+      body,
+      notice_type,
+      event_id
+    });
+    res.status(201).json({ message: "Notice created successfully" });
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+});

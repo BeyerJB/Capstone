@@ -204,7 +204,7 @@ export const UserNotices = () => {
       {cookies.isManager && (
         <>
           <h2>Pending Event Request</h2>
-          <div className="notice-form">
+          <div className="notice-form"  style={{ marginBottom: '20px' }}>
             {pendingEvents.length === 0 ? (
               <p>No Pending Events</p>
             ) : (
@@ -263,7 +263,7 @@ export const UserNotices = () => {
       )}
 
       <h2>Submitted Notices</h2>
-      <div className="notice-form">
+      <div className="notice-form" style={{ marginBottom: '20px' }}>
         <Tabs>
           <TabList>
             <Tab>Current</Tab>
@@ -329,7 +329,7 @@ export const UserNotices = () => {
       {cookies.isSupervisor && (
         <>
           <h2>Supervisor Notices</h2>
-          <div className="notice-form">
+          <div className="notice-form"  style={{ marginBottom: '20px' }}>
             {supervisorNotices.length === 0 ? (
               <p>No Pending Notices</p>
             ) : (
@@ -364,7 +364,7 @@ export const UserNotices = () => {
       )}
 
       <h2>Create New Notice</h2>
-      <form className="notice-form" onSubmit={handleNewNotice}>
+      <form className="notice-form" onSubmit={handleNewNotice}  style={{ marginBottom: '20px' }}>
         <div className="form-group">
           <label htmlFor="body">Body:</label>
           <textarea
