@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Row, Col, Button, Form } from "react-bootstrap";
+import 'bootstrap/dist/css/bootstrap.min.css'
 import { useCookies } from 'react-cookie'
 
 export const CreateEvent = () => {
@@ -41,235 +42,265 @@ export const CreateEvent = () => {
     });
   };
 
-  const handleSubmit = async (e) => {
-      e.preventDefault();
-      const startDateTime = `${formData.start_date}T${formData.start_time}:00`;
-      const endDateTime = `${formData.end_date}T${formData.end_time}:00`;
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    //CHECK TO SEE IF CRITICAL VALUES HAVE BEEN LEFT BLANK, IF SO, RETURN WITH AN ALERT
 
-      //DIAGNOSTIC LOGGING TO CHECK USER INPUT VARIABLES
-      // console.log('USING THE FOLLOWING DATA FOR SUBMISSION:', formData);
-      // console.log("CONCAT START STRING: ",startDateTime);
-      // console.log("CONCAT END STRING: ",endDateTime);
-      // console.log("ALLDAY FLAG: ", checkedBox);
+    //IF THE TIME IS EMPTY, CONCAT ZEROS INTO THE DATETIME
+    var startDateTime;
+    var endDateTime;
+    if (formData.start_time == "") {
+      startDateTime = `${formData.start_date}T06:00:00`;
+      endDateTime = `${formData.end_date}T06:00:00`;
 
-      //PUSH USER VALUES TO API
-      async function sendData() {
-          //console.log("TEAM DATA IS: ", teamFormData);
-          //console.log("EVENT TYPE DATA IS: ", eventTypeData);
+    } else {
+      startDateTime = `${formData.start_date}T${formData.start_time}:00`;
+      endDateTime = `${formData.end_date}T${formData.end_time}:00`;
+    }
 
-          //NULLIFY teamFormData.team_id IF SELECTED FIELD IS "Just Me"
-          //console.log("TEAM ID: ", teamFormData.team_id);
-          if(teamFormData.team_id == "Just Me"){
-            setTeamFormData({
-              ...teamFormData.team_id = null
-            });
+    var UTCDATESTART = new Date(startDateTime);
+    var UTCDATEEND = new Date(endDateTime);
 
-          try {
-              const res = await fetch("http://localhost:8080/create_event", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({
-                      title: formData.title,
-                      description: formData.description,
-                      start_datetime: startDateTime,
-                      end_datetime: endDateTime,
-                      all_day: checkedBox,
-                      team_id: teamFormData.team_id,
-                      user_id: cookies.userID,
-                      event_type: eventTypeData.event_id,
-                      creator_id: cookies.userID
-                  }),
-              });
-              const eventData = await res.json();
-              console.log(eventData);
-              await setNewNoticeData({ submitter_id: cookies.userID, body: `Event Request: ${formData.title}`, notice_type: 4, event_id: eventData.new_event_id.event_id });
-              window.location.href = "http://localhost:3000/mycalendar";
-          } catch (error) {
-              console.error("Error submitting event:", error);
-          }
-      };
-    };
-    sendData();
-  };
+    //UTCDATESTART.toISOString()
+    //UTCDATEEND.toISOString()
 
-  useEffect(() => {
-    async function fetchData() {
+
+    //console.log("DATE LOOKS LIKE: ", UTCDATE);
+    //console.log("DATATYPE IS: ", typeof UTCDATE);
+    //console.log("ISOString CONVERSION: ", UTCDATE.toISOString());
+
+    //console.log(`CURRENT TIME STRINGS ARE ${formData.start_date} AND ${formData.start_time}`);
+
+
+
+    //DIAGNOSTIC LOGGING TO CHECK USER INPUT VARIABLES
+    // console.log('USING THE FOLLOWING DATA FOR SUBMISSION:', formData);
+    // console.log("CONCAT START STRING: ",startDateTime);
+    // console.log("CONCAT END STRING: ",endDateTime);
+    // console.log("ALLDAY FLAG: ", checkedBox);
+
+    //PUSH USER VALUES TO API
+    async function sendData() {
+      //console.log("TEAM DATA IS: ", teamFormData);
+      //console.log("EVENT TYPE DATA IS: ", eventTypeData);
+
+      //NULLIFY teamFormData.team_id IF SELECTED FEILD IS "Just Me"
+      //console.log("TEAM ID: ", teamFormData.team_id);
+      if (teamFormData.team_id == "Just Me") {
+        setTeamFormData({
+          ...teamFormData.team_id = null
+        });
+        //console.log("NULLIFIED VALUE: ", teamFormData.team_id);
+      }
+
       try {
-        const res = await fetch(`http://localhost:8080/calendar_team/userid`, {
+        const res = await fetch("http://localhost:8080/create_event", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id: cookies.userID }),
+          body: JSON.stringify({
+            title: formData.title,
+            description: formData.description,
+            //start_datetime: startDateTime,
+            //end_datetime: endDateTime,
+            start_datetime: UTCDATESTART.toISOString(),
+            end_datetime: UTCDATEEND.toISOString(),
+            all_day: checkedBox,
+            team_id: teamFormData.team_id,
+            user_id: cookies.userID,
+            event_type: eventTypeData.event_id,
+            creator_id: cookies.userID
+          }),
         });
-        const userTeams = await res.json();
-        console.log("RETRIEVED TEAMS ARE: ", await userTeams);
-
-        //GENERATE DROPDOWN BOX OPTIONS BASED ON RETRIEVED TEAMS
-        const additionalOptions = userTeams.map((team, index) => (
-          <option key={index} value={team.team_id}>{team.name}</option>
-        ));
-        setTeamOptions(additionalOptions);
+        const eventData = await res.json();
+        console.log(eventData);
+        await setNewNoticeData({ submitter_id: cookies.userID, body: `Event Request: ${formData.title}`, notice_type: 4, event_id: eventData.new_event_id.event_id });
+        window.location.href = "http://localhost:3000/mycalendar";
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("Error submitting event:", error);
       }
-    }
-    fetchData();
-  }, []);
+    };
+  sendData();
+};
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        //const user_id = 3;
-        const res = await fetch("http://localhost:8080/event_type");
-        const eventType = await res.json();
-        //console.log("RETRIEVED EVENTS ARE: ", eventType);
-
-        //GENERATE DROPDOWN BOX OPTIONS BASED ON RETRIEVED EVENTS
-        const additionalOptions = eventType.map((event, index) => (
-          <option key={index} value={event.event_id}>{event.name}</option>
-        ));
-        setEventTypeOptions(additionalOptions);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    }
-
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    if (newNoticeData.event_id !== 0 && newNoticeData.body !== '') {
-      handleNewNotice();
-    }
-  }, [newNoticeData]);
-
-  const handleNewNotice = () => {
-    fetch('http://localhost:8080/api/notices/auto', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(newNoticeData),
-    })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        setNewNoticeData({ submitter_id: cookies.userID, body: '', notice_type: 4, event_id: 0 });
-      })
-      .catch(error => {
-        console.error('Error adding new notice:', error);
-        alert('Error adding new notice. Please try again.');
+useEffect(() => {
+  async function fetchData() {
+    try {
+      const res = await fetch(`http://localhost:8080/calendar_team/userid`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: cookies.userID }),
       });
-  };
+      const userTeams = await res.json();
+      console.log("RETRIEVED TEAMS ARE: ", await userTeams);
 
-  return (
-    <Form onSubmit={handleSubmit}>
-      <Form.Group as={Row} className="mb-3">
-        <Form.Label column sm="2"> Event Title</Form.Label>
-        <Col sm="10">
-          <Form.Control
-            type="text"
-            placeholder="Enter event title"
-            name="title"
-            value={formData.title}
-            onChange={handleInputChange} />
-        </Col>
-      </Form.Group>
+      //GENERATE DROPDOWN BOX OPTIONS BASED ON RETRIEVED TEAMS
+      const additionalOptions = userTeams.map((team, index) => (
+        <option key={index} value={team.team_id}>{team.name}</option>
+      ));
+      setTeamOptions(additionalOptions);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  }
+  fetchData();
+}, []);
 
-      <Row>
-        <Form.Label column sm="2">Start Date & Time</Form.Label>
-        <Col sm="10">
-          <Form.Control
-            type="date"
-            placeholder="YYYY-MM-DD"
-            name="start_date"
-            value={formData.start_date}
-            onChange={handleInputChange} />
+useEffect(() => {
+  async function fetchData() {
+    try {
+      //const user_id = 3;
+      const res = await fetch("http://localhost:8080/event_type");
+      const eventType = await res.json();
+      //console.log("RETRIEVED EVENTS ARE: ", eventType);
 
-          <Form.Control
-            type="time"
-            placeholder="Start Time"
-            name="start_time"
-            value={formData.start_time}
-            onChange={handleInputChange} />
-        </Col>
-      </Row>
+      //GENERATE DROPDOWN BOX OPTIONS BASED ON RETRIEVED EVENTS
+      const additionalOptions = eventType.map((event, index) => (
+        <option key={index} value={event.event_id}>{event.name}</option>
+      ));
+      setEventTypeOptions(additionalOptions);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  }
 
-      <Form.Group as={Row} className="mb-3">
-        <Form.Label column sm="2">End Date & Time</Form.Label>
-        <Col sm="10">
-          <Form.Control
-            type="date"
-            placeholder="YYYY-MM-DD"
-            name="end_date"
-            value={formData.end_date}
-            onChange={handleInputChange} />
+  fetchData();
+}, []);
 
-          <Form.Control
-            type="time"
-            placeholder="End Time"
-            name="end_time"
-            value={formData.end_time}
-            onChange={handleInputChange} />
-        </Col>
-      </Form.Group>
+useEffect(() => {
+  if (newNoticeData.event_id !== 0 && newNoticeData.body !== '') {
+    handleNewNotice();
+  }
+}, [newNoticeData]);
 
-      <Form.Group as={Row} className="mb-3">
-        <Col sm="10">
-          <Form.Check
-            type="checkbox"
-            label="Click here if event lasts all day"
-            name="all_day"
-            checked={checkedBox}
-            onChange={handleCheckbox} />
-        </Col>
-      </Form.Group>
+const handleNewNotice = () => {
+  fetch('http://localhost:8080/api/notices/auto', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(newNoticeData),
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      setNewNoticeData({ submitter_id: cookies.userID, body: '', notice_type: 4, event_id: 0 });
+    })
+    .catch(error => {
+      console.error('Error adding new notice:', error);
+      alert('Error adding new notice. Please try again.');
+    });
+};
 
-      <Form.Group as={Row} className="mb-3">
-        <Form.Label column sm="2"> Team </Form.Label>
-        <Col sm="10">
-          <Form.Select
-            value={teamFormData.team_id}
-            onChange={handleInputChange}
-            name="team_id">
+return (
+  <Form onSubmit={handleSubmit} >
+    <h2>Create Event Request</h2>
+    <Row>
+      <h6 style={{ marginTop: '15px' }}>Event Title & Type </h6>
+      <Col xs={{ span: 4, offset: 0 }}>
+        <Form.Control
+          type="text"
+          placeholder="Enter event title"
+          name="title"
+          value={formData.title}
+          onChange={handleInputChange} />
+      </Col>
 
-            <option>Select a Team</option>
-            <option>Just Me</option>
-            {teamOptions}
-          </Form.Select>
-        </Col>
-      </Form.Group>
+      <Col xs={4}>
+        <Form.Select
+          value={eventTypeData.event_id}
+          onChange={handleInputChange}
+          name="event_id">
+          <option>Event type</option>
+          {eventTypeOptions}
+        </Form.Select>
+      </Col>
+    </Row>
 
-      <Form.Group className="mb-3">
-        <Form.Label>Description</Form.Label>
-        <br />
+    <Row>
+      <h6 style={{ marginTop: '15px' }}>Start Date & Time</h6>
+      <Col xs={{ span: 4, offset: 0 }}>
+        <Form.Control
+          type="date"
+          placeholder="start"
+          name="start_date"
+          value={formData.start_date}
+          onChange={handleInputChange} />
+      </Col>
+
+      <Col xs={4}>
+        <Form.Control
+          type="time"
+          placeholder="Start Time"
+          name="start_time"
+          value={formData.start_time}
+          onChange={handleInputChange} />
+      </Col>
+    </Row>
+
+    <Row>
+      <h6 style={{ marginTop: '15px' }}>End Date & Time </h6>
+      <Col xs={{ span: 4, offset: 0 }}>
+        <Form.Control
+          type="date"
+          placeholder="YYYY-MM-DD"
+          name="end_date"
+          value={formData.end_date}
+          onChange={handleInputChange} />
+      </Col>
+
+      <Col xs={4}>
+        <Form.Control
+          type="time"
+          placeholder="End Time"
+          name="end_time"
+          value={formData.end_time}
+          onChange={handleInputChange} />
+      </Col>
+    </Row>
+
+    <Row>
+      <h6 style={{ marginTop: '15px' }}>Team </h6>
+      <Col xs={{ span: 4, offset: 0 }}>
+        <Form.Select
+          value={teamFormData.team_id}
+          onChange={handleInputChange}
+          name="team_id">
+          <option>Select a Team</option>
+          <option>Just Me</option>
+          {teamOptions}
+        </Form.Select>
+      </Col>
+
+      <Col>
+        <Form.Check
+          type="checkbox"
+          label="All Day"
+          name="all_day"
+          checked={checkedBox}
+          onChange={handleCheckbox} />
+      </Col>
+    </Row>
+
+    <Row>
+      <h6 style={{ marginTop: '15px' }}>Description </h6>
+      <Col xs={{ span: 8, offset: 0 }} >
         <Form.Control
           as="textarea"
           rows={3}
           name="description"
           value={formData.description}
           onChange={handleInputChange} />
-      </Form.Group>
+      </Col>
+    </Row>
 
-      <Form.Group as={Row} className="mb-3">
-        <Form.Label column sm="2"> Event Type </Form.Label>
-        <Col sm="10">
-          <Form.Select
-            value={eventTypeData.event_id}
-            onChange={handleInputChange}
-            name="event_id">
-
-            <option>Select an Event</option>
-            {eventTypeOptions}
-          </Form.Select>
-        </Col>
-      </Form.Group>
-
-      <Col xs="auto">
-        <Button type="submit" className="mb-2">
+    <Row>
+      <Col xs={{ span: 1, offset: 0 }}>
+        <Button style={{ marginTop: '20px' }} variant="dark" type="submit">
           Submit
         </Button>
       </Col>
-    </Form>
-  );
+    </Row>
+  </Form>
+);
 }

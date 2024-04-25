@@ -294,7 +294,9 @@ app.post("/create_event", (req, res) => {
       team_id: event_data.team_id,
       user_id: event_data.user_id,
       event_type: event_data.event_type,
-      creator_id: event_data.creator_id
+      creator_id: event_data.creator_id,
+      pending: true,
+      approved: false
     })
     .returning('event_id')
     .then((newID) => {
