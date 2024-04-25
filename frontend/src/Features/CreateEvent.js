@@ -126,8 +126,10 @@ export const CreateEvent = () => {
                   body: JSON.stringify({
                       title: formData.title,
                       description: formData.description,
-                      start_datetime: startDateTime,
-                      end_datetime: endDateTime,
+                      //start_datetime: startDateTime,
+                      //end_datetime: endDateTime,
+                      start_datetime: UTCDATESTART.toISOString(),
+                      end_datetime: UTCDATEEND.toISOString(),
                       all_day: checkedBox,
                       team_id: teamFormData.team_id,
                       user_id: cookies.userID,
