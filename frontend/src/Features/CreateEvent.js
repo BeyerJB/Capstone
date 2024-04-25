@@ -68,8 +68,8 @@ export const CreateEvent = () => {
     //   alert("Please set the end date later than the start date.");
     //   return
     // }
-      
-    
+
+
 
     //IF THE TIME IS EMPTY, CONCAT ZEROS INTO THE DATETIME
     var startDateTime;
@@ -82,6 +82,20 @@ export const CreateEvent = () => {
       startDateTime = `${formData.start_date}T${formData.start_time}:00`;
       endDateTime = `${formData.end_date}T${formData.end_time}:00`;
     }
+
+    var UTCDATESTART = new Date(startDateTime);
+    var UTCDATEEND = new Date(endDateTime);
+
+    //UTCDATESTART.toISOString()
+    //UTCDATEEND.toISOString()
+
+
+    //console.log("DATE LOOKS LIKE: ", UTCDATE);
+    //console.log("DATATYPE IS: ", typeof UTCDATE);
+    //console.log("ISOString CONVERSION: ", UTCDATE.toISOString());
+
+    //console.log(`CURRENT TIME STRINGS ARE ${formData.start_date} AND ${formData.start_time}`);
+
 
 
     //DIAGNOSTIC LOGGING TO CHECK USER INPUT VARIABLES
@@ -111,8 +125,11 @@ export const CreateEvent = () => {
         body: JSON.stringify({
           title: formData.title,
           description: formData.description,
-          start_datetime: startDateTime,
-          end_datetime: endDateTime,
+          //OLD TIME FORMAT, SWITCHED TO UTC CONVERTED SCREEN
+          //start_datetime: startDateTime,
+          //end_datetime: endDateTime,
+          start_datetime: UTCDATESTART.toISOString(),
+          end_datetime: UTCDATEEND.toISOString(),
           all_day: checkedBox,
           team_id: teamFormData.team_id,
           user_id: cookies.userID,
@@ -174,13 +191,9 @@ export const CreateEvent = () => {
 
   return (
     <Form onSubmit={handleSubmit} >
-      
-  <h2>Create Event Request</h2> 
+      <h2>Create Event Request</h2>
       <Row>
-        {/* <Col xs={{ span: 1, offset: 3 }}> */}
         <h6 style={{ marginTop: '15px' }}>Event Title & Type </h6>
-          {/* <Form.Label style={{ marginTop: '10px' }}> Event Title & Type</Form.Label> */}
-        {/* </Col> */}
         <Col xs={{ span: 4, offset: 0 }}>
           <Form.Control
             type="text"
@@ -195,7 +208,6 @@ export const CreateEvent = () => {
             value={eventTypeData.event_id}
             onChange={handleInputChange}
             name="event_id">
-
             <option>Event type</option>
             {eventTypeOptions}
           </Form.Select>
@@ -203,10 +215,7 @@ export const CreateEvent = () => {
       </Row>
 
       <Row>
-        {/* <Col xs={{ span: 1, offset: 3 }}> */}
         <h6 style={{ marginTop: '15px' }}>Start Date & Time</h6>
-          {/* <Form.Label style={{ marginTop: '10px' }}>Start Date & Time</Form.Label> */}
-        {/* </Col> */}
         <Col xs={{ span: 4, offset: 0 }}>
           <Form.Control
             type="date"
@@ -227,10 +236,7 @@ export const CreateEvent = () => {
       </Row>
 
       <Row>
-        {/* <Col xs={{ span: 1, offset: 3 }}> */}
         <h6 style={{ marginTop: '15px' }}>End Date & Time </h6>
-          {/* <Form.Label style={{ marginTop: '10px' }}>End Date & Time</Form.Label> */}
-        {/* </Col> */}
         <Col xs={{ span: 4, offset: 0 }}>
           <Form.Control
             type="date"
@@ -251,16 +257,12 @@ export const CreateEvent = () => {
       </Row>
 
       <Row>
-        {/* <Col xs={{span:1, offset:3}}>    */}
         <h6 style={{ marginTop: '15px' }}>Team </h6>
-        {/* <Form.Label style={{ marginTop: '10px' }}> Team </Form.Label> */}
-        {/* </Col> */}
         <Col xs={{ span: 4, offset: 0 }}>
           <Form.Select
             value={teamFormData.team_id}
             onChange={handleInputChange}
             name="team_id">
-
             <option>Select a Team</option>
             <option>Just Me</option>
             {teamOptions}
@@ -273,54 +275,29 @@ export const CreateEvent = () => {
             label="All Day"
             name="all_day"
             checked={checkedBox}
-            onChange={handleCheckbox}/>      
-            </Col>
+            onChange={handleCheckbox} />
+        </Col>
       </Row>
 
-
-
-  
-<Row>
-      <h6 style={{ marginTop: '15px' }}>Description </h6>
-        {/* <Form.Label style={{ marginTop: '10px' }}>Description</Form.Label> */}
+      <Row>
+        <h6 style={{ marginTop: '15px' }}>Description </h6>
         <Col xs={{ span: 8, offset: 0 }} >
-        <Form.Control
-          as="textarea"
-          rows={3}
-          name="description"
-          value={formData.description}
-          onChange={handleInputChange} />
-      </Col>
-</Row>
-
-<Row>
-      <Col xs={{ span: 1, offset: 0 }}>
-        <Button style={{ marginTop: '20px' }} variant="dark" type="submit">
-          Submit
-        </Button>
-      </Col>
+          <Form.Control
+            as="textarea"
+            rows={3}
+            name="description"
+            value={formData.description}
+            onChange={handleInputChange} />
+        </Col>
       </Row>
 
-      {/* <Row>
-      <Col xs={{ span: 1, offset: 3 }}>
-        <Button style={{ marginTop: '50px' }} type="submit" className="mb-2">
-          Submit
-        </Button>
-      </Col>
-      <Col xs={{ span: 4, offset: 0 }}>
-        <Form.Label>Description</Form.Label>
-        <br />
-        <Form.Control
-          as="textarea"
-          rows={3}
-          name="description"
-          value={formData.description}
-          onChange={handleInputChange} />
-      </Col>
-      </Row> */}
-
-
-      
+      <Row>
+        <Col xs={{ span: 1, offset: 0 }}>
+          <Button style={{ marginTop: '20px' }} variant="dark" type="submit">
+            Submit
+          </Button>
+        </Col>
+      </Row>
     </Form>
   );
 }
