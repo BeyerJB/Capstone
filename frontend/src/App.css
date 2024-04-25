@@ -37,12 +37,6 @@
   }
 }
 
-.calendar {
-
-  height: 85vh;
-  overflow: hidden;
-  text-decoration: none;
-}
 
 
 
@@ -79,7 +73,6 @@
   background-color: #333;
   padding: 10px 0;
 }
-
 .navbar {
   display: flex;
   justify-content: center;

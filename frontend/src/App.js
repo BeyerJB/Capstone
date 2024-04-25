@@ -1,3 +1,4 @@
+import logo from './timeweave-transparent.png'
 import './App.css';
 import './CSS/UserNoticeModal.css';
 import { useContext, useState } from "react"
@@ -30,9 +31,9 @@ function App() {
   return (
     <>
       <div className="App">
-        <h1>Welcome!</h1>
         <nav>
           <div className="navbarcontainer">
+          <img src={logo} className="app-logo" alt="TIMEWEAVE" width={ '100vw' } height={ ' 25vw '} />
             <ul className="navbar">
               <li><Link to="/">Home</Link></li>
               {!cookies.userID ? (

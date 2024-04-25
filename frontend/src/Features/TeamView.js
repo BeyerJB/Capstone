@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect} from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
@@ -10,6 +10,7 @@ import Button from 'react-bootstrap/Button';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import '../CSS/TeamView.css'
 
 
 export const TeamView = () => {
@@ -37,53 +38,61 @@ export const TeamView = () => {
 
   return (
     <div className="calendar">
-      <h1>Team Calendar</h1>
-      <FullCalendar
-
+      <FullCalendar className ='teamview-calendar'
         plugins={[
           dayGridPlugin,
           timeGridPlugin,
           interactionPlugin,
           resourceTimelinePlugin,
         ]}
-        initialView="resourceTimelineDay"
+        initialView="TenDay"
+
         headerToolbar={{
           left: "today prev,next",
-          center: "title",
+          center: "",
           right:
             "resourceTimelineDay,TenDay,resourceTimelineMonth,resourceTimelineYear",
         }}
         views = {{
+          //dayView
           resourceTimelineDay: {
             buttonText: 'Day',
-            slotLabelFormat :{
-              hour: '2-digit',
-              minute: '2-digit',
-              hour12: false
-              },
+            slotLabelFormat :[
+              {weekday: 'short', day: 'numeric', month:'long', year: 'numeric'},
+              {hour: '2-digit',minute: '2-digit',hour12: false}
+            ],
             slotDuration: '00:30'
           },
+          //TenDay View
           TenDay: {
             type: 'resourceTimeline',
             duration: { days: 10 },
             buttonText: '10 days',
             slotDuration: '06:00',
             slotLabelFormat:[
-              {
-              weekday: 'short',
-              day: 'numeric',
-              },{
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: false
-              }
-            ]
-
-          }
-        }}
+              {weekday: 'short',day: 'numeric'},
+              {hour: '2-digit',minute: '2-digit',hour12: false}
+            ]},
+            //Year View
+            resourceTimelineYear: {
+              buttonText: 'Year',
+              slotLabelFormat:[
+                {month: 'long', year:'numeric'},
+                {weekday:'short', day: 'numeric'
+              }]
+            },
+            //MonthView
+            resourceTimelineMonth: {
+              buttonText: 'Month',
+              slotLabelFormat: [
+                {weekday: 'short',day: 'numeric'}
+              ]
+            }
+                  }}
         schedulerLicenseKey="CC-Attribution-NonCommercial-NoDerivatives"
         timeZone="UTC"
-        height="60vh"
+        width="99vw"
+        height="90vh"
         scrollTime="00:00"
         aspectRatio={2}
         nowIndicator = {true}

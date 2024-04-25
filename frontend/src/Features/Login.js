@@ -104,17 +104,29 @@ const CreateAccount = () => {
     }));
   };
 
-  const handleNewAccount = () => {
+  const handleNewAccount = (event) => {
+    if(newUserInfo.first_name === undefined || newUserInfo.last_name === undefined || newUserInfo.password === undefined){
+      event.preventDefault();
+      alert("Please complete all fields");
+    }else{
+      event.preventDefault();
     fetch(
       "http://localhost:8080/api/newuser",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newUserInfo),
-      },
-      []
-    );
-  };
+      })
+      .then(res => {
+        if(res.status === 202){
+          alert("Account has been requested")
+          window.location.reload()
+        } else {
+          alert("An error occurred please try again later")
+        }
+      })
+  }
+};
 
   return (
     <div className="log-form">
@@ -165,7 +177,7 @@ const CreateAccount = () => {
       </select>
       <label for="rank_id">Choose your rank:</label>
       <select
-        name="rank_id"
+        name="rank"
         form="newaccountform"
         value={newUserInfo.rank_id}
         onChange={handleInputChange}

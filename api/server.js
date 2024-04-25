@@ -107,7 +107,8 @@ app.post("/api/login", async (req, res) => {
       rank: user.rank,
       supervisorID: supervisorID,
       isSupervisor: !!isSupervisor,
-      isManager: isManager
+      isManager: isManager,
+      enabled: user.enabled
     });
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
@@ -130,7 +131,10 @@ app.get("/api/ranks", (req, res) => {
 })
 //user account request
 app.post("/api/newuser", async (req, res) => {
-
+  knex("calendar_users")
+  .insert(req.body)
+  .then(res.status(202).send("Account Request Pending"))
+  .catch(err => res.status(500))
 })
 
 // Create notice
