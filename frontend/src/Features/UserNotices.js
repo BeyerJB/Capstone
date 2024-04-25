@@ -108,12 +108,12 @@ export const UserNotices = () => {
   };
 
   const handleRejectEvent = (eventId) => {
-    setEventUpdateData({ request_id: eventId, choice: false });
+    setEventUpdateData({ event_id: eventId, choice: false });
     fetchPendingEvents();
   };
 
   const handleAcceptEvent = (eventId) => {
-    setEventUpdateData({ request_id: eventId, choice: true });
+    setEventUpdateData({ event_id: eventId, choice: true });
     fetchPendingEvents();
   };
 
@@ -144,8 +144,27 @@ export const UserNotices = () => {
       });
   };
 
+  useEffect(() => {
+    if (eventUpdateData.event_id !== undefined && eventUpdateData.choice !== undefined) {
+      handleUpdateEvent()
+        .then(() => {
+          if (eventUpdateData.choice) {
+            handleAcceptNotice(eventUpdateData.event_id);
+          } else {
+            handleRejectNotice(eventUpdateData.event_id);
+          }
+
+          fetchPendingEvents();
+        })
+        .catch(error => {
+          console.error('Error handling event action:', error);
+          alert('Error handling event action. Please try again.');
+        });
+    }
+  }, [eventUpdateData]);
+
   const handleUpdateEvent = () => {
-    fetch('http://localhost:8080/api/events/choice', {
+    return fetch('http://localhost:8080/api/events/choice', {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -264,7 +283,7 @@ export const UserNotices = () => {
                 <tbody>
                   {submittedNotices.filter(notice => notice.archived === false).map(notice => (
                     <tr key={notice.user_notice_id}>
-                      <td>Current</td>
+                      <td>{notice.name}</td>
                       <td>{notice.body}</td>
                       <td>
                         <div className="button-container text-center">
