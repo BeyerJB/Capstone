@@ -39,7 +39,8 @@
 
 .calendar {
 
-  height: 85vh;
+  height: 100vh;
+
   overflow: hidden;
   text-decoration: none;
 }
@@ -79,7 +80,6 @@
   background-color: #333;
   padding: 10px 0;
 }
-
 .navbar {
   display: flex;
   justify-content: center;
