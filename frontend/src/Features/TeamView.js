@@ -15,9 +15,10 @@ import '../CSS/TeamView.css'
 
 export const TeamView = () => {
   const [cookies] = useCookies(['userID', 'firstName', 'lastName', 'rank']);
-  const [ teamEvents, setTeamEvents ] = useState([])
+  const [teamEvents, setTeamEvents ] = useState([])
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [filteredUsers, setFilteredUsers] = useState([])
 
 
   useEffect(() => {
@@ -35,6 +36,10 @@ export const TeamView = () => {
   const closeModal = () => {
     setIsModalOpen(false);
   };
+
+  // const guardianFilter = () => {
+  //   const modifiedevents = teamEvents.filter((user) => user.user_id = event.user_id)
+  // }
 
   return (
     <div className="calendar">
@@ -166,16 +171,5 @@ export const TeamView = () => {
       }
     ]
   },
-
-
-  const teams = {
-    teamname: knex(calendar_teams)
-    .select('name')
-    members: {
-      knex(calendar_users)
-      .select("name rank kdalkkjld")
-      .where("")
-    }
-  }
 
 */
