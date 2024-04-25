@@ -1,14 +1,25 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect} from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import resourceTimelinePlugin from "@fullcalendar/resource-timeline";
 import { useCookies } from 'react-cookie'
+import Modal from 'react-bootstrap/Modal';
+import Button from 'react-bootstrap/Button';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
+import '../CSS/TeamView.css'
+
 
 export const TeamView = () => {
   const [cookies] = useCookies(['userID', 'firstName', 'lastName', 'rank']);
-  const [ teamEvents, setTeamEvents ] = useState([])
+  const [teamEvents, setTeamEvents ] = useState([])
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [filteredUsers, setFilteredUsers] = useState([])
+
 
   useEffect(() => {
     console.log("cookie id", `http://localhost:8080/api/teamview/${cookies.userID}`)
@@ -17,61 +28,81 @@ export const TeamView = () => {
       .then(jsonRes => setTeamEvents(jsonRes))
   }, [cookies.userID])
 
-  console.log(teamEvents)
+  const openModal = (event) => {
+    setSelectedEvent(event);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  // const guardianFilter = () => {
+  //   const modifiedevents = teamEvents.filter((user) => user.user_id = event.user_id)
+  // }
 
   return (
     <div className="calendar">
-      <h1>Team Calendar</h1>
-      <FullCalendar
-
+      <FullCalendar className ='teamview-calendar'
         plugins={[
           dayGridPlugin,
           timeGridPlugin,
           interactionPlugin,
           resourceTimelinePlugin,
         ]}
-        initialView="resourceTimelineDay"
+        initialView="TenDay"
+
         headerToolbar={{
           left: "today prev,next",
-          center: "title",
+          center: "",
           right:
             "resourceTimelineDay,TenDay,resourceTimelineMonth,resourceTimelineYear",
         }}
         views = {{
+          //dayView
           resourceTimelineDay: {
             buttonText: 'Day',
-            slotLabelFormat :{
-              hour: '2-digit',
-              minute: '2-digit',
-              hour12: false
-              },
+            slotLabelFormat :[
+              {weekday: 'short', day: 'numeric', month:'long', year: 'numeric'},
+              {hour: '2-digit',minute: '2-digit',hour12: false}
+            ],
             slotDuration: '00:30'
           },
+          //TenDay View
           TenDay: {
             type: 'resourceTimeline',
             duration: { days: 10 },
             buttonText: '10 days',
             slotDuration: '06:00',
             slotLabelFormat:[
-              {
-              weekday: 'short',
-              day: 'numeric',
-              },{
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: false
-              }
-            ]
-
-          }
-        }}
+              {weekday: 'short',day: 'numeric'},
+              {hour: '2-digit',minute: '2-digit',hour12: false}
+            ]},
+            //Year View
+            resourceTimelineYear: {
+              buttonText: 'Year',
+              slotLabelFormat:[
+                {month: 'long', year:'numeric'},
+                {weekday:'short', day: 'numeric'
+              }]
+            },
+            //MonthView
+            resourceTimelineMonth: {
+              buttonText: 'Month',
+              slotLabelFormat: [
+                {weekday: 'short',day: 'numeric'}
+              ]
+            }
+                  }}
         schedulerLicenseKey="CC-Attribution-NonCommercial-NoDerivatives"
         timeZone="UTC"
-        height="60vh"
+        width="99vw"
+        height="90vh"
         scrollTime="00:00"
         aspectRatio={2}
         nowIndicator = {true}
         editable={false}
+        eventClick={openModal}
         resourceAreaHeaderContent="Guardians"
         resourceAreaWidth = "15vw"
         resourceGroupField= 'team_name'
@@ -99,6 +130,27 @@ export const TeamView = () => {
           })
       }
       />
+      <div style={{ position: 'absolute', visibility: 'hidden', zIndex: 12001, width: '158px', padding: '2px 0 0 0',  textDecoration: 'none' }}>
+      <Modal show={isModalOpen} onHide={closeModal} size='lg' aria-labelledby='contained-modal-title-vcenter' centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Event: {selectedEvent ? selectedEvent.event.title : ''}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>Start: {selectedEvent ? selectedEvent.event.start.toString() : ''}</p>
+          <p>End: {selectedEvent ? selectedEvent.event.end.toString() : ''}</p>
+          <p>Description: {selectedEvent ? selectedEvent.event.extendedProps.description : ''}</p>
+        </Modal.Body>
+        <Modal.Footer>
+        <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+          <div>
+            <Button variant="primary">Button 1</Button>
+            <Button variant="secondary" style={{ marginLeft: '10px' }}>Button 2</Button>
+          </div>
+          <Button variant="danger" onClick={closeModal}>Close</Button>
+        </div>
+        </Modal.Footer>
+      </Modal>
+      </div>
     </div>
   );
 };
@@ -119,16 +171,5 @@ export const TeamView = () => {
       }
     ]
   },
-
-
-  const teams = {
-    teamname: knex(calendar_teams)
-    .select('name')
-    members: {
-      knex(calendar_users)
-      .select("name rank kdalkkjld")
-      .where("")
-    }
-  }
 
 */

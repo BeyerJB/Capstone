@@ -107,12 +107,35 @@ app.post("/api/login", async (req, res) => {
       rank: user.rank,
       supervisorID: supervisorID,
       isSupervisor: !!isSupervisor,
-      isManager: isManager
+      isManager: isManager,
+      enabled: user.enabled
     });
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+//get teams for account creation
+app.get("/api/teams", (req, res) => {
+  knex("calendar_teams")
+  .select("name", "team_id")
+  .then(dbres => res.status(200).json(dbres))
+  .catch(err => res.status(500).json({ error: "Internal server error"}))
+})
+
+//get ranks for account creation
+app.get("/api/ranks", (req, res) => {
+  knex("ranks")
+  .select("name", "rank_id")
+  .then(dbres => res.status(200).json(dbres))
+  .catch(err => res.status(500).json({ error: "Internal server error"}))
+})
+//user account request
+app.post("/api/newuser", async (req, res) => {
+  knex("calendar_users")
+  .insert(req.body)
+  .then(res.status(202).send("Account Request Pending"))
+  .catch(err => res.status(500))
+})
 
 // Create notice
 app.post("/api/notices", async (req, res) => {
