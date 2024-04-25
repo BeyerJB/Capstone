@@ -19,6 +19,7 @@ export const CreateEvent = () => {
   const [eventTypeOptions, setEventTypeOptions] = useState([]);
   const [checkedBox, setCheckedBox] = useState(false);
   const [cookies] = useCookies(['userID', 'firstName', 'lastName', 'rank']);
+  const [newNoticeData, setNewNoticeData] = useState({ submitter_id: cookies.userID, body: '', notice_type: 4, event_id: 0 });
 
   const handleCheckbox = () =>
     setCheckedBox(!checkedBox);
@@ -40,61 +41,64 @@ export const CreateEvent = () => {
     });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const startDateTime = `${formData.start_date}T${formData.start_time}:00`;
-    const endDateTime = `${formData.end_date}T${formData.end_time}:00`;
-    //DIAGNOSTIC LOGGING TO CHECK USER INPUT VARIABLES
-    // console.log('USING THE FOLLOWING DATA FOR SUBMISSION:', formData);
-    // console.log("CONCAT START STRING: ",startDateTime);
-    // console.log("CONCAT END STRING: ",endDateTime);
-    // console.log("ALLDAY FLAG: ", checkedBox);
+  const handleSubmit = async (e) => {
+      e.preventDefault();
+      const startDateTime = `${formData.start_date}T${formData.start_time}:00`;
+      const endDateTime = `${formData.end_date}T${formData.end_time}:00`;
 
-    //PUSH USER VALUES TO API
-    async function sendData() {
-      //console.log("TEAM DATA IS: ", teamFormData);
-      //console.log("EVENT TYPE DATA IS: ", eventTypeData);
+      //DIAGNOSTIC LOGGING TO CHECK USER INPUT VARIABLES
+      // console.log('USING THE FOLLOWING DATA FOR SUBMISSION:', formData);
+      // console.log("CONCAT START STRING: ",startDateTime);
+      // console.log("CONCAT END STRING: ",endDateTime);
+      // console.log("ALLDAY FLAG: ", checkedBox);
 
-      //NULLIFY teamFormData.team_id IF SELECTED FEILD IS "Just Me"
-      //console.log("TEAM ID: ", teamFormData.team_id);
-      if(teamFormData.team_id == "Just Me"){
-        setTeamFormData({
-          ...teamFormData.team_id = null
-        });
-        //console.log("NULLIFIED VALUE: ", teamFormData.team_id);
-      }
+      //PUSH USER VALUES TO API
+      async function sendData() {
+          //console.log("TEAM DATA IS: ", teamFormData);
+          //console.log("EVENT TYPE DATA IS: ", eventTypeData);
 
+          //NULLIFY teamFormData.team_id IF SELECTED FIELD IS "Just Me"
+          //console.log("TEAM ID: ", teamFormData.team_id);
+          if(teamFormData.team_id == "Just Me"){
+            setTeamFormData({
+              ...teamFormData.team_id = null
+            });
 
-      const res = await fetch("http://localhost:8080/create_event", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title: formData.title,
-          description: formData.description,
-          start_datetime: startDateTime,
-          end_datetime: endDateTime,
-          all_day: checkedBox,
-          team_id: teamFormData.team_id,
-          user_id: cookies.userID,
-          event_type: eventTypeData.event_id,
-          creator_id: cookies.userID
-        }),
-      });
-      window.location.href="http://localhost:3000/mycalendar"
-
-    }
+          try {
+              const res = await fetch("http://localhost:8080/create_event", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                      title: formData.title,
+                      description: formData.description,
+                      start_datetime: startDateTime,
+                      end_datetime: endDateTime,
+                      all_day: checkedBox,
+                      team_id: teamFormData.team_id,
+                      user_id: cookies.userID,
+                      event_type: eventTypeData.event_id,
+                      creator_id: cookies.userID
+                  }),
+              });
+              const eventData = await res.json();
+              console.log(eventData);
+              await setNewNoticeData({ submitter_id: cookies.userID, body: `Event Request: ${formData.title}`, notice_type: 4, event_id: eventData.new_event_id.event_id });
+              window.location.href = "http://localhost:3000/mycalendar";
+          } catch (error) {
+              console.error("Error submitting event:", error);
+          }
+      };
+    };
     sendData();
-
   };
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const user_id = 3;
-        const res = await fetch("http://localhost:8080/calendar_team/userid", {
+        const res = await fetch(`http://localhost:8080/calendar_team/userid`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id: user_id }),
+          body: JSON.stringify({ id: cookies.userID }),
         });
         const userTeams = await res.json();
         console.log("RETRIEVED TEAMS ARE: ", await userTeams);
@@ -114,7 +118,7 @@ export const CreateEvent = () => {
   useEffect(() => {
     async function fetchData() {
       try {
-        const user_id = 3;
+        //const user_id = 3;
         const res = await fetch("http://localhost:8080/event_type");
         const eventType = await res.json();
         //console.log("RETRIEVED EVENTS ARE: ", eventType);
@@ -131,6 +135,32 @@ export const CreateEvent = () => {
 
     fetchData();
   }, []);
+
+  useEffect(() => {
+    if (newNoticeData.event_id !== 0 && newNoticeData.body !== '') {
+      handleNewNotice();
+    }
+  }, [newNoticeData]);
+
+  const handleNewNotice = () => {
+    fetch('http://localhost:8080/api/notices/auto', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newNoticeData),
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        setNewNoticeData({ submitter_id: cookies.userID, body: '', notice_type: 4, event_id: 0 });
+      })
+      .catch(error => {
+        console.error('Error adding new notice:', error);
+        alert('Error adding new notice. Please try again.');
+      });
+  };
 
   return (
     <Form onSubmit={handleSubmit}>
