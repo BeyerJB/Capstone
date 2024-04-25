@@ -79,6 +79,7 @@ function Login() {
 const CreateAccount = () => {
   const [teamNames, setTeamNames] = useState([]);
   const [ranks, setRanks] = useState([]);
+  const [userType, setUserType] = useState([]);
 
   useEffect(() => {
     fetch("http://localhost:8080/api/teams")
@@ -91,10 +92,15 @@ const CreateAccount = () => {
       .then((data) => {
         setRanks(data);
       });
+    fetch("http://localhost:8080/api/usertypes")
+      .then((res) => res.json())
+      .then((data) => {
+        setUserType(data);
+      });
   }, []);
 
 
-  const [newUserInfo, setnewUserInfo] = useState({});
+  const [newUserInfo, setnewUserInfo] = useState({user_type: 1, team_id: 1});
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -119,6 +125,7 @@ const CreateAccount = () => {
       })
       .then(res => {
         if(res.status === 202){
+          console.log(newUserInfo)
           alert("Account has been requested")
           window.location.reload()
         } else {
@@ -184,6 +191,17 @@ const CreateAccount = () => {
       >
         {ranks.map((eachrank) => {
           return <option value={eachrank.rank_id}>{eachrank.name}</option>;
+        })}
+      </select>
+      <label for="user_type">Choose User Type:</label>
+      <select
+        name="user_type"
+        form="newaccountform"
+        value={newUserInfo.user_type}
+        onChange={handleInputChange}
+      >
+        {userType.map((eachtype) => {
+          return <option value={eachtype.user_type_id}>{eachtype.name}</option>;
         })}
       </select>
     </div>
