@@ -24,8 +24,8 @@ export const Calendar = () => {
   const [selectedEvent, setSelectedEvent] = useState(null);
   ///
   const [isEditing, setIsEditing] = useState(false);
-  // const [editedEvent, setEditedEvent] = useState(null)
-  const [startDateTime, setStartDateTime] = useState(null);
+  const [editedEvent, setEditedEvent] = useState(null)
+  const [startDateTime, setStartDateTime] = useState('');
   const [endDateTime, setEndDateTime] = useState(null);
   const [title, setTitle] = useState(null);
   const [description, setDescription] = useState(null);
@@ -58,6 +58,8 @@ export const Calendar = () => {
   const openModal = (event) => {
     setSelectedEvent(event);
     setIsModalOpen(true);
+    console.log('event: ', event)
+    console.log('event id: ', selectedEvent.event.id)
   };
 
   const closeModal = () => {
@@ -77,6 +79,7 @@ export const Calendar = () => {
 
   const handleSaveClick = () => {
     const editedEventData = {
+      id: eventId,
       id: eventId,
       title: title,
       start: startDateTime,

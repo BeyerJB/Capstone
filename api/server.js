@@ -107,12 +107,54 @@ app.post("/api/login", async (req, res) => {
       rank: user.rank,
       supervisorID: supervisorID,
       isSupervisor: !!isSupervisor,
-      isManager: isManager
+      isManager: isManager,
+      enabled: user.enabled
     });
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+//get teams for account creation
+app.get("/api/teams", (req, res) => {
+  knex("calendar_teams")
+  .select("name", "team_id")
+  .then(dbres => res.status(200).json(dbres))
+  .catch(err => res.status(500).json({ error: "Internal server error"}))
+})
+
+//get ranks for account creation
+app.get("/api/ranks", (req, res) => {
+  knex("ranks")
+  .select("name", "rank_id")
+  .then(dbres => res.status(200).json(dbres))
+  .catch(err => res.status(500).json({ error: "Internal server error"}))
+})
+
+//get user types for account creation
+app.get("/api/usertypes", (req, res) => {
+  knex("user_type")
+  .select("name", "user_type_id")
+  .then(dbres => res.status(200).json(dbres))
+  .catch(err => res.status(500).json({ error: "Internal server error"}))
+})
+
+//user account request
+app.post("/api/newuser", async (req, res) => {
+  const { first_name, last_name, rank, username, password, team_id, user_type } = req.body
+  const user_password = await bcrypt.hash(password, 10);
+  knex("calendar_users")
+  .insert({
+    first_name: first_name,
+    last_name: last_name,
+    rank: rank,
+    username: username,
+    password: user_password,
+    team_id: team_id,
+    user_type: user_type
+  })
+  .then(res.status(202).send("Account Request Pending"))
+  .catch(err => res.status(500))
+})
 
 // Create notice
 app.post("/api/notices", async (req, res) => {
@@ -341,8 +383,26 @@ app.get("/api/events/pending", async (req, res) => {
       .join('ranks', 'rank_id', 'calendar_users.rank')
       .join('event_type', 'calendar_events.event_type', 'event_type.event_id')
       .join('user_notice', 'calendar_events.event_id', 'user_notice.event_id')
-      .where("pending", true)
+      .where("calendar_events.pending", true)
     res.status(200).json(pendingEvents);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+})
+
+// Get all pending account request
+app.get("/api/accounts/pending", async (req, res) => {
+  try {
+    const pendingAccounts = await knex("calendar_users")
+      .select(
+        "calendar_users.*",
+        'ranks.name as rank_name',
+        'user_type.name as user_type_name',
+      )
+      .join('ranks', 'rank_id', 'calendar_users.rank')
+      .join('user_type', 'calendar_users.user_type', 'user_type.user_type_id')
+      .where("calendar_users.pending", true)
+    res.status(200).json(pendingAccounts);
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });
   }
@@ -374,6 +434,17 @@ app.post("/api/notices/auto", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
+// Approve/Deny account request
+app.put("/api/accounts/choice", async (req, res) => {
+  const { user_id, approved, pending } = req.body;
+  try {
+    const pendingAccounts = await knex("calendar_users").where("user_id", user_id).update({pending: pending, approved: approved});
+    res.status(200).json(pendingAccounts);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+})
 
 //PATCHES IN UPDATED INFORMATION FROM MY CALENDAR UPDATE
 app.patch("/edit_event", (req, res) => {
