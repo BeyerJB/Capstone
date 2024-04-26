@@ -24,29 +24,35 @@ export const Calendar = () => {
   const [selectedEvent, setSelectedEvent] = useState(null);
   ///
   const [isEditing, setIsEditing] = useState(false);
-  const [editedEvent, setEditedEvent] = useState(null)
+  // const [editedEvent, setEditedEvent] = useState(null)
   const [startDateTime, setStartDateTime] = useState(null);
   const [endDateTime, setEndDateTime] = useState(null);
   const [title, setTitle] = useState(null);
   const [description, setDescription] = useState(null);
+  const [eventId, setEventId] = useState(null);
   ///
 
   useEffect(() => {
-    fetch(`http://localhost:8080/mycalendar?userId=${userId}`)
-      .then(response => response.json())
-      .then(data => {
-        setAllData(data);
-        const formattedEvents = data.map(event => ({
-          title: event.title,
-          start: event.start_datetime,
-          end: event.end_datetime,
-          description: event.description
-        }));
-        setEvents(formattedEvents);
-        // setDescription(formattedEvents.description)
-      })
-      .catch(error => console.error('Error fetching events: ', error));
-  }, [userId, editedEvent]);
+    //Added an async function fetchEventData as a wrapper, it terminates on line 53 then self-invokes
+    async function fetchEventData() {
+      await fetch(`http://localhost:8080/mycalendar?userId=${userId}`)
+        .then(response => response.json())
+        .then(data => {
+          setAllData(data);
+          const formattedEvents = data.map(event => ({
+            id: event.event_id,
+            title: event.title,
+            start: event.start_datetime,
+            end: event.end_datetime,
+            description: event.description
+          }));
+          setEvents(formattedEvents);
+          // setDescription(formattedEvents.description)
+        })
+        .catch(error => console.error('Error fetching events: ', error));
+    }
+    fetchEventData();
+  }, [userId, isEditing]);
 
 
   const openModal = (event) => {
@@ -66,11 +72,12 @@ export const Calendar = () => {
     setDescription(selectedEvent.event.extendedProps.description)
     setStartDateTime(selectedEvent.event.start)
     setEndDateTime(selectedEvent.event.end)
+    setEventId(selectedEvent.event.id)
   };
 
   const handleSaveClick = () => {
     const editedEventData = {
-      // event_id: 
+      id: eventId,
       title: title,
       start: startDateTime,
       end: endDateTime,
@@ -84,22 +91,21 @@ export const Calendar = () => {
       },
       body: JSON.stringify(editedEventData)
     })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Failed to edit event');
-      }
-      return response.json();
-    })
-    .then(data => {
-      console.log('Edit Successful:', data, editedEventData);
-      setIsEditing(false);
-    })
-    .catch(error => {
-      console.error('Error editing event:', error);
-      // Handle error
-    });
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to edit event');
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log('Edit Successful:', data, editedEventData);
+        setIsEditing(false);
+      })
+      .catch(error => {
+        console.error('Error editing event:', error);
+        // Handle error
+      });
   };
-
 
   const handleCancelClick = () => {
     setIsEditing(false);
@@ -115,25 +121,12 @@ export const Calendar = () => {
     console.log('button 2 clicked');
   };
 
-  // const handleStartDateChange = (date) => {
-  //   setStartDateTime(date);
-  // };
-
-  // const handleEndDateChange = (date) => {
-  //   setEndDateTime(date);
-  // };
-
   const handleStartDateChange = (date) => {
-    // Convert the selected date to UTC
-    const utcStartDate = date.toISOString();
-    setStartDateTime(utcStartDate);
-    console.log(utcStartDate)
+    setStartDateTime(date);
   };
 
   const handleEndDateChange = (date) => {
-    // Convert the selected date to UTC
-    const utcEndDate = date.toISOString();
-    setEndDateTime(utcEndDate);
+    setEndDateTime(date);
   };
 
   return (
@@ -148,7 +141,7 @@ export const Calendar = () => {
             center: 'title',
             end: 'timeGridDay,timeGridWeek,dayGridMonth,multiMonthYear'
           }}
-          themeSystem= 'bootstrap5'
+          themeSystem='bootstrap5'
           eventClick={openModal}
           nowIndicator='true'
           dayMaxEvents='true'
@@ -159,72 +152,72 @@ export const Calendar = () => {
           events={events}
         />
       </div>
-      <div style={{ position: 'absolute', visibility: 'hidden', zIndex: 12001, width: '158px', padding: '2px 0 0 0',  textDecoration: 'none' }}>
-      <Modal show={isModalOpen} onHide={closeModal} size='lg' aria-labelledby='contained-modal-title-vcenter' centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Event: {selectedEvent ? selectedEvent.event.title : ''}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {isEditing ? (
-            <Form>
-              <Form.Group controlId="formTitle">
-                <Form.Label>Title</Form.Label>
-                <Form.Control type="text" placeholder={selectedEvent.event.title} value={title} onChange={(e) => setTitle(e.target.value)}/>
-              </Form.Group>
-              <Form.Group controlId="formStart">
-                <Form.Label>Start</Form.Label>
-                <DatePicker
-                  selected={startDateTime}
-                  onChange={handleStartDateChange}
-                  showTimeSelect
-                  timeFormat="HH:mm"
-                  timeIntervals={15}
-                  dateFormat="MMMM d, yyyy h:mm aa"
-                  placeholderText="Select start date and time"
-                />
-              </Form.Group>
-              <Form.Group controlId="formEnd">
-                <Form.Label>End</Form.Label>
-                <DatePicker
-                  selected={endDateTime}
-                  onChange={handleEndDateChange}
-                  showTimeSelect
-                  timeFormat="HH:mm"
-                  timeIntervals={15}
-                  dateFormat="MMMM d, yyyy h:mm aa"
-                  placeholderText="Select end date and time"
-                />
-              </Form.Group>
-              <Form.Group controlId="formDescription">
-                <Form.Label>Description</Form.Label>
-                <Form.Control as="textarea" rows={3} placeholder={selectedEvent.event.extendedProps.description} value={description} onChange={(e) => setDescription(e.target.value)}/>
-              </Form.Group>
-            </Form>
-          ) : (
-            <>
-              <p>Start: {selectedEvent ? selectedEvent.event.start.toString() : ''}</p>
-              <p>End: {selectedEvent ? selectedEvent.event.end.toString() : ''}</p>
-              <p>Description: {selectedEvent ? selectedEvent.event.extendedProps.description : ''}</p>
-            </>
-          )}
-        </Modal.Body>
-        <Modal.Footer>
-          <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+      <div style={{ position: 'absolute', visibility: 'hidden', zIndex: 12001, width: '158px', padding: '2px 0 0 0', textDecoration: 'none' }}>
+        <Modal show={isModalOpen} onHide={closeModal} size='lg' aria-labelledby='contained-modal-title-vcenter' centered>
+          <Modal.Header closeButton>
+            <Modal.Title>Event: {selectedEvent ? selectedEvent.event.title : ''}</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
             {isEditing ? (
-              <>
-                <Button variant="success" onClick={handleSaveClick}>Save</Button>
-                <Button variant="secondary" onClick={handleCancelClick}>Cancel</Button>
-                <Button variant="danger" onClick={handleCancelEventClick}>Send Cancel Notice</Button>
-              </>
+              <Form>
+                <Form.Group controlId="formTitle">
+                  <Form.Label>Title</Form.Label>
+                  <Form.Control type="text" placeholder={selectedEvent.event.title} value={title} onChange={(e) => setTitle(e.target.value)} />
+                </Form.Group>
+                <Form.Group controlId="formStart">
+                  <Form.Label>Start</Form.Label>
+                  <DatePicker
+                    selected={startDateTime}
+                    onChange={handleStartDateChange}
+                    showTimeSelect
+                    timeFormat="HH:mm"
+                    timeIntervals={15}
+                    dateFormat="MMMM d, yyyy h:mm"
+                    placeholderText="Select start date and time"
+                  />
+                </Form.Group>
+                <Form.Group controlId="formEnd">
+                  <Form.Label>End</Form.Label>
+                  <DatePicker
+                    selected={endDateTime}
+                    onChange={handleEndDateChange}
+                    showTimeSelect
+                    timeFormat="HH:mm"
+                    timeIntervals={15}
+                    dateFormat="MMMM d, yyyy h:mm"
+                    placeholderText="Select end date and time"
+                  />
+                </Form.Group>
+                <Form.Group controlId="formDescription">
+                  <Form.Label>Description</Form.Label>
+                  <Form.Control as="textarea" rows={3} placeholder={selectedEvent.event.extendedProps.description} value={description} onChange={(e) => setDescription(e.target.value)} />
+                </Form.Group>
+              </Form>
             ) : (
               <>
-                <Button variant="secondary" onClick={handleEditClick}>Edit event</Button>
+                <p>Start: {selectedEvent ? selectedEvent.event.start.toString() : ''}</p>
+                <p>End: {selectedEvent ? selectedEvent.event.end.toString() : ''}</p>
+                <p>Description: {selectedEvent ? selectedEvent.event.extendedProps.description : ''}</p>
               </>
             )}
-            <Button variant="danger" onClick={closeModal}>Close</Button>
-          </div>
-        </Modal.Footer>
-      </Modal>
+          </Modal.Body>
+          <Modal.Footer>
+            <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+              {isEditing ? (
+                <>
+                  <Button variant="success" onClick={handleSaveClick}>Save</Button>
+                  <Button variant="secondary" onClick={handleCancelClick}>Cancel</Button>
+                  <Button variant="danger" onClick={handleCancelEventClick}>Send Cancel Notice</Button>
+                </>
+              ) : (
+                <>
+                  <Button variant="secondary" onClick={handleEditClick}>Edit event</Button>
+                </>
+              )}
+              <Button variant="danger" onClick={closeModal}>Close</Button>
+            </div>
+          </Modal.Footer>
+        </Modal>
       </div>
     </>
   );

@@ -1,19 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Row, Col, Button, Form } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css'
+import DatePicker from "react-datepicker";
 import { useCookies } from 'react-cookie'
 
 export const CreateEvent = () => {
   const [formData, setFormData] = useState({
     title: '',
-    start_date: '',
-    start_time: '',
-    end_date: '',
-    end_time: '',
     team_id: '',
     description: '',
     event_type: ''
   });
+
   const [teamFormData, setTeamFormData] = useState({ team_id: '' });
   const [teamOptions, setTeamOptions] = useState([]);
   const [eventTypeData, setEventTypeData] = useState({ event_type: '' });
@@ -21,20 +19,34 @@ export const CreateEvent = () => {
   const [checkedBox, setCheckedBox] = useState(false);
   const [cookies] = useCookies(['userID', 'firstName', 'lastName', 'rank', 'isManager']);
   const [newNoticeData, setNewNoticeData] = useState({ submitter_id: cookies.userID, body: '', notice_type: 4, event_id: 0 });
+  const [startDate, setStartDate] = useState(null)
+  const [endDate, setEndDate] = useState(null)
 
   const handleCheckbox = () =>
     setCheckedBox(!checkedBox);
 
+  const handleStartDateChange = (date) => {
+    setStartDate(date)
+  }
+
+  const handleEndDateChange = (date) => {
+    setEndDate(date)
+  }
+
   const handleInputChange = (e) => {
+    //console.log('Test: ', e)
     const { name, value } = e.target;
     setFormData({
       ...formData,
       [name]: value
     });
+
+
     setTeamFormData({
       ...teamFormData,
       [name]: value
     });
+
     setEventTypeData({
       ...eventTypeData,
       [name]: value
@@ -44,25 +56,23 @@ export const CreateEvent = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    //IF THE TIME IS EMPTY, CONCAT ZEROS INTO THE DATETIME
-    var startDateTime;
-    var endDateTime;
-    if (formData.start_time == "") {
-      startDateTime = `${formData.start_date}T06:00:00`;
-      endDateTime = `${formData.end_date}T07:00:00`;
+    // console.log('Team Form Data: ', teamFormData)
+    // console.log('Team Options: ', teamOptions)
+    // console.log('Event Type: ', eventTypeData)
+    // console.log('Event Type Options: ', eventTypeOptions)
+    // console.log('Checkbox: ', checkedBox)
+    // console.log('Cookies: ', cookies)
+    // console.log('Notice: ', newNoticeData)
 
-    } else {
-      startDateTime = `${formData.start_date}T${formData.start_time}:00`;
-      endDateTime = `${formData.end_date}T${formData.end_time}:00`;
-    }
 
-    var UTCDATESTART = new Date(startDateTime);
-    var UTCDATEEND = new Date(endDateTime);
-
-    if ((UTCDATEEND > UTCDATESTART) == false) {
+    if ((startDate < endDate) == false) {
       alert("Please select a beginning date that is earlier than the end date.");
       return;
     }
+
+    // console.log('All form Data: formData: ', formData)
+    // console.log('Start Date: ', startDate);
+    // console.log('End Date: ', endDate)
 
     //PUSH USER VALUES TO API
     async function sendData() {
@@ -80,8 +90,8 @@ export const CreateEvent = () => {
           body: JSON.stringify({
             title: formData.title,
             description: formData.description,
-            start_datetime: UTCDATESTART.toISOString(),
-            end_datetime: UTCDATEEND.toISOString(),
+            start_datetime: startDate,
+            end_datetime: endDate,
             all_day: checkedBox,
             team_id: teamFormData.team_id,
             user_id: cookies.userID,
@@ -113,7 +123,7 @@ export const CreateEvent = () => {
           body: JSON.stringify({ id: cookies.userID }),
         });
         const userTeams = await res.json();
-        console.log("RETRIEVED TEAMS ARE: ", await userTeams);
+        //console.log("RETRIEVED TEAMS ARE: ", await userTeams);
 
         //GENERATE DROPDOWN BOX OPTIONS BASED ON RETRIEVED TEAMS
         const additionalOptions = userTeams.map((team, index) => (
@@ -201,45 +211,33 @@ export const CreateEvent = () => {
 
       <Row>
         <h6 style={{ marginTop: '15px' }}>Start Date & Time</h6>
-        <Col xs={{ span: 4, offset: 0 }}>
-          <Form.Control
-            required
-            type="date"
-            placeholder="start"
-            name="start_date"
-            value={formData.start_date}
-            onChange={handleInputChange} />
-        </Col>
-
         <Col xs={4}>
-          <Form.Control
-            type="time"
-            placeholder="Start Time"
-            name="start_time"
-            value={formData.start_time}
-            onChange={handleInputChange} />
+          <DatePicker
+            selected={startDate}
+            onChange={handleStartDateChange}
+            showTimeSelect
+            timeFormat="HH:mm"
+            timeIntervals={15}
+            dateFormat="MMMM d, yyyy h:mm"
+            placeholderText="Select Start"
+            value={startDate}
+          />
         </Col>
       </Row>
 
       <Row>
         <h6 style={{ marginTop: '15px' }}>End Date & Time </h6>
-        <Col xs={{ span: 4, offset: 0 }}>
-          <Form.Control
-            required
-            type="date"
-            placeholder="YYYY-MM-DD"
-            name="end_date"
-            value={formData.end_date}
-            onChange={handleInputChange} />
-        </Col>
-
         <Col xs={4}>
-          <Form.Control
-            type="time"
-            placeholder="End Time"
-            name="end_time"
-            value={formData.end_time}
-            onChange={handleInputChange} />
+          <DatePicker
+            selected={endDate}
+            onChange={handleEndDateChange}
+            showTimeSelect
+            timeFormat="HH:mm"
+            timeIntervals={15}
+            dateFormat="MMMM d, yyyy h:mm"
+            placeholderText="Select End"
+            value={endDate}
+          />
         </Col>
       </Row>
 

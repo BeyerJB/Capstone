@@ -374,3 +374,18 @@ app.post("/api/notices/auto", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
+//PATCHES IN UPDATED INFORMATION FROM MY CALENDAR UPDATE
+app.patch("/edit_event", (req, res) => {
+  const {id, title, start, end, description} = req.body;
+  //console.log("ATTEMPTING TO UPDATE WITH: ", id, title, start, end, description)
+  knex("calendar_events")
+    .where({event_id: id})
+    .update({
+      title: title,
+      description: description,
+      start_datetime: start,
+      end_datetime: end
+    })
+    .then(res.status(201).json({ message: "Update pushed" }));
+})
