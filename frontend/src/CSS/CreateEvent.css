@@ -1,0 +1,33 @@
+.form-control {
+  /* height: 50px;
+  border-radius: 0; */
+  background-color: lightgrey;
+  /* color: white;
+  border-color: white;
+  border-width: 1.3px; */
+}
+
+.form-select {
+  background-color: lightgrey;
+}
+
+.datepicker {
+  background-color: lightgrey;
+  border-radius: 8px;
+  border: none;
+  border-color: none;
+  min-width: 300px;
+  min-height: 35px;
+}
+
+.form-check-input {
+  background-color: lightgrey;
+  min-width: 35px;
+  min-height: 35px;
+}
+
+.form-check-label {
+  font-family: "Segoe UI", Arial, sans-serif;
+  padding-left: 10px;
+  padding-top: 8px;
+}

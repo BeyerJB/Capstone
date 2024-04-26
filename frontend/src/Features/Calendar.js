@@ -39,6 +39,7 @@ export const Calendar = () => {
         .then(response => response.json())
         .then(data => {
           setAllData(data);
+          console.log("RECEIVED DATA IS: ", data);
           const formattedEvents = data.map(event => ({
             id: event.event_id,
             title: event.title,
@@ -59,7 +60,7 @@ export const Calendar = () => {
     setSelectedEvent(event);
     setIsModalOpen(true);
     console.log('event: ', event)
-    console.log('event id: ', selectedEvent.event.id)
+    //console.log('event id: ', selectedEvent.event.id)
   };
 
   const closeModal = () => {

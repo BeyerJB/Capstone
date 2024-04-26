@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Row, Col, Button, Form } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css'
 import DatePicker from "react-datepicker";
-import { useCookies } from 'react-cookie'
+import { useCookies } from 'react-cookie';
+import '../CSS/CreateEvent.css'
 
 export const CreateEvent = () => {
   const [formData, setFormData] = useState({
@@ -210,33 +211,35 @@ export const CreateEvent = () => {
       </Row>
 
       <Row>
+        <Col xs={{ span: 4, offset: 0 }}>
         <h6 style={{ marginTop: '15px' }}>Start Date & Time</h6>
-        <Col xs={4}>
-          <DatePicker
+        <DatePicker
+            className="datepicker"
             selected={startDate}
             onChange={handleStartDateChange}
             showTimeSelect
             timeFormat="HH:mm"
             timeIntervals={15}
             dateFormat="MMMM d, yyyy h:mm"
-            placeholderText="Select Start"
+            placeholderText="  Select Start"
             value={startDate}
+            required 
           />
         </Col>
-      </Row>
-
-      <Row>
-        <h6 style={{ marginTop: '15px' }}>End Date & Time </h6>
+        
         <Col xs={4}>
-          <DatePicker
+        <h6 style={{ marginTop: '15px' }}>End Date & Time</h6>
+        <DatePicker
+            className="datepicker"
             selected={endDate}
             onChange={handleEndDateChange}
             showTimeSelect
             timeFormat="HH:mm"
             timeIntervals={15}
             dateFormat="MMMM d, yyyy h:mm"
-            placeholderText="Select End"
+            placeholderText="  Select End"
             value={endDate}
+            required 
           />
         </Col>
       </Row>
