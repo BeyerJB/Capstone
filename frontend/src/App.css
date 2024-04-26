@@ -1,6 +1,8 @@
+
 .App {
   text-align: center;
   background-color: #252525ea;
+  height:100vh;
 
 }
 
@@ -131,13 +133,15 @@ body {
 
 .navbarcontainer {
   display: flex;
-  justify-content: center;
+  justify-content: left;
+  align-content: center;
   background-color: #212121;
   padding: 10px 0;
 }
 .navbar {
   display: flex;
   justify-content: center;
+  align-content: center;
   list-style-type: none;
   padding: 0;
 }

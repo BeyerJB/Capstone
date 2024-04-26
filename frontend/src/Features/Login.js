@@ -1,6 +1,9 @@
 import React, { useState, useContext, useEffect } from "react";
 import { AuthContext } from "./AuthContext";
 import { useNavigate } from "react-router-dom";
+import '../CSS/Login.css'
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
 
 function Login() {
   const [loginData, setLoginData] = useState({ username: "", password: "" });
@@ -42,6 +45,7 @@ function Login() {
   };
 
   return (
+    <div className="body">
     <div className="log-form">
       {createAccount === false ? (
         <>
@@ -68,10 +72,29 @@ function Login() {
           <button className="btn" onClick={() => setCreateAccount(true)}>
             Request Account
           </button>
+          {/* <h2>Login to your account</h2>
+          <Form onSubmit={handleLogin}>
+            <Form.Group className="mb-3" controlId="Username">
+              <Form.Label>Username</Form.Label>
+              <Form.Control type="Username" placeholder="Enter Username" value={loginData.username} onChange={handleInputChange} />
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="Password">
+              <Form.Label>Password</Form.Label>
+              <Form.Control type="password" placeholder="Password" value={loginData.password} onChange={handleInputChange}/>
+            </Form.Group>
+              <Button variant="primary" type="submit">
+                Login
+              </Button>
+              <Button variant="primary" type="submit">
+                Request Account
+              </Button>
+            </Form> */}
+
         </>
       ) : (
         <CreateAccount />
       )}
+    </div>
     </div>
   );
 }
