@@ -14,7 +14,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import Form from 'react-bootstrap/Form';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import '../CSS/Calendar.css'
+import '../CSS/calendar.css'
 
 export const Calendar = () => {
   const [cookies] = useCookies(['userID', 'firstName', 'lastName', 'rank']);
@@ -156,11 +156,27 @@ export const Calendar = () => {
           headerToolbar={{
             start: "today prev,next",
             center: 'title',
-            end: 'timeGridDay,timeGridWeek,dayGridMonth,multiMonthYear'
+            end: 'timeGridWeek,dayGridMonth,multiMonthYear'
             // end: 'timeGridDay,timeGridWeek,dayGridMonth'
           }}
-          fixedWeekCount = 'false'
-          showNonCurrentDates = 'false'
+          views = {{
+            timeGridWeek: {
+              buttonText: 'Week',
+              slotDuration: '01:00',
+              expandRows: true
+            },
+            dayGridMonth: {
+              buttonText: 'Month',
+              // duration: {days: 35}
+              fixedWeekCount: false,
+              showNonCurrentDates: false
+            },
+            multiMonthYear: {
+              buttonText: 'Year',
+            }
+          }}
+          // fixedWeekCount = 'false'
+          // showNonCurrentDates = 'false'
           themeSystem= 'bootstrap5'
           eventClick={openModal}
           nowIndicator='true'
