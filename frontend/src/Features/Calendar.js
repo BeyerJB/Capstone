@@ -14,6 +14,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import Form from 'react-bootstrap/Form';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import '../CSS/Calendar.css'
 
 export const Calendar = () => {
   const [cookies] = useCookies(['userID', 'firstName', 'lastName', 'rank']);
@@ -148,15 +149,18 @@ export const Calendar = () => {
   return (
     <>
       <div className="calendar" style={{ paddingInline: '50px' }}>
-        <h1> {cookies.firstName} {cookies.lastName}'s Calendar</h1>
+        <h1 style={{ color: '#c1c1c1' }}> {cookies.firstName} {cookies.lastName}'s Calendar</h1>
         <Fullcalendar
-          plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, multiMonthPlugin, bootstrap5Plugin]}
+          plugins={[dayGridPlugin, timeGridPlugin, multiMonthPlugin, interactionPlugin, bootstrap5Plugin]}
           initialView={'dayGridMonth'}
           headerToolbar={{
             start: "today prev,next",
             center: 'title',
             end: 'timeGridDay,timeGridWeek,dayGridMonth,multiMonthYear'
+            // end: 'timeGridDay,timeGridWeek,dayGridMonth'
           }}
+          fixedWeekCount = 'false'
+          showNonCurrentDates = 'false'
           themeSystem= 'bootstrap5'
           eventClick={openModal}
           nowIndicator='true'
@@ -164,7 +168,7 @@ export const Calendar = () => {
           selectable='true'
           handleWindowResize='true'
           aspectRatio='2'
-          multiMonthMaxColumns='12'
+          // multiMonthMaxColumns='12'
           events={events}
         />
       </div>

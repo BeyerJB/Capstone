@@ -296,7 +296,7 @@ return (
 
     <Row>
       <Col xs={{ span: 1, offset: 0 }}>
-        <Button style={{ marginTop: '20px' }} variant="dark" type="submit">
+        <Button style={{ marginTop: '20px' }} variant="secondary" type="submit">
           Submit
         </Button>
       </Col>
