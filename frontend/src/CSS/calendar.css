@@ -1,0 +1,49 @@
+.calendar fc td {
+  border-style: solid;
+  border-width: 1px;
+  border-color:#c1c1c1;
+  border-right: 0;
+  border-bottom: 0;
+  color:#c1c1c1;
+  font-family: 'Times New Roman', Times, serif;
+  /* font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif ; */
+}
+
+ .calendar fc th {
+  color: #c1c1c1;
+  border-style: solid;
+  border-width: .3px;
+  border-right: 0;
+  border-color:#c1c1c1;
+ }
+ table {
+  margin-bottom: 0 !important;
+ }
+
+ .calendar fc-button-primary {
+  background-color: #8ecccc;
+}
+
+.calendar fc-button-primary:hover {
+  background-color: #50717b;
+}
+
+.calendar fc-toolbar-title {
+  color: #c1c1c1 !important;
+}
+
+.calendar .fc .fc-multimonth-title {
+  font-size: 1.2em;
+  font-weight: 700;
+  padding: 1em 0px;
+  text-align: center;
+  color: #c1c1c1;
+}
+
+.calendar fc-button-primary {
+  background-color: #8ecccc;
+}
+
+.calendar fc-button-primary:hover {
+  background-color: #50717b;
+}

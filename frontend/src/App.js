@@ -1,4 +1,5 @@
 import logo from './timeweave-transparent.png'
+import icon from './spacetime-curvature.png'
 import './App.css';
 import './CSS/UserNoticeModal.css';
 import { useContext, useState } from "react"
@@ -33,6 +34,7 @@ function App() {
       <div className="App">
         <nav>
           <div className="navbarcontainer">
+          <img src={icon} className="app-logo" alt="spacetime" width={'50vw'}/>
           <img src={logo} className="app-logo" alt="TIMEWEAVE" width={ '100vw' } height={ ' 25vw '} />
             <ul className="navbar">
               <li><Link to="/">Home</Link></li>

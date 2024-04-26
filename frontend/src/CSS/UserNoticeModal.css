@@ -1,12 +1,13 @@
 .slide-pane {
   display: flex;
   flex-direction: column;
-  background: #fff;
+  background: #282828;
   min-width: 100px;
   height: 100%;
   box-shadow: 0 8px 8px rgba(0, 0, 0, 0.5);
   transition: transform 0.5s;
   will-change: transform;
+  color: #c1c1c1;
 }
 .slide-pane:focus {
   outline-style: none;
@@ -64,7 +65,7 @@
   display: flex;
   flex: 0 0 64px;
   align-items: center;
-  background: #ebebeb;
+  background: #212121;
   height: 64px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
@@ -133,7 +134,7 @@ button {
 }
 
 .notice-form {
-  background-color: #ebebeb;
+  background-color: #212121;
   padding: 20px;
   border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
