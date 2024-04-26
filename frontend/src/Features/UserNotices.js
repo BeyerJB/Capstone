@@ -445,7 +445,7 @@ export const UserNotices = () => {
                       <td>{notice.body}</td>
                       <td>
                         <div className="button-container text-center">
-                          <Button variant="dark" onClick={() => handleArchiveNotice(notice.user_notice_id)} class="btn btn-primary">Archive</Button>
+                          <Button variant="secondary" onClick={() => handleArchiveNotice(notice.user_notice_id)} class="btn btn-primary">Archive</Button>
                         </div>
                       </td>
                     </tr>
@@ -484,6 +484,43 @@ export const UserNotices = () => {
         </Tabs>
       </div>
 
+      {cookies.isSupervisor && (
+        <>
+          <h2>Supervisor Notices</h2>
+          <div className="notice-form"  style={{ marginBottom: '20px' }}>
+            {supervisorNotices.length === 0 ? (
+              <p>No Pending Notices</p>
+            ) : (
+              <table>
+                <thead>
+                  <tr>
+                    <th>User</th>
+                    <th>Request</th>
+                    <th>Type</th>
+                    <th className="text-center">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {supervisorNotices.map(notice => (
+                    <tr key={notice.user_notice_id}>
+                      <td>{notice.rank_name} {notice.first_name} {notice.last_name}</td>
+                      <td>{notice.body}</td>
+                      <td>{notice.notice_name}</td>
+                      <td>
+                        <div className="button-container text-center">
+                          <Button variant="dark" style={{ margin: '5px' }} onClick={() => handleAcceptNotice(notice.user_notice_id)} class="btn btn-primary">Approve</Button>
+                          <Button variant="dark" style={{ margin: '5px' }} onClick={() => handleRejectNotice(notice.user_notice_id)} class="btn btn-primary">Deny</Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+        </>
+      )}
+
       <h2>Create New Notice</h2>
       <form className="notice-form" onSubmit={handleNewNotice}  style={{ marginBottom: '20px' }}>
         <div className="form-group">
@@ -501,7 +538,7 @@ export const UserNotices = () => {
         <div className="form-group">
           <label htmlFor="notice_type">Notice Type:</label>
           <select
-            data-bs-theme="dark"
+            data-bs-theme="secondary"
             id="notice_type"
             name="notice_type"
             value={newNoticeData.notice_type}
@@ -515,7 +552,7 @@ export const UserNotices = () => {
             ))}
           </select>
         </div>
-        <Button variant="dark" type="submit" className="btn btn-primary">Submit</Button>
+        <Button variant="secondary" type="submit" className="btn btn-primary">Submit</Button>
       </form>
     </>
   );
