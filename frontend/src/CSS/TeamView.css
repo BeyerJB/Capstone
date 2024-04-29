@@ -2,32 +2,27 @@ a {
   text-decoration:none;
   color: #ddd
 }
-.teamview-calendar fc th {
-border-right-color: blue !important;
-}
-.teamview-calendar fc td {
-  border-bottom: 0;
-}
 .teamview-calendar fc-scroller{
 overflow: hidden hidden;
 }
-.teamview-calendar fc-scrollgrid {
-box-shadow: #ddd !important;
-}
-.teamview-calendar fc td {
+
+.teamview-calendar td{
   border-style: solid;
   border-width: 2px;
-  border-color:#212121 !important;
+  border-color:#464545 !important;
   border-right: 0;
   border-bottom: 0 !important;
   color:#c1c1c1;
   font-family: 'Times New Roman', Times, serif;
+
 }
 :root {
 --fc-now-indicator-color: #117bb8;
 --fc-event-bg-color: #3788d8;
 --fc-border-color: #ddd;
 }
+
+
 .teamview-calendar{
   padding-left: .5%;
   padding-right:.5%;
@@ -44,5 +39,6 @@ box-shadow: #ddd !important;
   margin-right: .5vw; */
   background-color: #282828;
   /* background-color: #3a4042; */
+
 }
 

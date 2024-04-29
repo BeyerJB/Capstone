@@ -14,7 +14,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import Form from 'react-bootstrap/Form';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import '../CSS/calendar.css'
+import '../CSS/Calendar.css'
 
 export const Calendar = () => {
   const [cookies] = useCookies(['userID', 'firstName', 'lastName', 'rank']);

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'react-tabs/style/react-tabs.css';
+import '../CSS/UserNoticeModal.css';
 import Button from 'react-bootstrap/Button';
 import { useCookies } from 'react-cookie';
 
@@ -508,8 +509,8 @@ export const UserNotices = () => {
                       <td>{notice.notice_name}</td>
                       <td>
                         <div className="button-container text-center">
-                          <Button variant="dark" style={{ margin: '5px' }} onClick={() => handleAcceptNotice(notice.user_notice_id)} class="btn btn-primary">Approve</Button>
-                          <Button variant="dark" style={{ margin: '5px' }} onClick={() => handleRejectNotice(notice.user_notice_id)} class="btn btn-primary">Deny</Button>
+                          <Button variant="secondary" style={{ margin: '5px' }} onClick={() => handleAcceptNotice(notice.user_notice_id)} class="btn btn-primary">Approve</Button>
+                          <Button variant="secondary" style={{ margin: '5px' }} onClick={() => handleRejectNotice(notice.user_notice_id)} class="btn btn-primary">Deny</Button>
                         </div>
                       </td>
                     </tr>
@@ -533,6 +534,7 @@ export const UserNotices = () => {
             className="form-control"
             rows="4"
             required="true"
+            style={{ backgroundColor: '#282828', color: '#c1c1c1' }}
           ></textarea>
         </div>
         <div className="form-group">
@@ -544,6 +546,7 @@ export const UserNotices = () => {
             value={newNoticeData.notice_type}
             onChange={handleInputChange}
             className="form-control"
+            style={{ backgroundColor: '#282828', color: '#c1c1c1' }}
           >
             {noticeTypeOptions.map(option => (
               <option key={option.value} value={option.value}>
