@@ -27,11 +27,11 @@ app.use((req, res, next) => {
 // // All Calendar data
 app.get(`/mycalendar`, function (req, res) {
   var userId = req.query.userId;
-  console.log(req, res);
+  var teamId = req.query.teamId;
   knex("calendar_events")
+    .select("calendar_events.*", "event_type.color_code")
     .join('event_type', 'calendar_events.event_type', 'event_type.event_id')
-    .where("user_id", userId)
-    .select("calendar_events.*", "event_type.color_code" )
+    .where("calendar_events.user_id", userId).orWhere("calendar_events.team_id", teamId)
     .then((data) => {
       console.log("it works");
       res.status(200).json(data);
@@ -134,7 +134,8 @@ app.post("/api/login", async (req, res) => {
       supervisorID: supervisorID,
       isSupervisor: !!isSupervisor,
       isManager: isManager,
-      enabled: user.enabled
+      enabled: user.enabled,
+      teamID: user.team_id
     });
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });

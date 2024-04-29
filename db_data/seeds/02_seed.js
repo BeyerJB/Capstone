@@ -123,7 +123,7 @@ exports.seed = async function(knex) {
 
   // Seed calendar_events table
   await knex('calendar_events').insert([
-    { title: 'Meeting 1', start_datetime: '2024-04-19T10:00:00', end_datetime: '2024-04-19T11:00:00', user_id: 1, description: 'Weekly team meeting', event_type: 2, creator_id: 1, pending: false, approved: true },
+    { title: 'Meeting 1', start_datetime: '2024-04-19T10:00:00', end_datetime: '2024-04-19T11:00:00', team_id: 1, description: 'Weekly team meeting', event_type: 2, creator_id: 1, pending: false, approved: true },
     { title: 'Training 1', start_datetime: '2024-04-20T09:00:00', end_datetime: '2024-04-20T12:00:00', user_id: 2, description: 'Training session', event_type: 3, creator_id: 2, pending: false, approved: true },
     { title: 'Holiday 1', start_datetime: '2024-04-21T00:00:00', end_datetime: '2024-04-21T23:59:59', user_id: 3, description: 'Public holiday', event_type: 4, creator_id: 3, pending: false, approved: true },
     { title: 'Meeting 2', start_datetime: '2024-04-22T11:00:00', end_datetime: '2024-04-22T12:00:00', team_id: 1, description: 'Weekly team meeting', event_type: 2, creator_id: 1, pending: false, approved: true },

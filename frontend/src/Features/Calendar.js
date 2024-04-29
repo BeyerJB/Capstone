@@ -34,7 +34,7 @@ export const Calendar = () => {
   // const [color, setColor] = useState(null)
 
   useEffect(() => {
-    fetch(`http://localhost:8080/mycalendar?userId=${userId}`)
+    fetch(`http://localhost:8080/mycalendar?userId=${userId}&teamId=${cookies.teamID}`)
       .then(response => response.json())
       .then(data => {
         setAllData(data);
@@ -47,6 +47,7 @@ export const Calendar = () => {
           color: event.color_code
         }));
         setEvents(formattedEvents);
+        console.log(data);
         // setDescription(formattedEvents.description)
       })
       .catch(error => console.error('Error fetching events: ', error));
