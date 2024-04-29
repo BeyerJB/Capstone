@@ -7,6 +7,10 @@
   border-width: 1.3px; */
 }
 
+.form-control::placeholder {
+  color: black;
+}
+
 .form-select {
   background-color: lightgrey;
 }
@@ -22,12 +26,17 @@
 
 .form-check-input {
   background-color: lightgrey;
-  min-width: 35px;
-  min-height: 35px;
+  min-width: 25px;
+  min-height: 25px;
 }
 
 .form-check-label {
   font-family: "Segoe UI", Arial, sans-serif;
   padding-left: 10px;
-  padding-top: 8px;
+  padding-top: 5px;
 }
+
+.datepicker::placeholder {
+  color: black; 
+}
+

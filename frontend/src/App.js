@@ -12,7 +12,9 @@ import { CreateEvent } from './Features/CreateEvent'
 import { AuthContext } from './Features/AuthContext';
 import { useCookies } from 'react-cookie'
 import { UserNotices } from './Features/UserNotices';
-import { TeamView } from './Features/TeamView'
+import { TeamView } from './Features/TeamView';
+import { TeamEditor } from './Features/TeamEditor'
+
 
 function App() {
   const { logout } = useContext(AuthContext)
@@ -46,6 +48,7 @@ function App() {
                   <li><Link to="/TeamView">Team View</Link></li>
                   <li><a onClick={handleOpenNotices}>Notices</a></li>
                   <li><a onClick={handleOpenEvents}>Create Event</a></li>
+                  <li><Link to="/teameditor">Team Editor</Link></li>
                   <li><a onClick={() => logout()}>Log out</a></li>
                 </>
               )}
@@ -58,6 +61,7 @@ function App() {
           <Route path='/mycalendar' element={<Calendar />} />
           <Route path='/TeamView' element={<TeamView /> } />
           <Route path='/createevent' element={<CreateEvent />} />
+          <Route path='/teameditor' element={<TeamEditor/>} />
         </Routes>
         <SlidingPane isOpen={noticePaneOpened} onRequestClose={handleOpenNotices} width="1000px" title="User Notices">
           <UserNotices />

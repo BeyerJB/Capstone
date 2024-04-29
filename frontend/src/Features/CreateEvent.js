@@ -192,7 +192,7 @@ const handleNewNotice = () => {
           <Form.Control
             required
             type="text"
-            placeholder="Enter event title"
+            placeholder="Enter Event Title"
             name="title"
             value={formData.title}
             onChange={handleInputChange} />
@@ -204,7 +204,7 @@ const handleNewNotice = () => {
             value={eventTypeData.event_id}
             onChange={handleInputChange}
             name="event_id">
-            <option value="">Event type</option>
+            <option value="">Select an Event</option>
             {eventTypeOptions}
           </Form.Select>
         </Col>
@@ -252,7 +252,7 @@ const handleNewNotice = () => {
             value={teamFormData.team_id}
             onChange={handleInputChange}
             name="team_id">
-            <option value="">Select A Team</option>
+            <option value="">Select a Team</option>
             <option>Just Me</option>
             {teamOptions}
           </Form.Select>
