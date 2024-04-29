@@ -26,6 +26,7 @@ export const TeamView = () => {
     fetch(`http://localhost:8080/api/teamview/${cookies.userID}`)
       .then(res => res.json())
       .then(jsonRes => setTeamEvents(jsonRes))
+    console.log(teamEvents);
   }, [cookies.userID])
 
   const openModal = (event) => {

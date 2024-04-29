@@ -14,7 +14,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import Form from 'react-bootstrap/Form';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import '../CSS/Calendar.css'
+import '../CSS/calendar.css'
 
 export const Calendar = () => {
   const [cookies] = useCookies(['userID', 'firstName', 'lastName', 'rank']);
@@ -30,11 +30,11 @@ export const Calendar = () => {
   const [endDateTime, setEndDateTime] = useState(null);
   const [title, setTitle] = useState(null);
   const [description, setDescription] = useState(null);
-  const [eventId, setEventId] = useState(null)
-  ///
+  const [eventId, setEventId] = useState(null);
+  // const [color, setColor] = useState(null)
 
   useEffect(() => {
-    fetch(`http://localhost:8080/mycalendar?userId=${userId}`)
+    fetch(`http://localhost:8080/mycalendar?userId=${userId}&teamId=${cookies.teamID}`)
       .then(response => response.json())
       .then(data => {
         setAllData(data);
@@ -43,27 +43,34 @@ export const Calendar = () => {
           start: new Date(event.start_datetime),
           end: new Date(event.end_datetime),
           description: event.description,
-          id: event.event_id
+          id: event.event_id,
+          color: event.color_code
         }));
         setEvents(formattedEvents);
+        console.log(data);
         // setDescription(formattedEvents.description)
       })
       .catch(error => console.error('Error fetching events: ', error));
-  }, [userId, editedEvent]);
+  }, [editedEvent]);
  console.log('all data: ', allData)
 
-  const openModal = (event) => {
+ const openModal = (event) => {
+  try {
     setSelectedEvent(event);
     setIsModalOpen(true);
-    console.log('event: ', event)
-    console.log('event id: ', selectedEvent.event.id)
-  };
+    console.log('event: ', event);
+    console.log('event id: ', selectedEvent.event.id);
+    console.log(selectedEvent);
+  } catch (error) {
+    console.error('Error opening modal:', error);
+    // Handle error
+  }
+}
 
   const closeModal = () => {
     setIsModalOpen(false);
     setIsEditing(false);
   };
-
 
   const handleEditClick = () => {
     setIsEditing(true);
@@ -72,6 +79,7 @@ export const Calendar = () => {
     setStartDateTime(selectedEvent.event.start)
     setEndDateTime(selectedEvent.event.end)
     setEventId( selectedEvent.event.id)
+    // setColor(selectedEvent.event.backgroundColor)
   };
 
   const handleSaveClick = () => {
@@ -99,13 +107,14 @@ export const Calendar = () => {
     .then(data => {
       console.log('Edit Successful:', data, editedEventData);
       setIsEditing(false);
+      window.location.reload();
     })
     .catch(error => {
       console.error('Error editing event:', error);
       // Handle error
     });
-  };
 
+  };
 
   const handleCancelClick = () => {
     setIsEditing(false);
@@ -133,19 +142,6 @@ export const Calendar = () => {
     setEndDateTime(date);
   };
 
-  // const handleStartDateChange = (date) => {
-  //   // Convert the selected date to UTC
-  //   const utcStartDate = date.toISOString();
-  //   setStartDateTime(utcStartDate);
-  //   console.log(utcStartDate)
-  // };
-
-  // const handleEndDateChange = (date) => {
-  //   // Convert the selected date to UTC
-  //   const utcEndDate = date.toISOString();
-  //   setEndDateTime(utcEndDate);
-  // };
-
   return (
     <>
       <div className="calendar" style={{ paddingInline: '50px' }}>
@@ -157,7 +153,6 @@ export const Calendar = () => {
             start: "today prev,next",
             center: 'title',
             end: 'timeGridWeek,dayGridMonth,multiMonthYear'
-            // end: 'timeGridDay,timeGridWeek,dayGridMonth'
           }}
           views = {{
             timeGridWeek: {
@@ -186,6 +181,21 @@ export const Calendar = () => {
           aspectRatio='2'
           // multiMonthMaxColumns='12'
           events={events}
+          eventContent={(eventInfo) => {
+            return (
+              <div style={{ backgroundColor: `#${eventInfo.event.backgroundColor}`}}>
+                {eventInfo.timeText} - {eventInfo.event.title}
+              </div>
+            );
+          }}
+          // eventContent={(eventInfo) => {
+          //   return {
+          //     ...eventInfo,
+          //     backgroundColor: eventInfo.event.backgroundColor
+          //   }
+          // }}
+
+
         />
       </div>
       <div style={{ position: 'absolute', visibility: 'hidden', zIndex: 12001, width: '158px', padding: '2px 0 0 0',  textDecoration: 'none' }}>
