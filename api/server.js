@@ -128,7 +128,8 @@ app.get("/api/ranks", (req, res) => {
   .select("name", "rank_id")
   .then(dbres => res.status(200).json(dbres))
   .catch(err => res.status(500).json({ error: "Internal server error"}))
-})
+  }
+)
 
 //get user types for account creation
 app.get("/api/usertypes", (req, res) => {
@@ -252,49 +253,55 @@ app.get("/api/supervisor/:userId", async (req, res) => {
 });
 
 //Get Team Calendar Events
-app.get("/api/teamview/:userId", async (req, res) => {
-  const userId = req.params.userId;
-  knex("calendar_users")
+app.get("/api/teamview", async (req, res) => {
+  try {
+    const users = await knex('calendar_users')
     .select(
-      "calendar_users.user_id",
+      "calendar_users.team_id",
+      "calendar_teams.name AS team_name",
       "first_name",
       "last_name",
-      "event_type.name as event_type",
+      "ranks.name AS rank"
+    )
+    .join("ranks", "calendar_users.rank", "=", "ranks.rank_id")
+    .join("calendar_teams", "calendar_teams.team_id", "calendar_users.team_id");
+    const userEvents = await knex('calendar_events')
+    .select(
+      "user_id",
       "title",
-      "calendar_events.description",
       "start_datetime",
       "end_datetime",
       "all_day",
-      "creator_id",
-      "ranks.name AS rank",
-      "calendar_teams.name AS team_name"
+      "calendar_events.description",
+      "event_type.name AS event_type"
     )
-    .join("calendar_events","calendar_users.user_id","=","calendar_events.user_id")
-    .join("ranks", "calendar_users.rank", "=", "ranks.rank_id")
     .join("event_type", "calendar_events.event_type", "=", "event_type.event_id")
-    .join("calendar_teams", "calendar_teams.team_id", "calendar_users.team_id")
-    //.where("calendar_users.supervisor_id", userId)
-    .then((dbres) => res.status(200).json(dbres))
-    .catch((err) => res.status(500).json({ err: "Internal server error : ", err }));
+    .whereNotNull("user_id")
+
+    const teamEvents = await knex('calendar_events')
+    .select(
+      "calendar_events.team_id",
+      "calendar_teams.name AS team_name",
+      "title",
+      "start_datetime",
+      "end_datetime",
+      "all_day",
+      "calendar_events.description",
+      "event_type.name AS event_type"
+    )
+    .join("event_type", "calendar_events.event_type", "=", "event_type.event_id")
+    .join("calendar_teams", "calendar_events.team_id", "=", "calendar_teams.team_id")
+    .whereNotNull("calendar_events.team_id")
+
+    res.status(200).json({users:users, userEvents:userEvents, teamEvents:teamEvents})
+  } catch(err) {
+    res.status(500).json({ err: "Internal server error : ", err });
+  }
 });
-
-
-
-
-
-// app.get("/aaa", (req, res) => {
-//   knex("calendar_events")
-//     .select("*")
-//     .then((data) => res.status(200).json(data));
-// });
 
 app.listen(port, () => {
   console.log("It is running");
 });
-
-app.get("/", (req, res) => {
-  res.send("SYSTEM ONLINE");
-})
 
 //THIS CALL GETS ALL TEAMS A USER IS PART OF VIA THEIR ID, RETURNS AN ARRAY OF OBJECTS WITH ALL RELEVANT FIELDS
 app.post("/calendar_team/userid", (req, res) => {
@@ -445,3 +452,4 @@ app.put("/api/accounts/choice", async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 })
+

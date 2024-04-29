@@ -15,18 +15,43 @@ import '../CSS/TeamView.css'
 
 export const TeamView = () => {
   const [cookies] = useCookies(['userID', 'firstName', 'lastName', 'rank']);
-  const [teamEvents, setTeamEvents ] = useState([])
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
-  //const [filteredUsers, setFilteredUsers] = useState([])
+  const [filteredUsers, setFilteredUsers] = useState([])
+  const [teamEvents, setTeamEvents ] = useState([])
+  const [userEvents, setUserEvents ] = useState([])
+  const [users, setUsers] = useState([])
 
 
   useEffect(() => {
-    console.log("cookie id", `http://localhost:8080/api/teamview/${cookies.userID}`)
-    fetch(`http://localhost:8080/api/teamview/${cookies.userID}`)
-      .then(res => res.json())
-      .then(jsonRes => setTeamEvents(jsonRes))
-  }, [cookies.userID])
+    fetch(`http://localhost:8080/api/teamview`)
+      .then(result => result.json())
+      .then((result) => {
+        //setTeamEvents(jsonRes))
+        modifyUsers(result.users);
+        setUserEvents(result.userEvents);
+        setUsers(result.teamEvents);
+  })}, [])
+
+  // useEffect(() => {
+  //   fetch(`http://localhost:8080/api/teamview`)
+  //     .then(res => res.json())
+  //     .then(jsonRes => setTeamEvents(jsonRes))
+  // }, [])
+
+
+  // useEffect(() => {
+  //   fetch(`http://localhost:8080/api/teamview`)
+  //     .then(res => res.json())
+  //     .then(jsonRes => setTeamEvents(jsonRes))
+  // }, [])
+
+
+const modifyUsers = (users) => {
+  const usersByTeam = Object.groupBy(users, user => user.team_name)
+  console.log(usersByTeam)
+}
+
 
   const openModal = (event) => {
     setSelectedEvent(event);
@@ -37,9 +62,17 @@ export const TeamView = () => {
     setIsModalOpen(false);
   };
 
-  // const guardianFilter = () => {
-  //   const modifiedevents = teamEvents.filter((user) => user.user_id = event.user_id)
-  // }
+  const handleGuardianClick = (info) => {
+      const filteredGuardian = {
+      resourceid: info.el.dataset.resourceId,
+      title: info.fieldValue,
+      team_name: 'A FilteredUsers'
+      }
+    setFilteredUsers([...filteredUsers, filteredGuardian])
+  }
+
+
+
 
   return (
     <div className="teamview-calendar">
@@ -97,7 +130,6 @@ export const TeamView = () => {
                   }}
         schedulerLicenseKey="CC-Attribution-NonCommercial-NoDerivatives"
         timeZone="UTC"
-        width="99vw"
         height="90vh"
         contentHeight= 'auto'
         scrollTime="00:00"
@@ -108,16 +140,25 @@ export const TeamView = () => {
         resourceAreaHeaderContent="Guardians"
         resourceAreaWidth = "10vw"
         resourceGroupField={['team_name']}
-        resources={
-         //filterstate ? filters.map(users) :
-          teamEvents.map(user => {
+        resources={[
+          ...filteredUsers,
+          ...teamEvents.map(user => {
               return ({
                 id: user.user_id,
                 title: `${user.rank} ${user.first_name} ${user.last_name}`,
                 team_name : user.team_name
               })
             })
+
+          ]
         }
+        resourceLabelDidMount={(info) => {
+          info.el.addEventListener("click", function() {
+              handleGuardianClick(info)
+
+              console.log('clicked', info.fieldValue, 'id:', info.el.dataset.resourceId,'allinfo:', info )    //.el.dataset.resourceId   el.dataset
+          })}}
+
         events={
           teamEvents.map(user => {
             return ({
@@ -131,7 +172,7 @@ export const TeamView = () => {
 
             })
           })
-      }
+        }
       />
       <div style={{ position: 'absolute', visibility: 'hidden', zIndex: 12001, width: '158px', padding: '2px 0 0 0',  textDecoration: 'none' }}>
       <Modal show={isModalOpen} onHide={closeModal} size='lg' aria-labelledby='contained-modal-title-vcenter' centered>
@@ -175,4 +216,37 @@ export const TeamView = () => {
     ]
   },
 
+{
+    "users": [
+        {
+            "team_id": 1,
+            "team_name": "Team A",
+            "first_name": "John",
+            "last_name": "Doe",
+            "rank": "SMSgt"
+        }
+      ],
+      "userEvents": [
+        {
+            "user_id": 1,
+            "title": "Meeting 1",
+            "start_datetime": "2024-04-19T10:00:00.000Z",
+            "end_datetime": "2024-04-19T11:00:00.000Z",
+            "all_day": false,
+            "description": "Weekly team meeting",
+            "event_type": "Meeting"
+        }
+      ],
+      ["teamEvents": [
+        {
+            "team_id": 1,
+            "team_name": "Team A",
+            "title": "Meeting 2",
+            "start_datetime": "2024-04-22T11:00:00.000Z",
+            "end_datetime": "2024-04-22T12:00:00.000Z",
+            "all_day": false,
+            "description": "Weekly team meeting",
+            "event_type": "Meeting"
+        }
+      ]
 */
