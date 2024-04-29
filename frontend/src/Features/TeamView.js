@@ -28,7 +28,7 @@ export const TeamView = () => {
       .then(result => result.json())
       .then((result) => {
         //setTeamEvents(jsonRes))
-        modifyUsers(result.users);
+        setUserEvents(modifyUsers(result.users));
         setUserEvents(result.userEvents);
         setUsers(result.teamEvents);
   })}, [])
