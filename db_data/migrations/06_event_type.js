@@ -3,6 +3,7 @@ exports.up = function(knex) {
     table.increments('event_id').primary();
     table.string('name');
     table.string('description');
+    table.string('color_code');
   });
 };
 

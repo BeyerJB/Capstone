@@ -3,6 +3,7 @@ const app = express();
 const port = process.env.port || 8080;
 const cors = require("cors");
 const morgan = require("morgan");
+const bodyParser = require('body-parser');
 const knex = require("knex")(
   require("./knexfile.js")[process.env.NODE_ENV || "development"]
 );
@@ -17,7 +18,7 @@ app.use(
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, PUT, DELETE");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
   res.setHeader("Access-Control-Allow-Credentials", "true");
   next();
@@ -26,10 +27,11 @@ app.use((req, res, next) => {
 // // All Calendar data
 app.get(`/mycalendar`, function (req, res) {
   var userId = req.query.userId;
-  console.log(req, res);
+  var teamId = req.query.teamId;
   knex("calendar_events")
-    .where("user_id", userId)
-    .select("*")
+    .select("calendar_events.*", "event_type.color_code")
+    .join('event_type', 'calendar_events.event_type', 'event_type.event_id')
+    .where("calendar_events.user_id", userId).orWhere("calendar_events.team_id", teamId)
     .then((data) => {
       console.log("it works");
       res.status(200).json(data);
@@ -42,32 +44,24 @@ app.get(`/mycalendar`, function (req, res) {
     });
 });
 
-// All Calendar data
-// app.get(`/mycalendar/:userId`, async function(req, res){
-//   try {
-//     console.log(req);
-//     const userId = req.params.userId;
-//     const data = await knex('calendar_events')
-//                       .where('user_id', userId)
-//                       .select('*');
-//     res.status(200).json(data);
-//   } catch (error) {
-//     console.error('Error fetching calendar data:', error);
-//     res.status(500).json({message: 'Internal server error'});
-//   }
-// });
+app.use(bodyParser.json());
 
-// Calendar data for a specific user
-// app.get('/mycalendar', function(req,res){
-//   knex('calendar_events')
-//     .select('*')
-//     .then(data => res.status(200).json(data))
-//     .catch(err => res.status(202).json({message: 'The data you are looking for could not be found.'}))
-// })
 
-// app.get('/', req, res) {
-//   res.status(200).send({message: 'server is running'})
-// }
+
+app.patch("/edit_event", (req, res) => {
+  const {id, title, start, end, description} = req.body;
+  //console.log("ATTEMPTING TO UPDATE WITH: ", id, title, start, end, description)
+  knex("calendar_events")
+    .where({event_id: id})
+    .update({
+      title: title,
+      description: description,
+      start_datetime: start,
+      end_datetime: end
+    })
+    .then(res.status(201).json({ message: "Update pushed" }));
+})
+
 
 // Login API
 app.post("/api/login", async (req, res) => {
@@ -108,7 +102,8 @@ app.post("/api/login", async (req, res) => {
       supervisorID: supervisorID,
       isSupervisor: !!isSupervisor,
       isManager: isManager,
-      enabled: user.enabled
+      enabled: user.enabled,
+      teamID: user.team_id
     });
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
@@ -217,7 +212,7 @@ app.get("/api/notices/supervisor/:userId", async (req, res) => {
       .join('notice_type', 'notice_type_id', 'user_notice.notice_type')
       .join('calendar_users', 'submitter_id', 'user_id')
       .join('ranks', 'rank_id', 'calendar_users.rank')
-      .where({ recipient_id: userId, notice_status: 1 });
+      .where({ recipient_id: userId, notice_status: 1, event_id: null });
     res.status(200).json(notices);
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
@@ -384,7 +379,8 @@ app.get("/api/events/pending", async (req, res) => {
         'calendar_users.last_name',
         'ranks.name as rank_name',
         'event_type.name as event_type_name',
-        'user_notice.user_notice_id'
+        'user_notice.user_notice_id',
+        'user_notice.recipient_id'
       )
       .join('calendar_users', 'creator_id', 'calendar_users.user_id')
       .join('ranks', 'rank_id', 'calendar_users.rank')
@@ -426,15 +422,16 @@ app.put("/api/events/choice", async (req, res) => {
   }
 })
 
-// Create auto generated notice for during event creation
+// Create auto generated notice during event creation or edit
 app.post("/api/notices/auto", async (req, res) => {
-  const { submitter_id, body, notice_type, event_id } = req.body;
+  const { submitter_id, body, notice_type, event_id, recipient_id } = req.body;
   try {
     await knex("user_notice").insert({
       submitter_id,
       body,
       notice_type,
-      event_id
+      event_id,
+      recipient_id
     });
     res.status(201).json({ message: "Notice created successfully" });
   } catch (error) {
@@ -453,3 +450,15 @@ app.put("/api/accounts/choice", async (req, res) => {
   }
 })
 
+// Get team member user_id's
+app.get("/api/teammembers/:teamId", async (req, res) => {
+  const teamID = req.params.teamId;
+  try {
+    const teamMembers = await knex("calendar_users")
+      .select("user_id")
+      .where("team_id", teamID)
+    res.status(200).json(teamMembers);
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+});

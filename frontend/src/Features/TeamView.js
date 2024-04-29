@@ -24,6 +24,7 @@ export const TeamView = () => {
 
 
   useEffect(() => {
+<<<<<<< HEAD
     fetch(`http://localhost:8080/api/teamview`)
       .then(result => result.json())
       .then((result) => {
@@ -52,6 +53,14 @@ const modifyUsers = (users) => {
   console.log(usersByTeam)
 }
 
+=======
+    console.log("cookie id", `http://localhost:8080/api/teamview/${cookies.userID}`)
+    fetch(`http://localhost:8080/api/teamview/${cookies.userID}`)
+      .then(res => res.json())
+      .then(jsonRes => setTeamEvents(jsonRes))
+    console.log(teamEvents);
+  }, [cookies.userID])
+>>>>>>> origin/main
 
   const openModal = (event) => {
     setSelectedEvent(event);
