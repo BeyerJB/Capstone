@@ -89,36 +89,36 @@ exports.seed = async function(knex) {
 
   // Seed chain_of_command table
   await knex('chain_of_command').insert([
-    { supervisor_id: 1, subordinate_id: 4 },
-    { supervisor_id: 1, subordinate_id: 5 },
-    { supervisor_id: 1, subordinate_id: 6 },
-    { supervisor_id: 1, subordinate_id: 7 },
-    { supervisor_id: 1, subordinate_id: 8 },
-    { supervisor_id: 1, subordinate_id: 9 },
-    { supervisor_id: 2, subordinate_id: 10 },
-    { supervisor_id: 2, subordinate_id: 11 },
-    { supervisor_id: 2, subordinate_id: 12 },
-    { supervisor_id: 2, subordinate_id: 13 },
-    { supervisor_id: 2, subordinate_id: 14 },
-    { supervisor_id: 2, subordinate_id: 15 },
-    { supervisor_id: 3, subordinate_id: 16 },
-    { supervisor_id: 3, subordinate_id: 17 },
-    { supervisor_id: 3, subordinate_id: 18 },
-    { supervisor_id: 3, subordinate_id: 19 },
-    { supervisor_id: 3, subordinate_id: 20 }
+    { supervisor_id: 8, subordinate_id: 4 },
+    { supervisor_id: 8, subordinate_id: 5 },
+    { supervisor_id: 8, subordinate_id: 6 },
+    { supervisor_id: 8, subordinate_id: 7 },
+    { supervisor_id: 9, subordinate_id: 8 },
+    { supervisor_id: 2, subordinate_id: 9 },
+    { supervisor_id: 14, subordinate_id: 10 },
+    { supervisor_id: 14, subordinate_id: 11 },
+    { supervisor_id: 14, subordinate_id: 12 },
+    { supervisor_id: 14, subordinate_id: 13 },
+    { supervisor_id: 9, subordinate_id: 14 },
+    { supervisor_id: 3, subordinate_id: 15 },
+    { supervisor_id: 20, subordinate_id: 16 },
+    { supervisor_id: 20, subordinate_id: 17 },
+    { supervisor_id: 20, subordinate_id: 18 },
+    { supervisor_id: 20, subordinate_id: 19 },
+    { supervisor_id: 15, subordinate_id: 20 }
   ]);
 
   // Seed user_notice table
   await knex('user_notice').insert([
-    { notice_status: 1, submitter_id: 10, recipient_id: 2, body: 'Test notice 1', notice_type: 1 },
-    { notice_status: 1, submitter_id: 13, recipient_id: 2, body: 'Test notice 2', notice_type: 2 },
-    { notice_status: 1, submitter_id: 5, recipient_id: 1, body: 'Test notice 3', notice_type: 3 },
-    { notice_status: 1, submitter_id: 7, recipient_id: 1, body: 'Test notice 3', notice_type: 3 },
-    { notice_status: 1, submitter_id: 17, recipient_id: 3, body: 'Test notice 4', notice_type: 1 },
-    { notice_status: 1, submitter_id: 20, recipient_id: 3, body: 'Test notice 5', notice_type: 2 },
-    { notice_status: 1, submitter_id: 20, body: 'Event Creation', notice_type: 4, event_id: 30 },
-    { notice_status: 1, submitter_id: 17, body: 'Event Creation', notice_type: 4, event_id: 31 },
-    { notice_status: 1, submitter_id: 18, body: 'Event Creation', notice_type: 4, event_id: 32 }
+    { notice_status: 1, submitter_id: 10, recipient_id: 14, body: 'Test notice 1', notice_type: 1 },
+    { notice_status: 1, submitter_id: 13, recipient_id: 14, body: 'Test notice 2', notice_type: 2 },
+    { notice_status: 1, submitter_id: 5, recipient_id: 8, body: 'Test notice 3', notice_type: 3 },
+    { notice_status: 1, submitter_id: 7, recipient_id: 8, body: 'Test notice 3', notice_type: 3 },
+    { notice_status: 1, submitter_id: 17, recipient_id: 20, body: 'Test notice 4', notice_type: 1 },
+    { notice_status: 1, submitter_id: 20, recipient_id: 15, body: 'Test notice 5', notice_type: 2 },
+    { notice_status: 1, submitter_id: 20, recipient_id: 15, body: 'Event Creation', notice_type: 4, event_id: 30 },
+    { notice_status: 1, submitter_id: 17, recipient_id: 20, body: 'Event Creation', notice_type: 4, event_id: 31 },
+    { notice_status: 1, submitter_id: 9, recipient_id: 2, body: 'Event Creation', notice_type: 4, event_id: 32 }
   ]);
 
   // Seed calendar_events table
@@ -154,6 +154,6 @@ exports.seed = async function(knex) {
     { title: 'Training 9', start_datetime: '2024-05-17T10:00:00', end_datetime: '2024-05-17T12:00:00', user_id: 9, description: 'Training session on leadership skills', event_type: 2, creator_id: 2, pending: false, approved: true },
     { title: 'Random Meeting 7', start_datetime: '2024-05-19T11:00:00', end_datetime: '2024-05-19T12:00:00', team_id: 1, description: 'Weekly team meeting', event_type: 1, creator_id: 20 },
     { title: 'Random Meeting 8', start_datetime: '2024-05-20T11:00:00', end_datetime: '2024-05-20T12:00:00', team_id: 2, description: 'Weekly team meeting', event_type: 1, creator_id: 17 },
-    { title: 'Random Meeting 6', start_datetime: '2024-05-21T11:00:00', end_datetime: '2024-05-20T12:00:00', team_id: 1, description: 'Weekly team meeting', event_type: 1, creator_id: 18 }
+    { title: 'Random Meeting 6', start_datetime: '2024-05-21T11:00:00', end_datetime: '2024-05-20T12:00:00', team_id: 1, description: 'Weekly team meeting', event_type: 1, creator_id: 9 }
   ]);
 };

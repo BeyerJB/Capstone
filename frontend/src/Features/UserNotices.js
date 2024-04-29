@@ -16,7 +16,7 @@ export const UserNotices = () => {
   const [noticeUpdateData, setNoticeUpdateData] = useState({});
   const [eventUpdateData, setEventUpdateData] = useState({});
   const [accountUpdateData, setAccountUpdateData] = useState({});
-  const [supervisorNoticeData, setSupervisorNoticeData] = useState({});
+  const [supervisorNoticeData, setSupervisorNoticeData] = useState([]);
 
   const [noticeTypeOptions] = useState([
     { value: 1, label: 'General' },
@@ -46,15 +46,23 @@ export const UserNotices = () => {
     }
   };
 
-  const fetchPendingEvents = () => {
+  const fetchPendingEvents = async () => {
     if (cookies.userID !== undefined) {
-      fetch(`http://localhost:8080/api/events/pending`)
-        .then(response => response.json())
-        .then(data => {
-          setPendingEvents(data);
-          setSupervisorNoticeData(data.filter((notices) => notices.recipient_id === cookies.userID))
-        })
-        .catch(error => console.error('Error fetching submitted notices:', error));
+      try {
+        const response = await fetch(`http://localhost:8080/api/events/pending`);
+        const data = await response.json();
+
+        setPendingEvents(data);
+
+        if (Array.isArray(data)) {
+          const filteredData = data.filter(notice => notice.recipient_id === cookies.userID);
+          setSupervisorNoticeData(filteredData);
+        } else {
+          setSupervisorNoticeData([]);
+        }
+      } catch (error) {
+        console.error('Error fetching submitted notices:', error);
+      }
     }
   };
 
@@ -392,8 +400,8 @@ export const UserNotices = () => {
           <div className="notice-form"  style={{ marginBottom: '20px' }}>
           <Tabs>
               <TabList>
+                <Tab>User Notices</Tab>
                 <Tab>Calendar Request</Tab>
-                <Tab>Account Request</Tab>
               </TabList>
 
               <TabPanel>
@@ -429,9 +437,10 @@ export const UserNotices = () => {
               </TabPanel>
 
               <TabPanel>
-                {supervisorNoticeData.length === 0 ? (
+                {(supervisorNoticeData.length === 0 || cookies.isManager) && (
                     <p>No Pending Calendar Request</p>
-                ) : (
+                )}
+                {(supervisorNoticeData.length > 0 && !cookies.isManager) && (
                   <table>
                     <thead>
                       <tr>
@@ -552,43 +561,6 @@ export const UserNotices = () => {
           </TabPanel>
         </Tabs>
       </div>
-
-      {cookies.isSupervisor && (
-        <>
-          <h2>Supervisor Notices</h2>
-          <div className="notice-form"  style={{ marginBottom: '20px' }}>
-            {supervisorNotices.length === 0 ? (
-              <p>No Pending Notices</p>
-            ) : (
-              <table>
-                <thead>
-                  <tr>
-                    <th>User</th>
-                    <th>Request</th>
-                    <th>Type</th>
-                    <th className="text-center">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {supervisorNotices.map(notice => (
-                    <tr key={notice.user_notice_id}>
-                      <td>{notice.rank_name} {notice.first_name} {notice.last_name}</td>
-                      <td>{notice.body}</td>
-                      <td>{notice.notice_name}</td>
-                      <td>
-                        <div className="button-container text-center">
-                          <Button variant="secondary" style={{ margin: '5px' }} onClick={() => handleAcceptNotice(notice.user_notice_id)} class="btn btn-primary">Approve</Button>
-                          <Button variant="secondary" style={{ margin: '5px' }} onClick={() => handleRejectNotice(notice.user_notice_id)} class="btn btn-primary">Deny</Button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
-          </div>
-        </>
-      )}
 
       <h2>Create New Notice</h2>
       <form className="notice-form" onSubmit={handleNewNotice}  style={{ marginBottom: '20px' }}>

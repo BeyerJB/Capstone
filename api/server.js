@@ -216,7 +216,7 @@ app.get("/api/notices/supervisor/:userId", async (req, res) => {
       .join('notice_type', 'notice_type_id', 'user_notice.notice_type')
       .join('calendar_users', 'submitter_id', 'user_id')
       .join('ranks', 'rank_id', 'calendar_users.rank')
-      .where({ recipient_id: userId, notice_status: 1 });
+      .where({ recipient_id: userId, notice_status: 1, event_id: null });
     res.status(200).json(notices);
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
@@ -377,7 +377,8 @@ app.get("/api/events/pending", async (req, res) => {
         'calendar_users.last_name',
         'ranks.name as rank_name',
         'event_type.name as event_type_name',
-        'user_notice.user_notice_id'
+        'user_notice.user_notice_id',
+        'user_notice.recipient_id'
       )
       .join('calendar_users', 'creator_id', 'calendar_users.user_id')
       .join('ranks', 'rank_id', 'calendar_users.rank')
