@@ -31,7 +31,7 @@ export const Calendar = () => {
   const [title, setTitle] = useState(null);
   const [description, setDescription] = useState(null);
   const [eventId, setEventId] = useState(null);
-  const [color, setColor] = useState(null)
+  // const [color, setColor] = useState(null)
   ///
 
   useEffect(() => {
@@ -51,15 +51,20 @@ export const Calendar = () => {
         // setDescription(formattedEvents.description)
       })
       .catch(error => console.error('Error fetching events: ', error));
-  }, [userId, editedEvent]);
+  }, [editedEvent]);
  console.log('all data: ', allData)
 
-  const openModal = (event) => {
+ const openModal = (event) => {
+  try {
     setSelectedEvent(event);
     setIsModalOpen(true);
-    console.log('event: ', event)
-    console.log('event id: ', selectedEvent.event.id)
-  };
+    console.log('event: ', event);
+    console.log('event id: ', selectedEvent.event.id);
+  } catch (error) {
+    console.error('Error opening modal:', error);
+    // Handle error
+  }
+}
 
   const closeModal = () => {
     setIsModalOpen(false);
@@ -74,7 +79,7 @@ export const Calendar = () => {
     setStartDateTime(selectedEvent.event.start)
     setEndDateTime(selectedEvent.event.end)
     setEventId( selectedEvent.event.id)
-    setColor(selectedEvent.event.backgroundColor)
+    // setColor(selectedEvent.event.backgroundColor)
   };
 
   const handleSaveClick = () => {
@@ -83,8 +88,7 @@ export const Calendar = () => {
       title: title,
       start: startDateTime,
       end: endDateTime,
-      description: description,
-      color_code: color
+      description: description
     };
 
     fetch('http://localhost:8080/edit_event', {
@@ -103,11 +107,13 @@ export const Calendar = () => {
     .then(data => {
       console.log('Edit Successful:', data, editedEventData);
       setIsEditing(false);
+      window.location.reload();
     })
     .catch(error => {
       console.error('Error editing event:', error);
       // Handle error
     });
+
   };
 
 
