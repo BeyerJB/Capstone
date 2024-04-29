@@ -17,7 +17,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import '../CSS/calendar.css'
 
 export const Calendar = () => {
-  const [cookies] = useCookies(['userID', 'firstName', 'lastName', 'rank']);
+  const [cookies] = useCookies(['userID', 'firstName', 'lastName', 'rank', 'isManager']);
   const [events, setEvents] = useState([]);
   const [allData, setAllData] = useState([]);
   const userId = cookies.userID;
@@ -271,7 +271,8 @@ export const Calendar = () => {
               </>
             ) : (
               <>
-                <Button variant="secondary" onClick={handleEditClick}>Edit event</Button>
+              {cookies.isManager && (<Button variant="secondary" onClick={handleEditClick}>Edit event</Button>) }
+
               </>
             )}
             <Button variant="danger" onClick={closeModal}>Close</Button>
