@@ -32,6 +32,12 @@ export const Calendar = () => {
   const [description, setDescription] = useState(null);
   const [eventId, setEventId] = useState(null)
   ///
+  const [newNoticeData, setNewNoticeData] = useState({ submitter_id: cookies.userID, body: '', notice_type: 4, event_id: 0, recipient_id: 0 });
+  const [oldStartDateTime, setOldStartDateTime] = useState('');
+  const [oldEndDateTime, setOldEndDateTime] = useState('');
+  const [oldTitle, setOldTitle] = useState('');
+  const [oldDescription, setOldDescription] = useState('');
+  const [teamMemberIDs, setTeamMemberIDs] = useState({});
 
   useEffect(() => {
     fetch(`http://localhost:8080/mycalendar?userId=${userId}`)
@@ -43,7 +49,9 @@ export const Calendar = () => {
           start: new Date(event.start_datetime),
           end: new Date(event.end_datetime),
           description: event.description,
-          id: event.event_id
+          id: event.event_id,
+          user_id: event.user_id,
+          team_id: event.team_id
         }));
         setEvents(formattedEvents);
         // setDescription(formattedEvents.description)
@@ -64,9 +72,12 @@ export const Calendar = () => {
     setIsEditing(false);
   };
 
-
   const handleEditClick = () => {
     setIsEditing(true);
+    setOldTitle(selectedEvent.event.title);
+    setOldDescription(selectedEvent.event.extendedProps.description);
+    setOldStartDateTime(selectedEvent.event.start);
+    setOldEndDateTime(selectedEvent.event.end);
     setTitle(selectedEvent.event.title)
     setDescription(selectedEvent.event.extendedProps.description)
     setStartDateTime(selectedEvent.event.start)
@@ -99,6 +110,21 @@ export const Calendar = () => {
     .then(data => {
       console.log('Edit Successful:', data, editedEventData);
       setIsEditing(false);
+      if (
+        oldTitle !== title ||
+        oldDescription !== description ||
+        oldStartDateTime !== startDateTime ||
+        oldEndDateTime !== endDateTime
+      ) {
+        // Update newNoticeData
+        const newBody = `Event "${oldTitle}" has been updated.\n\nChanges:\n\nTitle: ${oldTitle} -> ${title}\nDescription: ${oldDescription} -> ${description}\nStart Date and Time: ${oldStartDateTime} -> ${startDateTime}\nEnd Date and Time: ${oldEndDateTime} -> ${endDateTime}`;
+
+        setNewNoticeData(prevData => ({
+          ...prevData,
+          body: newBody,
+          recipient_id: selectedEvent.event.creator_id
+        }));
+      }
     })
     .catch(error => {
       console.error('Error editing event:', error);
@@ -145,6 +171,72 @@ export const Calendar = () => {
   //   const utcEndDate = date.toISOString();
   //   setEndDateTime(utcEndDate);
   // };
+
+  const handleNewNotice = async () => {
+    try {
+      if (!selectedEvent.event.user_id) {
+        await handleTeamEvent(selectedEvent.event.team_id);
+        Object.values(teamMemberIDs).forEach(teamMemberId => {
+          const noticeData = {
+            submitter_id: cookies.userID,
+            body: '',
+            notice_type: 4,
+            event_id: selectedEvent.event.id,
+            recipient_id: teamMemberId
+          };
+          sendNewNotice(noticeData);
+        });
+      } else {
+        const noticeData = {
+          submitter_id: cookies.userID,
+          body: '',
+          notice_type: 4,
+          event_id: selectedEvent.event.id,
+          recipient_id: selectedEvent.event.user_id
+        };
+        sendNewNotice(noticeData);
+      }
+    } catch (error) {
+      console.error('Error sending new notice:', error);
+      alert('Error sending new notice. Please try again.');
+    }
+  };
+
+  const sendNewNotice = (noticeData) => {
+    fetch('http://localhost:8080/api/notices/auto', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(noticeData),
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        setNewNoticeData({ submitter_id: cookies.userID, body: '', notice_type: 4, event_id: 0, recipient_id: 0 });
+      })
+      .catch(error => {
+        console.error('Error adding new notice:', error);
+        alert('Error adding new notice. Please try again.');
+      });
+  };
+
+  useEffect(() => {
+    if (newNoticeData.event_id !== 0 && newNoticeData.body !== '') {
+      handleNewNotice();
+    }
+  }, [newNoticeData]);
+
+  const handleTeamEvent = async (teamId) => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/notices/${teamId}`)
+      const data = await response.json();
+      setTeamMemberIDs(data);
+    } catch (error) {
+      console.error('Error fetching team member user IDs:', error);
+    }
+  };
 
   return (
     <>

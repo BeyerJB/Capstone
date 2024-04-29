@@ -278,10 +278,6 @@ app.get("/api/teamview/:userId", async (req, res) => {
     .catch((err) => res.status(500).json({ err: "Internal server error : ", err }));
 });
 
-
-
-
-
 // app.get("/aaa", (req, res) => {
 //   knex("calendar_events")
 //     .select("*")
@@ -420,7 +416,7 @@ app.put("/api/events/choice", async (req, res) => {
   }
 })
 
-// Create auto generated notice for during event creation
+// Create auto generated notice during event creation or edit
 app.post("/api/notices/auto", async (req, res) => {
   const { submitter_id, body, notice_type, event_id, recipient_id } = req.body;
   try {
@@ -447,3 +443,16 @@ app.put("/api/accounts/choice", async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 })
+
+// Get team member user_id's
+app.get("/api/teammembers/:teamId", async (req, res) => {
+  const teamID = req.params.teamId;
+  try {
+    const teamMembers = await knex("calendar_users")
+      .select("user_id")
+      .where("team_id", teamID)
+    res.status(200).json(teamMembers);
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
