@@ -15,6 +15,7 @@ export const UserNotices = () => {
   const [noticeUpdateData, setNoticeUpdateData] = useState({});
   const [eventUpdateData, setEventUpdateData] = useState({});
   const [accountUpdateData, setAccountUpdateData] = useState({});
+  const [supervisorNoticeData, setSupervisorNoticeData] = useState({});
 
   const [noticeTypeOptions] = useState([
     { value: 1, label: 'General' },
@@ -50,6 +51,7 @@ export const UserNotices = () => {
         .then(response => response.json())
         .then(data => {
           setPendingEvents(data);
+          setSupervisorNoticeData(data.filter((notices) => notices.recipient_id === cookies.userID))
         })
         .catch(error => console.error('Error fetching submitted notices:', error));
     }
@@ -387,35 +389,101 @@ export const UserNotices = () => {
         <>
           <h2>Supervisor Notices</h2>
           <div className="notice-form"  style={{ marginBottom: '20px' }}>
-            {supervisorNotices.length === 0 ? (
-              <p>No Pending Notices</p>
-            ) : (
-              <table>
-                <thead>
-                  <tr>
-                    <th>User</th>
-                    <th>Request</th>
-                    <th>Type</th>
-                    <th className="text-center">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {supervisorNotices.map(notice => (
-                    <tr key={notice.user_notice_id}>
-                      <td>{notice.rank_name} {notice.first_name} {notice.last_name}</td>
-                      <td>{notice.body}</td>
-                      <td>{notice.notice_name}</td>
-                      <td>
-                        <div className="button-container text-center">
-                          <Button variant="dark" style={{ margin: '5px' }} onClick={() => handleAcceptNotice(notice.user_notice_id)} class="btn btn-primary">Approve</Button>
-                          <Button variant="dark" style={{ margin: '5px' }} onClick={() => handleRejectNotice(notice.user_notice_id)} class="btn btn-primary">Deny</Button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
+          <Tabs>
+              <TabList>
+                <Tab>Calendar Request</Tab>
+                <Tab>Account Request</Tab>
+              </TabList>
+
+              <TabPanel>
+                {supervisorNotices.length === 0 ? (
+                  <p>No Pending Notices</p>
+                  ) : (
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>User</th>
+                          <th>Request</th>
+                          <th>Type</th>
+                          <th className="text-center">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {supervisorNotices.map(notice => (
+                          <tr key={notice.user_notice_id}>
+                            <td>{notice.rank_name} {notice.first_name} {notice.last_name}</td>
+                            <td>{notice.body}</td>
+                            <td>{notice.notice_name}</td>
+                            <td>
+                              <div className="button-container text-center">
+                                <Button variant="dark" style={{ margin: '5px' }} onClick={() => handleAcceptNotice(notice.user_notice_id)} class="btn btn-primary">Approve</Button>
+                                <Button variant="dark" style={{ margin: '5px' }} onClick={() => handleRejectNotice(notice.user_notice_id)} class="btn btn-primary">Deny</Button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                )}
+              </TabPanel>
+
+              <TabPanel>
+                {supervisorNoticeData.length === 0 ? (
+                    <p>No Pending Calendar Request</p>
+                ) : (
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>User</th>
+                        <th>Request</th>
+                        <th>Type</th>
+                        <th className="text-center">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {supervisorNoticeData.map(notice => (
+                        <tr key={notice.user_notice_id}>
+                          <td>{notice.rank_name} {notice.first_name} {notice.last_name}</td>
+                          <td>
+                            Description: {notice.description} <br/>
+                            Start: {notice.start_datetime} <br/>
+                            End:  {notice.end_datetime}
+                          </td>
+                          <td>{notice.event_type_name}</td>
+                          <td>
+                            <div className="button-container text-center">
+                              <Button
+                                variant="dark"
+                                style={{ margin: '5px' }}
+                                onClick={() => {
+                                  handleAcceptNotice(notice.user_notice_id);
+                                  handleAcceptEvent(notice.event_id);
+                                }}
+                                className="btn btn-primary"
+                                >
+                                  Approve
+                              </Button>
+                              <Button
+                                variant="dark"
+                                style={{ margin: '5px' }}
+                                onClick={() => {
+                                  handleRejectNotice(notice.user_notice_id);
+                                  handleRejectEvent(notice.event_id);
+                                }}
+                                className="btn btn-primary"
+                              >
+                                Deny
+                              </Button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+              </TabPanel>
+          </Tabs>
+
           </div>
         </>
       )}
