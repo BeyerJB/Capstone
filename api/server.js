@@ -421,13 +421,14 @@ app.put("/api/events/choice", async (req, res) => {
 
 // Create auto generated notice for during event creation
 app.post("/api/notices/auto", async (req, res) => {
-  const { submitter_id, body, notice_type, event_id } = req.body;
+  const { submitter_id, body, notice_type, event_id, recipient_id } = req.body;
   try {
     await knex("user_notice").insert({
       submitter_id,
       body,
       notice_type,
-      event_id
+      event_id,
+      recipient_id
     });
     res.status(201).json({ message: "Notice created successfully" });
   } catch (error) {

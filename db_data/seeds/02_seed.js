@@ -53,10 +53,14 @@ exports.seed = async function(knex) {
 
   // Seed event_type table
   await knex('event_type').insert([
-    { name: 'Meeting', description: 'Regular meeting' },
-    { name: 'Training', description: 'Training session' },
-    { name: 'Holiday', description: 'Public holiday' },
-    { name: 'Leave', description: 'Personal Leave' }
+    { name: 'Appointment', description: 'Offical Appointment', color_code: 'FF5733' },
+    { name: 'Meeting', description: 'Regular Meeting', color_code: '3498DB' },
+    { name: 'Training', description: 'Training Session', color_code: '2ECC71' },
+    { name: 'Holiday', description: 'Public Holiday', color_code: 'E74C3C' },
+    { name: 'Leave', description: 'Personal Leave', color_code: '9B59B6' },
+    { name: 'TDY', description: 'Member TDY', color_code: 'F1C40F' },
+    { name: 'Deployed', description: 'Member Deployed', color_code: '1ABC9C'},
+    { name: 'Misc', description: 'All Other Events', color_code: '95A5A6'}
   ]);
 
   // Seed calendar_users table

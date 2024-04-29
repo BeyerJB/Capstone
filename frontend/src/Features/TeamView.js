@@ -18,7 +18,7 @@ export const TeamView = () => {
   const [teamEvents, setTeamEvents ] = useState([])
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const [filteredUsers, setFilteredUsers] = useState([])
+  //const [filteredUsers, setFilteredUsers] = useState([])
 
 
   useEffect(() => {
@@ -42,8 +42,8 @@ export const TeamView = () => {
   // }
 
   return (
-    <div className="calendar">
-      <FullCalendar className ='teamview-calendar'
+    <div className="teamview-calendar">
+      <FullCalendar
         plugins={[
           dayGridPlugin,
           timeGridPlugin,
@@ -90,6 +90,7 @@ export const TeamView = () => {
             resourceTimelineMonth: {
               buttonText: 'Month',
               slotLabelFormat: [
+                {month: 'long', year:'numeric'},
                 {weekday: 'short',day: 'numeric'}
               ]
             }
@@ -98,16 +99,18 @@ export const TeamView = () => {
         timeZone="UTC"
         width="99vw"
         height="90vh"
+        contentHeight= 'auto'
         scrollTime="00:00"
         aspectRatio={2}
         nowIndicator = {true}
         editable={false}
         eventClick={openModal}
         resourceAreaHeaderContent="Guardians"
-        resourceAreaWidth = "15vw"
-        resourceGroupField= 'team_name'
+        resourceAreaWidth = "10vw"
+        resourceGroupField={['team_name']}
         resources={
-            teamEvents.map(user => {
+         //filterstate ? filters.map(users) :
+          teamEvents.map(user => {
               return ({
                 id: user.user_id,
                 title: `${user.rank} ${user.first_name} ${user.last_name}`,
