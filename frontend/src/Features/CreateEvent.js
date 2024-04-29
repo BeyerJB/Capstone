@@ -19,8 +19,8 @@ export const CreateEvent = () => {
   const [eventTypeData, setEventTypeData] = useState({ event_type: '' });
   const [eventTypeOptions, setEventTypeOptions] = useState([]);
   const [checkedBox, setCheckedBox] = useState(false);
-  const [cookies] = useCookies(['userID', 'firstName', 'lastName', 'rank']);
-  const [newNoticeData, setNewNoticeData] = useState({ submitter_id: cookies.userID, body: '', notice_type: 4, event_id: 0 });
+  const [cookies] = useCookies(['userID', 'firstName', 'lastName', 'rank', 'supervisorID']);
+  const [newNoticeData, setNewNoticeData] = useState({ submitter_id: cookies.userID, body: '', notice_type: 4, event_id: 0, recipient_id: cookies.supervisorID });
 
   const handleCheckbox = () =>
     setCheckedBox(!checkedBox);
@@ -184,7 +184,7 @@ const handleNewNotice = () => {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      setNewNoticeData({ submitter_id: cookies.userID, body: '', notice_type: 4, event_id: 0 });
+      setNewNoticeData({ submitter_id: cookies.userID, body: '', notice_type: 4, event_id: 0, recipient_id: cookies.supervisorID });
     })
     .catch(error => {
       console.error('Error adding new notice:', error);
