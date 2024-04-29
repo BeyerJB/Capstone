@@ -142,13 +142,10 @@ button {
 
 .notice-form label {
   font-weight: bold;
-  display: block; /* Ensures label text appears above the input */
-  margin-bottom: 5px; /* Adds spacing between label and input */
+  display: block;
+  margin-bottom: 5px;
 }
 
 .notice-form .form-group {
   margin-bottom: 20px;
 }
-
-
-
