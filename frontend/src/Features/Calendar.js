@@ -32,10 +32,9 @@ export const Calendar = () => {
   const [description, setDescription] = useState(null);
   const [eventId, setEventId] = useState(null);
   // const [color, setColor] = useState(null)
-  ///
 
   useEffect(() => {
-    fetch(`http://localhost:8080/mycalendar?userId=${userId}`)
+    fetch(`http://localhost:8080/mycalendar?userId=${userId}&teamId=${cookies.teamID}`)
       .then(response => response.json())
       .then(data => {
         setAllData(data);
@@ -51,6 +50,7 @@ export const Calendar = () => {
           borderColor: `#${event.color_code}`
         }));
         setEvents(formattedEvents);
+        console.log(data);
         // setDescription(formattedEvents.description)
       })
       .catch(error => console.error('Error fetching events: ', error));
@@ -63,6 +63,7 @@ export const Calendar = () => {
     setIsModalOpen(true);
     console.log('event: ', event);
     console.log('event id: ', selectedEvent.event.id);
+    console.log(selectedEvent);
   } catch (error) {
     console.error('Error opening modal:', error);
     // Handle error
@@ -73,7 +74,6 @@ export const Calendar = () => {
     setIsModalOpen(false);
     setIsEditing(false);
   };
-
 
   const handleEditClick = () => {
     setIsEditing(true);
@@ -119,7 +119,6 @@ export const Calendar = () => {
 
   };
 
-
   const handleCancelClick = () => {
     setIsEditing(false);
   };
@@ -145,7 +144,6 @@ export const Calendar = () => {
   const handleEndDateChange = (date) => {
     setEndDateTime(date);
   };
-
 
   return (
     <>
