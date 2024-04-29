@@ -31,7 +31,7 @@ app.get(`/mycalendar`, function (req, res) {
   knex("calendar_events")
     .join('event_type', 'calendar_events.event_type', 'event_type.event_id')
     .where("user_id", userId)
-    .select("*")
+    .select("calendar_events.*", "event_type.color_code" )
     .then((data) => {
       console.log("it works");
       res.status(200).json(data);
@@ -46,8 +46,6 @@ app.get(`/mycalendar`, function (req, res) {
 
 app.use(bodyParser.json());
 
-// Edit Event
-let events = [];
 
 // // PATCH endpoint to edit an event
 // app.patch('/edit_event', (req, res) => {
