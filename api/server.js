@@ -27,11 +27,13 @@ app.use((req, res, next) => {
 // // All Calendar data
 app.get(`/mycalendar`, function (req, res) {
   var userId = req.query.userId;
+  var teamId = req.params.teamId;
   console.log(req, res);
   knex("calendar_events")
     .join('event_type', 'calendar_events.event_type', 'event_type.event_id')
+    // .join('calendar_users', 'calendar_events.user_id', 'calendar_users.user_id')
     .where("user_id", userId)
-    .select("calendar_events.*", "event_type.color_code")
+    .select("calendar_events.*", "event_type.color_code", "calendar_users.team_id")
     .then((data) => {
       console.log("it works");
       res.status(200).json(data);
