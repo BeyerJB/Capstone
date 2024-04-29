@@ -19,8 +19,8 @@ export const CreateEvent = () => {
   const [eventTypeData, setEventTypeData] = useState({ event_type: '' });
   const [eventTypeOptions, setEventTypeOptions] = useState([]);
   const [checkedBox, setCheckedBox] = useState(false);
-  const [cookies] = useCookies(['userID', 'firstName', 'lastName', 'rank', 'isManager']);
-  const [newNoticeData, setNewNoticeData] = useState({ submitter_id: cookies.userID, body: '', notice_type: 4, event_id: 0 });
+  const [cookies] = useCookies(['userID', 'firstName', 'lastName', 'rank', 'supervisorID']);
+  const [newNoticeData, setNewNoticeData] = useState({ submitter_id: cookies.userID, body: '', notice_type: 4, event_id: 0, recipient_id: cookies.supervisorID });
 
   const handleCheckbox = () =>
     setCheckedBox(!checkedBox);
@@ -146,31 +146,31 @@ export const CreateEvent = () => {
     fetchData();
   }, []);
 
-  useEffect(() => {
-    if (newNoticeData.event_id !== 0 && newNoticeData.body !== '') {
-      handleNewNotice();
-    }
-  }, [newNoticeData]);
+useEffect(() => {
+  if (newNoticeData.event_id !== 0 && newNoticeData.body !== '') {
+    handleNewNotice();
+  }
+}, [newNoticeData]);
 
-  const handleNewNotice = () => {
-    fetch('http://localhost:8080/api/notices/auto', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(newNoticeData),
+const handleNewNotice = () => {
+  fetch('http://localhost:8080/api/notices/auto', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(newNoticeData),
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      setNewNoticeData({ submitter_id: cookies.userID, body: '', notice_type: 4, event_id: 0, recipient_id: cookies.supervisorID });
     })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        setNewNoticeData({ submitter_id: cookies.userID, body: '', notice_type: 4, event_id: 0 });
-      })
-      .catch(error => {
-        console.error('Error adding new notice:', error);
-        alert('Error adding new notice. Please try again.');
-      });
-  };
+    .catch(error => {
+      console.error('Error adding new notice:', error);
+      alert('Error adding new notice. Please try again.');
+    });
+};
 
   return (
     <Form onSubmit={handleSubmit} >
