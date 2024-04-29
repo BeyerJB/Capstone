@@ -47,26 +47,6 @@ app.get(`/mycalendar`, function (req, res) {
 app.use(bodyParser.json());
 
 
-// // PATCH endpoint to edit an event
-// app.patch('/edit_event', (req, res) => {
-//   const { id, title, start, end, description, color_code } = req.body;
-//   const eventIndex = events.findIndex(event => event.id === id);
-
-//   if (eventIndex === -1) {
-//     return res.status(404).json({ error: 'Event not found' });
-//   }
-
-//   events[eventIndex] = {
-//     ...events[eventIndex],
-//     title,
-//     start,
-//     end,
-//     description,
-//     color_code
-//   };
-
-//   res.status(200).json({ message: 'Event edited successfully', editedEventData: events[eventIndex] });
-// });
 
 app.patch("/edit_event", (req, res) => {
   const {id, title, start, end, description} = req.body;
@@ -82,18 +62,6 @@ app.patch("/edit_event", (req, res) => {
     .then(res.status(201).json({ message: "Update pushed" }));
 })
 
-
-// Calendar data for a specific user
-// app.get('/mycalendar', function(req,res){
-//   knex('calendar_events')
-//     .select('*')
-//     .then(data => res.status(200).json(data))
-//     .catch(err => res.status(202).json({message: 'The data you are looking for could not be found.'}))
-// })
-
-// app.get('/', req, res) {
-//   res.status(200).send({message: 'server is running'})
-// }
 
 // Login API
 app.post("/api/login", async (req, res) => {

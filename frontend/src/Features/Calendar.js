@@ -44,7 +44,10 @@ export const Calendar = () => {
           end: new Date(event.end_datetime),
           description: event.description,
           id: event.event_id,
-          color: event.color_code
+          color: event.color_code,
+          allDay: event.all_day,
+          backgroundColor: `#${event.color_code}`,
+          borderColor: `#${event.color_code}`
         }));
         setEvents(formattedEvents);
         console.log(data);
@@ -153,12 +156,14 @@ export const Calendar = () => {
             start: "today prev,next",
             center: 'title',
             end: 'timeGridWeek,dayGridMonth,multiMonthYear'
+
           }}
           views = {{
             timeGridWeek: {
               buttonText: 'Week',
               slotDuration: '01:00',
-              expandRows: true
+              expandRows: true,
+              allDaySlot: true
             },
             dayGridMonth: {
               buttonText: 'Month',
@@ -172,6 +177,7 @@ export const Calendar = () => {
           }}
           // fixedWeekCount = 'false'
           // showNonCurrentDates = 'false'
+          allDaySlot= {true}
           themeSystem= 'bootstrap5'
           eventClick={openModal}
           nowIndicator='true'
@@ -179,11 +185,19 @@ export const Calendar = () => {
           selectable='true'
           handleWindowResize='true'
           aspectRatio='2'
+          eventColor= 'red'
           // multiMonthMaxColumns='12'
+          eventDisplay = "block"
+
           events={events}
           eventContent={(eventInfo) => {
             return (
-              <div style={{ backgroundColor: `#${eventInfo.event.backgroundColor}`}}>
+              <div style={{
+                backgroundColor: `#${eventInfo.event.backgroundColor}`,
+                borderColor: `#${eventInfo.event.backgroundColor}`,
+                display: `#${eventInfo.event.backgroundColor}`
+
+                }}>
                 {eventInfo.timeText} - {eventInfo.event.title}
               </div>
             );
