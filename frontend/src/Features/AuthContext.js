@@ -25,11 +25,13 @@ const AuthProvider = ({ children }) => {
     removeCookie('supervisorID', { maxAge: 1 });
     removeCookie('isSupervisor', { maxAge: 1 });
     removeCookie('isManager', { maxAge: 1 });
-    navigate('/')
+    navigate('/login')
   };
 
+  const isLoggedIn = !!cookies.userID;
+
   return (
-    <AuthContext.Provider value={{ login, logout }}>
+    <AuthContext.Provider value={{ login, logout, isLoggedIn }}>
       {children}
     </AuthContext.Provider>
   );
