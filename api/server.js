@@ -244,7 +244,7 @@ app.get("/api/notices/supervisor/:userId", async (req, res) => {
       .join('notice_type', 'notice_type_id', 'user_notice.notice_type')
       .join('calendar_users', 'submitter_id', 'user_id')
       .join('ranks', 'rank_id', 'calendar_users.rank')
-      .where({ recipient_id: userId, notice_status: 1 });
+      .where({ recipient_id: userId, notice_status: 1, event_id: null });
     res.status(200).json(notices);
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
@@ -305,10 +305,6 @@ app.get("/api/teamview/:userId", async (req, res) => {
     .then((dbres) => res.status(200).json(dbres))
     .catch((err) => res.status(500).json({ err: "Internal server error : ", err }));
 });
-
-
-
-
 
 // app.get("/aaa", (req, res) => {
 //   knex("calendar_events")
@@ -405,7 +401,8 @@ app.get("/api/events/pending", async (req, res) => {
         'calendar_users.last_name',
         'ranks.name as rank_name',
         'event_type.name as event_type_name',
-        'user_notice.user_notice_id'
+        'user_notice.user_notice_id',
+        'user_notice.recipient_id'
       )
       .join('calendar_users', 'creator_id', 'calendar_users.user_id')
       .join('ranks', 'rank_id', 'calendar_users.rank')
@@ -447,7 +444,7 @@ app.put("/api/events/choice", async (req, res) => {
   }
 })
 
-// Create auto generated notice for during event creation
+// Create auto generated notice during event creation or edit
 app.post("/api/notices/auto", async (req, res) => {
   const { submitter_id, body, notice_type, event_id, recipient_id } = req.body;
   try {
@@ -474,3 +471,16 @@ app.put("/api/accounts/choice", async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 })
+
+// Get team member user_id's
+app.get("/api/teammembers/:teamId", async (req, res) => {
+  const teamID = req.params.teamId;
+  try {
+    const teamMembers = await knex("calendar_users")
+      .select("user_id")
+      .where("team_id", teamID)
+    res.status(200).json(teamMembers);
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
