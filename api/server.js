@@ -3,6 +3,7 @@ const app = express();
 const port = process.env.port || 8080;
 const cors = require("cors");
 const morgan = require("morgan");
+const bodyParser = require('body-parser');
 const knex = require("knex")(
   require("./knexfile.js")[process.env.NODE_ENV || "development"]
 );
@@ -17,7 +18,7 @@ app.use(
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, PUT, DELETE");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
   res.setHeader("Access-Control-Allow-Credentials", "true");
   next();
@@ -28,6 +29,7 @@ app.get(`/mycalendar`, function (req, res) {
   var userId = req.query.userId;
   console.log(req, res);
   knex("calendar_events")
+    .join('event_type', 'calendar_events.event_type', 'event_type.event_id')
     .where("user_id", userId)
     .select("*")
     .then((data) => {
@@ -42,20 +44,46 @@ app.get(`/mycalendar`, function (req, res) {
     });
 });
 
-// All Calendar data
-// app.get(`/mycalendar/:userId`, async function(req, res){
-//   try {
-//     console.log(req);
-//     const userId = req.params.userId;
-//     const data = await knex('calendar_events')
-//                       .where('user_id', userId)
-//                       .select('*');
-//     res.status(200).json(data);
-//   } catch (error) {
-//     console.error('Error fetching calendar data:', error);
-//     res.status(500).json({message: 'Internal server error'});
+app.use(bodyParser.json());
+
+// Edit Event
+let events = [];
+
+// // PATCH endpoint to edit an event
+// app.patch('/edit_event', (req, res) => {
+//   const { id, title, start, end, description, color_code } = req.body;
+//   const eventIndex = events.findIndex(event => event.id === id);
+
+//   if (eventIndex === -1) {
+//     return res.status(404).json({ error: 'Event not found' });
 //   }
+
+//   events[eventIndex] = {
+//     ...events[eventIndex],
+//     title,
+//     start,
+//     end,
+//     description,
+//     color_code
+//   };
+
+//   res.status(200).json({ message: 'Event edited successfully', editedEventData: events[eventIndex] });
 // });
+
+app.patch("/edit_event", (req, res) => {
+  const {id, title, start, end, description} = req.body;
+  //console.log("ATTEMPTING TO UPDATE WITH: ", id, title, start, end, description)
+  knex("calendar_events")
+    .where({event_id: id})
+    .update({
+      title: title,
+      description: description,
+      start_datetime: start,
+      end_datetime: end
+    })
+    .then(res.status(201).json({ message: "Update pushed" }));
+})
+
 
 // Calendar data for a specific user
 // app.get('/mycalendar', function(req,res){

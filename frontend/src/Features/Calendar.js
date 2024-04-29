@@ -14,7 +14,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import Form from 'react-bootstrap/Form';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import '../CSS/Calendar.css'
+import '../CSS/calendar.css'
 
 export const Calendar = () => {
   const [cookies] = useCookies(['userID', 'firstName', 'lastName', 'rank']);
@@ -30,7 +30,8 @@ export const Calendar = () => {
   const [endDateTime, setEndDateTime] = useState(null);
   const [title, setTitle] = useState(null);
   const [description, setDescription] = useState(null);
-  const [eventId, setEventId] = useState(null)
+  const [eventId, setEventId] = useState(null);
+  // const [color, setColor] = useState(null)
   ///
   const [newNoticeData, setNewNoticeData] = useState({ submitter_id: cookies.userID, body: '', notice_type: 4, event_id: 0, recipient_id: 0 });
   const [oldStartDateTime, setOldStartDateTime] = useState('');
@@ -50,6 +51,7 @@ export const Calendar = () => {
           end: new Date(event.end_datetime),
           description: event.description,
           id: event.event_id,
+          color: event.color_code
           user_id: event.user_id,
           team_id: event.team_id
         }));
@@ -57,15 +59,20 @@ export const Calendar = () => {
         // setDescription(formattedEvents.description)
       })
       .catch(error => console.error('Error fetching events: ', error));
-  }, [userId, editedEvent]);
+  }, [editedEvent]);
  console.log('all data: ', allData)
 
-  const openModal = (event) => {
+ const openModal = (event) => {
+  try {
     setSelectedEvent(event);
     setIsModalOpen(true);
-    console.log('event: ', event)
-    console.log('event id: ', selectedEvent.event.id)
-  };
+    console.log('event: ', event);
+    console.log('event id: ', selectedEvent.event.id);
+  } catch (error) {
+    console.error('Error opening modal:', error);
+    // Handle error
+  }
+}
 
   const closeModal = () => {
     setIsModalOpen(false);
@@ -83,6 +90,7 @@ export const Calendar = () => {
     setStartDateTime(selectedEvent.event.start)
     setEndDateTime(selectedEvent.event.end)
     setEventId( selectedEvent.event.id)
+    // setColor(selectedEvent.event.backgroundColor)
   };
 
   const handleSaveClick = () => {
@@ -110,6 +118,7 @@ export const Calendar = () => {
     .then(data => {
       console.log('Edit Successful:', data, editedEventData);
       setIsEditing(false);
+      
       if (
         oldTitle !== title ||
         oldDescription !== description ||
@@ -125,11 +134,14 @@ export const Calendar = () => {
           recipient_id: selectedEvent.event.creator_id
         }));
       }
+      
+      window.location.reload();
     })
     .catch(error => {
       console.error('Error editing event:', error);
       // Handle error
     });
+
   };
 
 
@@ -159,18 +171,6 @@ export const Calendar = () => {
     setEndDateTime(date);
   };
 
-  // const handleStartDateChange = (date) => {
-  //   // Convert the selected date to UTC
-  //   const utcStartDate = date.toISOString();
-  //   setStartDateTime(utcStartDate);
-  //   console.log(utcStartDate)
-  // };
-
-  // const handleEndDateChange = (date) => {
-  //   // Convert the selected date to UTC
-  //   const utcEndDate = date.toISOString();
-  //   setEndDateTime(utcEndDate);
-  // };
 
   const handleNewNotice = async () => {
     try {
@@ -249,7 +249,6 @@ export const Calendar = () => {
             start: "today prev,next",
             center: 'title',
             end: 'timeGridWeek,dayGridMonth,multiMonthYear'
-            // end: 'timeGridDay,timeGridWeek,dayGridMonth'
           }}
           views = {{
             timeGridWeek: {
@@ -278,6 +277,21 @@ export const Calendar = () => {
           aspectRatio='2'
           // multiMonthMaxColumns='12'
           events={events}
+          eventContent={(eventInfo) => {
+            return (
+              <div style={{ backgroundColor: `#${eventInfo.event.backgroundColor}`}}>
+                {eventInfo.timeText} - {eventInfo.event.title}
+              </div>
+            );
+          }}
+          // eventContent={(eventInfo) => {
+          //   return {
+          //     ...eventInfo,
+          //     backgroundColor: eventInfo.event.backgroundColor
+          //   }
+          // }}
+
+
         />
       </div>
       <div style={{ position: 'absolute', visibility: 'hidden', zIndex: 12001, width: '158px', padding: '2px 0 0 0',  textDecoration: 'none' }}>

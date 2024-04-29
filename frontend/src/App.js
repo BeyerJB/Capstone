@@ -37,7 +37,7 @@ function App() {
           <img src={icon} className="app-logo" alt="spacetime" width={'50vw'}/>
           <img src={logo} className="app-logo" alt="TIMEWEAVE" width={ '100vw' } height={ ' 25vw '} />
             <ul className="navbar">
-              <li><Link to="/">Home</Link></li>
+              {/* <li><Link to="/">Home</Link></li> */}
               {!cookies.userID ? (
                 <li><Link to="/Login">Login</Link></li>
               ) : (
