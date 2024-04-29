@@ -337,8 +337,8 @@ app.post("/create_event", (req, res) => {
       user_id: event_data.user_id,
       event_type: event_data.event_type,
       creator_id: event_data.creator_id,
-      pending: true,
-      approved: false
+      pending: event_data.pending,
+      approved: event_data.approved
     })
     .returning('event_id')
     .then((newID) => {
