@@ -20,9 +20,6 @@ export const UserNotices = () => {
   const [supervisorNoticeData, setSupervisorNoticeData] = useState([]);
   const { updateCount } = useContext(NotificationsContext);
 
-  // const notificationContext = useContext(NotificationsContext);
-
-
   const [noticeTypeOptions] = useState([
     { value: 1, label: 'General' },
     { value: 2, label: 'Urgent' },
