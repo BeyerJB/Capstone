@@ -226,8 +226,7 @@ app.get("/api/notices/submitter/:userId", async (req, res) => {
     const notices = await knex("user_notice")
       .select("*")
       .join("notice_status", "status_id", "user_notice.notice_status")
-      .where({ submitter_id: userId });
-
+      .where('submitter_id', userId).whereNotIn('notice_type', [4]);
     res.status(200).json(notices);
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });

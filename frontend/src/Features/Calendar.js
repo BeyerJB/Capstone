@@ -32,6 +32,12 @@ export const Calendar = () => {
   const [description, setDescription] = useState(null);
   const [eventId, setEventId] = useState(null);
   // const [color, setColor] = useState(null)
+  const [oldStartDateTime, setOldStartDateTime] = useState('');
+  const [oldEndDateTime, setOldEndDateTime] = useState('');
+  const [oldTitle, setOldTitle] = useState('');
+  const [oldDescription, setOldDescription] = useState('');
+  const [teamMemberIDs, setTeamMemberIDs] = useState({});
+
 
   useEffect(() => {
     fetch(`http://localhost:8080/mycalendar?userId=${userId}&teamId=${cookies.teamID}`)
@@ -45,6 +51,7 @@ export const Calendar = () => {
           description: event.description,
           id: event.event_id,
           color: event.color_code,
+          team_id: event.team_id,
           allDay: event.all_day,
           backgroundColor: `#${event.color_code}`,
           borderColor: `#${event.color_code}`
@@ -57,13 +64,21 @@ export const Calendar = () => {
   }, [editedEvent]);
 //  console.log('all data: ', allData)
 
- const openModal = (event) => {
+ const openModal = async (event) => {
   try {
     setSelectedEvent(event);
     setIsModalOpen(true);
-    console.log('event: ', event);
-    console.log('event id: ', selectedEvent.event.id);
-    console.log(selectedEvent);
+
+    let modalEvent = events.find((thisEvent) => thisEvent.id == event.event.id);
+
+    // Check if the selected event has a user_id assigned
+    if (modalEvent && modalEvent.team_id !== null) {
+      await handleTeamEvent(modalEvent.team_id);
+    }
+
+    //console.log('event: ', event);
+    //console.log('event id: ', event.event.id);
+    //console.log(selectedEvent);
   } catch (error) {
     console.error('Error opening modal:', error);
     // Handle error
@@ -83,6 +98,11 @@ export const Calendar = () => {
     setEndDateTime(selectedEvent.event.end)
     setEventId( selectedEvent.event.id)
     // setColor(selectedEvent.event.backgroundColor)
+    setOldTitle(selectedEvent.event.title);
+    setOldDescription(selectedEvent.event.extendedProps.description);
+    setOldStartDateTime(selectedEvent.event.start);
+    setOldEndDateTime(selectedEvent.event.end);
+
   };
 
   const handleSaveClick = () => {
@@ -93,6 +113,31 @@ export const Calendar = () => {
       end: endDateTime,
       description: description
     };
+
+    if (
+      oldTitle !== editedEventData.title ||
+      oldDescription !== editedEventData.description ||
+      oldStartDateTime !== editedEventData.startDateTime ||
+      oldEndDateTime !== editedEventData.endDateTime
+    ) {
+      // Update newNoticeData
+      var newBody = `Event '${oldTitle}' has been updated.\n\nChanges:\n\nTitle: ${oldTitle} -> ${title}\nDescription: ${oldDescription} -> ${description}\nStart Date and Time: ${oldStartDateTime} -> ${startDateTime}\nEnd Date and Time: ${oldEndDateTime} -> ${endDateTime}`;
+    }
+
+    // If the event does not have a user_id assigned, send new notices
+    if (!selectedEvent.user_id) {
+      // Loop through each team member ID and trigger sendNewNotice function
+      Object.values(teamMemberIDs).forEach(teamMemberId => {
+        const noticeData = {
+          submitter_id: cookies.userID,
+          body: newBody,
+          notice_type: 4,
+          event_id: null,
+          recipient_id: teamMemberId.user_id
+        };
+        sendNewNotice(noticeData);
+      });
+    }
 
     fetch('http://localhost:8080/edit_event', {
       method: 'PATCH',
@@ -108,9 +153,9 @@ export const Calendar = () => {
       return response.json();
     })
     .then(data => {
-      console.log('Edit Successful:', data, editedEventData);
+      //console.log('Edit Successful:', data, editedEventData);
       setIsEditing(false);
-      window.location.reload();
+      //window.location.reload();
     })
     .catch(error => {
       console.error('Error editing event:', error);
@@ -130,7 +175,7 @@ export const Calendar = () => {
   };
 
   const handleButton2Click = () => {
-    console.log('button 2 clicked');
+    //console.log('button 2 clicked');
   };
 
   const handleStartDateChange = (date) => {
@@ -143,6 +188,35 @@ export const Calendar = () => {
 
   const handleEndDateChange = (date) => {
     setEndDateTime(date);
+  };
+
+  const sendNewNotice = (noticeData) => {
+    fetch('http://localhost:8080/api/notices/auto', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(noticeData),
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+      })
+      .catch(error => {
+        console.error('Error adding new notice:', error);
+        alert('Error adding new notice. Please try again.');
+      });
+  };
+
+  const handleTeamEvent = async (teamId) => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/teammembers/${teamId}`)
+      const data = await response.json();
+      setTeamMemberIDs(data);
+    } catch (error) {
+      console.error('Error fetching team member user IDs:', error);
+    }
   };
 
   return (

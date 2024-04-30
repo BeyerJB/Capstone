@@ -9,7 +9,7 @@ exports.up = function(knex) {
     table.foreign('recipient_id').references('calendar_users.user_id');
     table.integer('notice_type').unsigned();
     table.foreign('notice_type').references('notice_type.notice_type_id');
-    table.string('body');
+    table.text('body');
     table.boolean('archived').defaultTo(0);
     table.integer('event_id').unsigned();
   });

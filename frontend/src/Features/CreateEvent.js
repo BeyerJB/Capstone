@@ -10,11 +10,10 @@ export const CreateEvent = () => {
     start_time: '',
     end_date: '',
     end_time: '',
-    team_id: '',
     description: '',
     event_type: ''
   });
-  const [teamFormData, setTeamFormData] = useState({ team_id: '' });
+  const [teamFormData, setTeamFormData] = useState({ });
   const [teamOptions, setTeamOptions] = useState([]);
   const [eventTypeData, setEventTypeData] = useState({ event_type: '' });
   const [eventTypeOptions, setEventTypeOptions] = useState([]);
@@ -66,6 +65,23 @@ export const CreateEvent = () => {
 
     //PUSH USER VALUES TO API
     async function sendData() {
+
+      try {
+
+        let teamIdToSend;
+        let userIdToSend;
+
+        // If team_id is "Just Me", set it to null and set user_id to cookies.userID
+        if (teamFormData.team_id === "Just Me") {
+          teamIdToSend = null;
+          userIdToSend = cookies.userID;
+        } else {
+          teamIdToSend = teamFormData.team_id;
+          userIdToSend = null;
+        }
+
+
+
       //NULLIFY teamFormData.team_id IF SELECTED FEILD IS "Just Me"
       if (teamFormData.team_id == "Just Me") {
         setTeamFormData({
@@ -73,7 +89,6 @@ export const CreateEvent = () => {
         });
       }
 
-      try {
         const res = await fetch("http://localhost:8080/create_event", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -83,8 +98,8 @@ export const CreateEvent = () => {
             start_datetime: UTCDATESTART.toISOString(),
             end_datetime: UTCDATEEND.toISOString(),
             all_day: checkedBox,
-            team_id: teamFormData.team_id,
-            user_id: cookies.userID,
+            team_id: teamIdToSend,
+            user_id: userIdToSend,
             event_type: eventTypeData.event_id,
             creator_id: cookies.userID,
             approved: (cookies.isManager ? true : false),
