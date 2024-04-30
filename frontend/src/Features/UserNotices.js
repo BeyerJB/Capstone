@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'react-tabs/style/react-tabs.css';
 import '../CSS/UserNoticeModal.css';
 import Button from 'react-bootstrap/Button';
 import { useCookies } from 'react-cookie';
+import { NotificationsContext } from './NotificationContext';
 
 export const UserNotices = () => {
   const [cookies] = useCookies(['userID', 'firstName', 'lastName', 'rank', 'isSupervisor', 'isManager']);
@@ -17,6 +18,10 @@ export const UserNotices = () => {
   const [eventUpdateData, setEventUpdateData] = useState({});
   const [accountUpdateData, setAccountUpdateData] = useState({});
   const [supervisorNoticeData, setSupervisorNoticeData] = useState([]);
+  const { updateCount } = useContext(NotificationsContext);
+
+  // const notificationContext = useContext(NotificationsContext);
+
 
   const [noticeTypeOptions] = useState([
     { value: 1, label: 'General' },
@@ -30,6 +35,7 @@ export const UserNotices = () => {
         .then(response => response.json())
         .then(data => {
           setSupervisorNotices(data);
+          // setNoticeCount(prevCount => prevCount + data.length)
         })
         .catch(error => console.error('Error fetching supervisor notices:', error));
     }
@@ -41,6 +47,7 @@ export const UserNotices = () => {
         .then(response => response.json())
         .then(data => {
           setSubmittedNotices(data);
+          // setNoticeCount(prevCount => prevCount + data.length)
         })
         .catch(error => console.error('Error fetching submitted notices:', error));
     }
@@ -57,6 +64,7 @@ export const UserNotices = () => {
         if (Array.isArray(data)) {
           const filteredData = data.filter(notice => notice.recipient_id === cookies.userID);
           setSupervisorNoticeData(filteredData);
+          // setNoticeCount(prevCount => prevCount + data.length)
         } else {
           setSupervisorNoticeData([]);
         }
@@ -72,6 +80,7 @@ export const UserNotices = () => {
         .then(response => response.json())
         .then(data => {
           setPendingAccounts(data);
+          // setNoticeCount(prevCount => prevCount + data.length)
         })
         .catch(error => console.error('Error fetching submitted notices:', error));
     }
@@ -128,31 +137,37 @@ export const UserNotices = () => {
   const handleAcceptNotice = (noticeId) => {
     setNoticeUpdateData({ request_id: noticeId, choice: 2 });
     fetchSupervisorNotices();
+    updateCount()
   };
 
   const handleRejectNotice = (noticeId) => {
     setNoticeUpdateData({ request_id: noticeId, choice: 3 });
     fetchSupervisorNotices();
+    updateCount()
   };
 
   const handleRejectEvent = (eventId) => {
     setEventUpdateData({ event_id: eventId, choice: false });
     fetchPendingEvents();
+    updateCount()
   };
 
   const handleAcceptEvent = (eventId) => {
     setEventUpdateData({ event_id: eventId, choice: true });
     fetchPendingEvents();
+    updateCount()
   };
 
   const handleRejectAccount = (userId) => {
     setAccountUpdateData({ user_id: userId, approved: false, pending: false });
     fetchPendingAccounts();
+    updateCount()
   };
 
   const handleAcceptAccount = (userId) => {
     setAccountUpdateData({ user_id: userId, approved: true, pending: false });
     fetchPendingAccounts();
+    updateCount()
   };
 
   useEffect(() => {
@@ -275,6 +290,8 @@ export const UserNotices = () => {
         alert('Error updating account. Please try again.');
       });
   };
+
+  // console.log('notice count: ', noticeCount)
 
   return (
     <>

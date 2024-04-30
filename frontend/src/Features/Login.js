@@ -49,7 +49,7 @@ function Login() {
     <div className="log-form">
       {createAccount === false ? (
         <>
-          <h2>Login to your account</h2>
+          <h2 style={{ color: '#c1c1c1', padding: '10px' }}>Login to your account</h2>
           <form onSubmit={handleLogin}>
             <input
               type="text"
@@ -65,11 +65,44 @@ function Login() {
               value={loginData.password}
               onChange={handleInputChange}
             />
-            <button type="submit" className="btn">
+            <button type="submit" className="btn"
+            style={{
+              '--bs-btn-color': '#fff',
+              '--bs-btn-bg': '#2c3e50',
+              '--bs-btn-border-color': '#2c3e50',
+              '--bs-btn-hover-color': '#fff',
+              '--bs-btn-hover-bg': '#1e2b37',
+              '--bs-btn-hover-border-color': '#2c3e50',
+              '--bs-btn-focus-shadow-rgb': '49, 132, 253',
+              '--bs-btn-active-color': '#fff',
+              '--bs-btn-active-bg': '#2c3e50',
+              '--bs-btn-active-border-color': '#2c3e50',
+              '--bs-btn-active-shadow': 'inset 0 3px 5px rgba(0, 0, 0, 0.125)',
+              '--bs-btn-disabled-color': '#fff',
+              '--bs-btn-disabled-bg': '#303b47',
+              '--bs-btn-disabled-border-color': '#1e2b37',
+              marginRight: '10px'
+            }}>
               Login
             </button>
           </form>
-          <button className="btn" onClick={() => setCreateAccount(true)}>
+          <button className="btn" onClick={() => setCreateAccount(true)}
+          style={{
+                '--bs-btn-color': '#fff',
+                '--bs-btn-bg': '#2c3e50',
+                '--bs-btn-border-color': '#2c3e50',
+                '--bs-btn-hover-color': '#fff',
+                '--bs-btn-hover-bg': '#1e2b37',
+                '--bs-btn-hover-border-color': '#2c3e50',
+                '--bs-btn-focus-shadow-rgb': '49, 132, 253',
+                '--bs-btn-active-color': '#fff',
+                '--bs-btn-active-bg': '#2c3e50',
+                '--bs-btn-active-border-color': '#2c3e50',
+                '--bs-btn-active-shadow': 'inset 0 3px 5px rgba(0, 0, 0, 0.125)',
+                '--bs-btn-disabled-color': '#fff',
+                '--bs-btn-disabled-bg': '#303b47',
+                '--bs-btn-disabled-border-color': '#1e2b37'
+              }}>
             Request Account
           </button>
           {/* <h2>Login to your account</h2>
