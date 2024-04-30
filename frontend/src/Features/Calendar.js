@@ -17,7 +17,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import '../CSS/calendar.css'
 
 export const Calendar = () => {
-  const [cookies] = useCookies(['userID', 'firstName', 'lastName', 'rank']);
+  const [cookies] = useCookies(['userID', 'firstName', 'lastName', 'rank', 'isManager']);
   const [events, setEvents] = useState([]);
   const [allData, setAllData] = useState([]);
   const userId = cookies.userID;
@@ -50,12 +50,12 @@ export const Calendar = () => {
           borderColor: `#${event.color_code}`
         }));
         setEvents(formattedEvents);
-        console.log(data);
+        // console.log(data);
         // setDescription(formattedEvents.description)
       })
       .catch(error => console.error('Error fetching events: ', error));
   }, [editedEvent]);
- console.log('all data: ', allData)
+//  console.log('all data: ', allData)
 
  const openModal = (event) => {
   try {
@@ -134,11 +134,11 @@ export const Calendar = () => {
   };
 
   const handleStartDateChange = (date) => {
-    console.log(date)
+    // console.log(date)
     const utcStartDate = date.toISOString();
-    console.log('utc time: ', utcStartDate)
+    // console.log('utc time: ', utcStartDate)
     setStartDateTime(date);
-    console.log('start date time: ',startDateTime)
+    // console.log('start date time: ',startDateTime)
   };
 
   const handleEndDateChange = (date) => {
@@ -270,7 +270,8 @@ export const Calendar = () => {
               </>
             ) : (
               <>
-                <Button variant="secondary" onClick={handleEditClick}>Edit event</Button>
+              {cookies.isManager && (<Button variant="secondary" onClick={handleEditClick}>Edit event</Button>) }
+
               </>
             )}
             <Button variant="danger" onClick={closeModal}>Close</Button>
