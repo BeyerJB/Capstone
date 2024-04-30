@@ -51,7 +51,10 @@ export const Calendar = () => {
           description: event.description,
           id: event.event_id,
           color: event.color_code,
-          team_id: event.team_id
+          team_id: event.team_id,
+          allDay: event.all_day,
+          backgroundColor: `#${event.color_code}`,
+          borderColor: `#${event.color_code}`
         }));
         setEvents(formattedEvents);
         //console.log(data);
@@ -227,16 +230,17 @@ export const Calendar = () => {
             start: "today prev,next",
             center: 'title',
             end: 'timeGridWeek,dayGridMonth,multiMonthYear'
+
           }}
           views = {{
             timeGridWeek: {
               buttonText: 'Week',
               slotDuration: '01:00',
-              expandRows: true
+              expandRows: true,
+              allDaySlot: true
             },
             dayGridMonth: {
               buttonText: 'Month',
-              // duration: {days: 35}
               fixedWeekCount: false,
               showNonCurrentDates: false
             },
@@ -244,20 +248,29 @@ export const Calendar = () => {
               buttonText: 'Year',
             }
           }}
-          // fixedWeekCount = 'false'
-          // showNonCurrentDates = 'false'
+
+          allDaySlot= {true}
           themeSystem= 'bootstrap5'
           eventClick={openModal}
           nowIndicator='true'
           dayMaxEvents='true'
+
           selectable='true'
           handleWindowResize='true'
           aspectRatio='2'
-          // multiMonthMaxColumns='12'
+          eventColor= 'red'
+
+          eventDisplay = "block"
+
           events={events}
           eventContent={(eventInfo) => {
             return (
-              <div style={{ backgroundColor: `#${eventInfo.event.backgroundColor}`}}>
+              <div style={{
+                backgroundColor: `#${eventInfo.event.backgroundColor}`,
+                borderColor: `#${eventInfo.event.backgroundColor}`,
+                display: `#${eventInfo.event.backgroundColor}`
+
+                }}>
                 {eventInfo.timeText} - {eventInfo.event.title}
               </div>
             );
