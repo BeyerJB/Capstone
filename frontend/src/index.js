@@ -6,13 +6,16 @@ import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./Features/AuthContext";
 import { CookiesProvider} from 'react-cookie'
+import { NotificationsProvider } from './Features/NotificationContext';
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <CookiesProvider defaultSetOptions={{ path: '/', maxAge: 86400 }}>
   <BrowserRouter>
     <AuthProvider>
-      <App />
+      <NotificationsProvider>
+        <App />
+      </NotificationsProvider>
     </AuthProvider>
   </BrowserRouter>
   </CookiesProvider>
