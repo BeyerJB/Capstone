@@ -394,53 +394,24 @@ export const UserNotices = () => {
         </>
       )}
 
-      {cookies.isSupervisor && (
-        <>
-          <h2>Supervisor Notices</h2>
-          <div className="notice-form"  style={{ marginBottom: '20px' }}>
-          <Tabs>
-              <TabList>
-                <Tab>User Notices</Tab>
-                <Tab>Calendar Request</Tab>
-              </TabList>
-
-              <TabPanel>
-                {supervisorNotices.length === 0 ? (
-                  <p>No Pending Notices</p>
-                  ) : (
-                    <table>
-                      <thead>
-                        <tr>
-                          <th>User</th>
-                          <th>Request</th>
-                          <th>Type</th>
-                          <th className="text-center">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {supervisorNotices.map(notice => (
-                          <tr key={notice.user_notice_id}>
-                            <td>{notice.rank_name} {notice.first_name} {notice.last_name}</td>
-                            <td>{notice.body}</td>
-                            <td>{notice.notice_name}</td>
-                            <td>
-                              <div className="button-container text-center">
-                                <Button variant="dark" style={{ margin: '5px' }} onClick={() => handleAcceptNotice(notice.user_notice_id)} class="btn btn-primary">Approve</Button>
-                                <Button variant="dark" style={{ margin: '5px' }} onClick={() => handleRejectNotice(notice.user_notice_id)} class="btn btn-primary">Deny</Button>
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                )}
-              </TabPanel>
-
-              <TabPanel>
-                {(supervisorNoticeData.length === 0 || cookies.isManager) && (
-                    <p>No Pending Calendar Request</p>
-                )}
-                {(supervisorNoticeData.length > 0 && !cookies.isManager) && (
+      <>
+        <h2>User Notices</h2>
+        <div className="notice-form"  style={{ marginBottom: '20px' }}>
+        <Tabs>
+          {(cookies.isSupervisor || cookies.isManager) ? (
+            <TabList>
+              <Tab>User Notices</Tab>
+              <Tab>Calendar Request</Tab>
+            </TabList>
+          ) : (
+            <TabList>
+              <Tab>User Notices</Tab>
+            </TabList>
+          )}
+            <TabPanel>
+              {supervisorNotices.length === 0 ? (
+                <p>No Pending Notices</p>
+                ) : (
                   <table>
                     <thead>
                       <tr>
@@ -451,52 +422,91 @@ export const UserNotices = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {supervisorNoticeData.map(notice => (
+                      {supervisorNotices.map(notice => (
                         <tr key={notice.user_notice_id}>
                           <td>{notice.rank_name} {notice.first_name} {notice.last_name}</td>
+                          <td>{notice.body}</td>
+                          <td>{notice.notice_name}</td>
                           <td>
-                            Description: {notice.description} <br/>
-                            Start: {notice.start_datetime} <br/>
-                            End:  {notice.end_datetime}
-                          </td>
-                          <td>{notice.event_type_name}</td>
-                          <td>
-                            <div className="button-container text-center">
-                              <Button
-                                variant="dark"
-                                style={{ margin: '5px' }}
-                                onClick={() => {
-                                  handleAcceptNotice(notice.user_notice_id);
-                                  handleAcceptEvent(notice.event_id);
-                                }}
-                                className="btn btn-primary"
-                                >
-                                  Approve
-                              </Button>
-                              <Button
-                                variant="dark"
-                                style={{ margin: '5px' }}
-                                onClick={() => {
-                                  handleRejectNotice(notice.user_notice_id);
-                                  handleRejectEvent(notice.event_id);
-                                }}
-                                className="btn btn-primary"
-                              >
-                                Deny
-                              </Button>
+                            {notice.notice_type === 4 && notice.event_id === null ? (
+                              <div className="button-container text-center">
+                                <Button variant="dark" style={{ margin: '5px' }} onClick={() => handleAcceptNotice(notice.user_notice_id)} class="btn btn-primary">Acknowledge</Button>
+                              </div>
+                            ) : (
+                              <div className="button-container text-center">
+                              <Button variant="dark" style={{ margin: '5px' }} onClick={() => handleAcceptNotice(notice.user_notice_id)} class="btn btn-primary">Approve</Button>
+                              <Button variant="dark" style={{ margin: '5px' }} onClick={() => handleRejectNotice(notice.user_notice_id)} class="btn btn-primary">Deny</Button>
                             </div>
+                            )}
                           </td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
-                )}
-              </TabPanel>
-          </Tabs>
+              )}
+            </TabPanel>
+            {(cookies.isSupervisor || cookies.isManager) && (
+            <TabPanel>
+              {(supervisorNoticeData.length === 0 || cookies.isManager) && (
+                  <p>No Pending Calendar Request</p>
+              )}
+              {(supervisorNoticeData.length > 0 && !cookies.isManager) && (
+                <table>
+                  <thead>
+                    <tr>
+                      <th>User</th>
+                      <th>Request</th>
+                      <th>Type</th>
+                      <th className="text-center">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {supervisorNoticeData.map(notice => (
+                      <tr key={notice.user_notice_id}>
+                        <td>{notice.rank_name} {notice.first_name} {notice.last_name}</td>
+                        <td>
+                          Description: {notice.description} <br/>
+                          Start: {notice.start_datetime} <br/>
+                          End:  {notice.end_datetime}
+                        </td>
+                        <td>{notice.event_type_name}</td>
+                        <td>
+                          <div className="button-container text-center">
+                            <Button
+                              variant="dark"
+                              style={{ margin: '5px' }}
+                              onClick={() => {
+                                handleAcceptNotice(notice.user_notice_id);
+                                handleAcceptEvent(notice.event_id);
+                              }}
+                              className="btn btn-primary"
+                              >
+                                Approve
+                            </Button>
+                            <Button
+                              variant="dark"
+                              style={{ margin: '5px' }}
+                              onClick={() => {
+                                handleRejectNotice(notice.user_notice_id);
+                                handleRejectEvent(notice.event_id);
+                              }}
+                              className="btn btn-primary"
+                            >
+                              Deny
+                            </Button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </TabPanel>
+            )}
+        </Tabs>
 
-          </div>
-        </>
-      )}
+        </div>
+      </>
 
       <h2>Submitted Notices</h2>
       <div className="notice-form" style={{ marginBottom: '20px' }}>
@@ -606,7 +616,6 @@ export const UserNotices = () => {
 /*
 
 
-
 const [newNoticeData, setNewNoticeData] = useState({ submitter_id: cookies.userID, body: '', notice_type: 4, event_id: 0, recipient_id: 0 });
 const [oldStartDateTime, setOldStartDateTime] = useState('');
 const [oldEndDateTime, setOldEndDateTime] = useState('');
@@ -619,8 +628,6 @@ setOldTitle(selectedEvent.event.title);
 setOldDescription(selectedEvent.event.extendedProps.description);
 setOldStartDateTime(selectedEvent.event.start);
 setOldEndDateTime(selectedEvent.event.end);
-
-
 
 
 if (
