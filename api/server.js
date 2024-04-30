@@ -271,7 +271,8 @@ app.get("/api/teamview", async (req, res) => {
       "all_day",
       "calendar_events.description",
       "event_type.name AS event_type",
-      "event_type.color_code"
+      "event_type.color_code",
+      "calendar_events.event_id"
     )
     .join("event_type", "calendar_events.event_type", "=", "event_type.event_id")
     .join("calendar_users", "calendar_users.user_id", "calendar_events.user_id")
@@ -288,7 +289,8 @@ app.get("/api/teamview", async (req, res) => {
       "all_day",
       "calendar_events.description",
       "event_type.name AS event_type",
-      "event_type.color_code"
+      "event_type.color_code",
+      "calendar_events.event_id"
     )
     .join("event_type", "calendar_events.event_type", "=", "event_type.event_id")
     .join("calendar_teams", "calendar_events.team_id", "=", "calendar_teams.team_id")

@@ -68,8 +68,10 @@ const handleGuardianClick = (info) => {
     setDescription(selectedEvent.event.extendedProps.description)
     setStartDateTime(selectedEvent.event.start)
     setEndDateTime(selectedEvent.event.end)
-    setEventId( selectedEvent.event.id)
-    // setColor(selectedEvent.event.backgroundColor)
+    console.log(selectedEvent.event)
+    setEventId(selectedEvent.event.id)
+
+
   };
 
   const handleSaveClick = () => {
@@ -80,7 +82,6 @@ const handleGuardianClick = (info) => {
       end: endDateTime,
       description: description
     };
-
     fetch('http://localhost:8080/edit_event', {
       method: 'PATCH',
       headers: {
@@ -195,6 +196,7 @@ const handleGuardianClick = (info) => {
         contentHeight= 'auto'
         scrollTime="00:00"
         aspectRatio={2}
+        // expandRows={false}
         nowIndicator = {true}
         editable={false}
         eventClick={openModal}
@@ -213,6 +215,7 @@ const handleGuardianClick = (info) => {
         events={[
               ...resourceInfo.teamEvents.map(event => ({
                 resourceId:event.team_id,
+                id:event.event_id,
                 title:event.title,
                 start: event.start_datetime,
                 end:event.end_datetime,
@@ -223,6 +226,7 @@ const handleGuardianClick = (info) => {
             })),
               ...resourceInfo.userEvents.map(event => ({
               resourceId: `${event.name}${event.user_id}`,
+              id:event.event_id,
               title:event.title,
               start: event.start_datetime,
               end:event.end_datetime,

@@ -167,7 +167,6 @@ export const Calendar = () => {
             },
             dayGridMonth: {
               buttonText: 'Month',
-              // duration: {days: 35}
               fixedWeekCount: false,
               showNonCurrentDates: false
             },
@@ -175,18 +174,18 @@ export const Calendar = () => {
               buttonText: 'Year',
             }
           }}
-          // fixedWeekCount = 'false'
-          // showNonCurrentDates = 'false'
+
           allDaySlot= {true}
           themeSystem= 'bootstrap5'
           eventClick={openModal}
           nowIndicator='true'
           dayMaxEvents='true'
+
           selectable='true'
           handleWindowResize='true'
           aspectRatio='2'
           eventColor= 'red'
-          // multiMonthMaxColumns='12'
+
           eventDisplay = "block"
 
           events={events}
