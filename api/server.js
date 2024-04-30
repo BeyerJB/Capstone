@@ -42,33 +42,6 @@ app.get(`/mycalendar`, function (req, res) {
     });
 });
 
-// All Calendar data
-// app.get(`/mycalendar/:userId`, async function(req, res){
-//   try {
-//     console.log(req);
-//     const userId = req.params.userId;
-//     const data = await knex('calendar_events')
-//                       .where('user_id', userId)
-//                       .select('*');
-//     res.status(200).json(data);
-//   } catch (error) {
-//     console.error('Error fetching calendar data:', error);
-//     res.status(500).json({message: 'Internal server error'});
-//   }
-// });
-
-// Calendar data for a specific user
-// app.get('/mycalendar', function(req,res){
-//   knex('calendar_events')
-//     .select('*')
-//     .then(data => res.status(200).json(data))
-//     .catch(err => res.status(202).json({message: 'The data you are looking for could not be found.'}))
-// })
-
-// app.get('/', req, res) {
-//   res.status(200).send({message: 'server is running'})
-// }
-
 // Login API
 app.post("/api/login", async (req, res) => {
   const { username, password } = req.body;
@@ -278,16 +251,6 @@ app.get("/api/teamview/:userId", async (req, res) => {
     .catch((err) => res.status(500).json({ err: "Internal server error : ", err }));
 });
 
-
-
-
-
-// app.get("/aaa", (req, res) => {
-//   knex("calendar_events")
-//     .select("*")
-//     .then((data) => res.status(200).json(data));
-// });
-
 app.listen(port, () => {
   console.log("It is running");
 });
@@ -320,7 +283,7 @@ app.post("/calendar_team/userid", (req, res) => {
 //THIS CALL CREATES A CALENDAR EVENT, YOU MUST PASS IT A USERS ID IN ADDITION TO ALL RELEVANT EVENT FIELDS
 app.post("/create_event", (req, res) => {
   let event_data = req.body;
-  console.log("ATTEMPTING TO CREATE EVENT WITH: ", event_data);
+  //console.log("ATTEMPTING TO CREATE EVENT WITH: ", event_data);
   // //DIAGNOSTIC RETURN OF ALL EVENTS
   // knex("calendar_events")
   //   .select("*")
@@ -465,7 +428,7 @@ app.patch("/edit_event", (req, res) => {
 //ADDS A PERSON TO A TEAM
 app.post("/teams/add_member", (req, res) => {
   const { user_id, team_id } = req.body;
-  console.log("ATTEMPTING TO ADD USER: ", user_id, "TO TEAM: ", team_id);
+  //console.log("ATTEMPTING TO ADD USER: ", user_id, "TO TEAM: ", team_id);
   knex("calendar_users")
     .where({ user_id: user_id })
     .update({
@@ -477,7 +440,7 @@ app.post("/teams/add_member", (req, res) => {
 //REMOVES A PERSON FROM A TEAM
 app.post("/teams/remove_member", (req, res) => {
   const user_id = req.body.user_id;
-  console.log("ATTEMPTING REMOVE FOR USER: ", user_id);
+  //console.log("ATTEMPTING REMOVE FOR USER: ", user_id);
   knex("calendar_users")
     .where({ user_id: user_id })
     .update({ team_id: null })
@@ -537,7 +500,7 @@ app.post("/users/first_last", (req, res) => {
 app.delete("/teams/purge", (req, res) => {
   // FIRST PURGE ALL USERS FROM TEAM
   const team_id = req.body.team_id;
-  console.log("PURGING USERS FROM TEAM")
+  //console.log("PURGING USERS FROM TEAM")
   knex("calendar_users")
     .select("team_id")
     .where({ team_id: team_id })
@@ -574,7 +537,7 @@ app.delete("/teams/purge", (req, res) => {
 // ADD A TEAM
 app.post("/teams/add", (req, res) => {
   const { name, description } = req.body;
-  console.log("ATTEMPTING TO CREATE TEAM WITH: ", name, " ", description);
+  //console.log("ATTEMPTING TO CREATE TEAM WITH: ", name, " ", description);
   knex("calendar_teams")
     .insert({ name, description })
     .then(data => res.status(200).json(data))
