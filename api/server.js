@@ -91,8 +91,8 @@ app.post("/api/login", async (req, res) => {
     const isManager = user.user_type === 1 ? false : true;
 
     const isSupervisor = await knex('chain_of_command')
-    .where('supervisor_id', user.user_id)
-    .first();
+      .where('supervisor_id', user.user_id)
+      .first();
 
     res.status(200).json({
       userID: user.user_id,
@@ -112,9 +112,9 @@ app.post("/api/login", async (req, res) => {
 //get teams for account creation
 app.get("/api/teams", (req, res) => {
   knex("calendar_teams")
-  .select("name", "team_id")
-  .then(dbres => res.status(200).json(dbres))
-  .catch(err => res.status(500).json({ error: "Internal server error"}))
+    .select("name", "team_id")
+    .then(dbres => res.status(200).json(dbres))
+    .catch(err => res.status(500).json({ error: "Internal server error" }))
 })
 
 //get ranks for account creation
@@ -129,9 +129,9 @@ app.get("/api/ranks", (req, res) => {
 //get user types for account creation
 app.get("/api/usertypes", (req, res) => {
   knex("user_type")
-  .select("name", "user_type_id")
-  .then(dbres => res.status(200).json(dbres))
-  .catch(err => res.status(500).json({ error: "Internal server error"}))
+    .select("name", "user_type_id")
+    .then(dbres => res.status(200).json(dbres))
+    .catch(err => res.status(500).json({ error: "Internal server error" }))
 })
 
 //user account request
@@ -139,17 +139,17 @@ app.post("/api/newuser", async (req, res) => {
   const { first_name, last_name, rank, username, password, team_id, user_type } = req.body
   const user_password = await bcrypt.hash(password, 10);
   knex("calendar_users")
-  .insert({
-    first_name: first_name,
-    last_name: last_name,
-    rank: rank,
-    username: username,
-    password: user_password,
-    team_id: team_id,
-    user_type: user_type
-  })
-  .then(res.status(202).send("Account Request Pending"))
-  .catch(err => res.status(500))
+    .insert({
+      first_name: first_name,
+      last_name: last_name,
+      rank: rank,
+      username: username,
+      password: user_password,
+      team_id: team_id,
+      user_type: user_type
+    })
+    .then(res.status(202).send("Account Request Pending"))
+    .catch(err => res.status(500))
 })
 
 // Create notice
@@ -343,7 +343,7 @@ app.get("/calendar_team/:userid", (req, res) => {
 //THIS CALL CREATES A CALENDAR EVENT, YOU MUST PASS IT A USERS ID IN ADDITION TO ALL RELEVANT EVENT FIELDS
 app.post("/create_event", (req, res) => {
   let event_data = req.body;
-  console.log("ATTEMPTING TO CREATE EVENT WITH: ", event_data);
+  //console.log("ATTEMPTING TO CREATE EVENT WITH: ", event_data);
   // //DIAGNOSTIC RETURN OF ALL EVENTS
   // knex("calendar_events")
   //   .select("*")
@@ -436,7 +436,7 @@ app.get("/api/accounts/pending", async (req, res) => {
 app.put("/api/events/choice", async (req, res) => {
   const { event_id, choice } = req.body;
   try {
-    const pendingEvents = await knex("calendar_events").where("event_id", event_id).update({pending: false, approved: choice});
+    const pendingEvents = await knex("calendar_events").where("event_id", event_id).update({ pending: false, approved: choice });
     res.status(200).json(pendingEvents);
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });
@@ -464,7 +464,7 @@ app.post("/api/notices/auto", async (req, res) => {
 app.put("/api/accounts/choice", async (req, res) => {
   const { user_id, approved, pending } = req.body;
   try {
-    const pendingAccounts = await knex("calendar_users").where("user_id", user_id).update({pending: pending, approved: approved});
+    const pendingAccounts = await knex("calendar_users").where("user_id", user_id).update({ pending: pending, approved: approved });
     res.status(200).json(pendingAccounts);
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });
@@ -483,3 +483,143 @@ app.get("/api/teammembers/:teamId", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
+
+//PATCHES IN UPDATED INFORMATION FROM MY CALENDAR UPDATE
+app.patch("/edit_event", (req, res) => {
+  const { id, title, start, end, description } = req.body;
+  //console.log("ATTEMPTING TO UPDATE WITH: ", id, title, start, end, description)
+  knex("calendar_events")
+    .where({ event_id: id })
+    .update({
+      title: title,
+      description: description,
+      start_datetime: start,
+      end_datetime: end
+    })
+    .then(res.status(201).json({ message: "Update pushed" }));
+})
+
+//ADDS A PERSON TO A TEAM
+app.post("/teams/add_member", (req, res) => {
+  const { user_id, team_id } = req.body;
+  //console.log("ATTEMPTING TO ADD USER: ", user_id, "TO TEAM: ", team_id);
+  knex("calendar_users")
+    .where({ user_id: user_id })
+    .update({
+      team_id: team_id
+    })
+    .then(res.status(201).json({ message: `User Added to Team ${team_id}` }));
+})
+
+//REMOVES A PERSON FROM A TEAM
+app.post("/teams/remove_member", (req, res) => {
+  const user_id = req.body.user_id;
+  //console.log("ATTEMPTING REMOVE FOR USER: ", user_id);
+  knex("calendar_users")
+    .where({ user_id: user_id })
+    .update({ team_id: null })
+    .then(res.status(201).json({ message: "User removed from team." }))
+    .catch((err) => {
+      res.status(202).json({
+        message: "ERROR REMOVING USER FROM TEAM",
+        err,
+      });
+    });
+})
+
+//RETURNS ALL TEAMS AND THEIR ASSOSIATED DATA
+app.get("/teams/all_teams", (req, res) => {
+  knex("calendar_teams")
+    .select("*")
+    .then(data => res.status(200).json(data))
+    .catch((err) => {
+      res.status(202).json({
+        message: "DATABASE ERROR",
+        err,
+      });
+    });
+})
+
+//RETURNS ALL user_id's OF A TEAM GIVEN THE TEAM ID
+app.post("/teams/members", (req, res) => {
+  const team_id = req.body.team_id;
+  knex("calendar_users")
+    .select("user_id")
+    .where({ team_id: team_id })
+    .then(data => res.status(200).json(data))
+    .catch((err) => {
+      res.status(202).json({
+        message: "user_id FETCH ERROR",
+        err,
+      });
+    });
+})
+
+//RETURNS THE FIRST AND LAST NAME OF THE user_id passed in
+app.post("/users/first_last", (req, res) => {
+  const user_id = req.body.user_id;
+  knex("calendar_users")
+    .select("first_name", "last_name")
+    .where({ user_id: user_id })
+    .then(data => res.status(200).json(data))
+    .catch((err) => {
+      res.status(202).json({
+        message: "ERROR FETCHING NAMES",
+        err,
+      });
+    });
+})
+
+//PURGES ALL USERS FROM A TEAM AND THEN DELETES THE TEAM
+app.delete("/teams/purge", (req, res) => {
+  // FIRST PURGE ALL USERS FROM TEAM
+  const team_id = req.body.team_id;
+  //console.log("PURGING USERS FROM TEAM")
+  knex("calendar_users")
+    .select("team_id")
+    .where({ team_id: team_id })
+    .update({ team_id: null })
+    .then(function () {
+      //PURGE ANY EVENTS THAT CALL THE TEAMS ID
+      knex("calendar_events")
+        .select("team_id")
+        .where({ team_id: team_id })
+        .update({ team_id: null })
+        .then(function () {
+          // NOW THAT FOREIGN KEYS ARE GONE, IT IS POSSIBLE TO DELETE THE TEAM
+          console.log("NOW ATTEMPTING TEAM DELETE");
+          return knex("calendar_teams")
+            .where({ team_id: team_id })
+            .del();
+        })
+
+    })
+    .then(function () {
+      res.status(200).json({
+        message: "TEAM AND ASSOSIATED USERS PURGED SUCCESSFULLY",
+      });
+    })
+    .catch((err) => {
+      res.status(500).json({
+        message: "ERROR PURGING TEAM AND USERS",
+        err,
+      });
+    });
+});
+
+
+// ADD A TEAM
+app.post("/teams/add", (req, res) => {
+  const { name, description } = req.body;
+  //console.log("ATTEMPTING TO CREATE TEAM WITH: ", name, " ", description);
+  knex("calendar_teams")
+    .insert({ name, description })
+    .then(data => res.status(200).json(data))
+    .catch((err) => {
+      res.status(202).json({
+        message: "ERROR CREATING TEAM",
+        err,
+      });
+    });
+})

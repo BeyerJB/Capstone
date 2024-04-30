@@ -1,39 +1,53 @@
 import React, { useState, useEffect } from 'react';
 import { Row, Col, Button, Form } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css'
-import { useCookies } from 'react-cookie'
+import DatePicker from "react-datepicker";
+import { useCookies } from 'react-cookie';
+import '../CSS/CreateEvent.css'
 
 export const CreateEvent = () => {
   const [formData, setFormData] = useState({
     title: '',
-    start_date: '',
-    start_time: '',
-    end_date: '',
-    end_time: '',
+    team_id: '',
     description: '',
     event_type: ''
   });
-  const [teamFormData, setTeamFormData] = useState({ });
+
+  const [teamFormData, setTeamFormData] = useState({ team_id: '' });
   const [teamOptions, setTeamOptions] = useState([]);
   const [eventTypeData, setEventTypeData] = useState({ event_type: '' });
   const [eventTypeOptions, setEventTypeOptions] = useState([]);
   const [checkedBox, setCheckedBox] = useState(false);
-  const [cookies] = useCookies(['userID', 'firstName', 'lastName', 'rank', 'supervisorID']);
-  const [newNoticeData, setNewNoticeData] = useState({ submitter_id: cookies.userID, body: '', notice_type: 4, event_id: 0, recipient_id: cookies.supervisorID });
+  const [cookies] = useCookies(['userID', 'firstName', 'lastName', 'rank', 'isManager']);
+  const [newNoticeData, setNewNoticeData] = useState({ submitter_id: cookies.userID, body: '', notice_type: 4, event_id: 0 });
+  const [startDate, setStartDate] = useState(null)
+  const [endDate, setEndDate] = useState(null)
 
   const handleCheckbox = () =>
     setCheckedBox(!checkedBox);
 
+  const handleStartDateChange = (date) => {
+    setStartDate(date)
+  }
+
+  const handleEndDateChange = (date) => {
+    setEndDate(date)
+  }
+
   const handleInputChange = (e) => {
+    //console.log('Test: ', e)
     const { name, value } = e.target;
     setFormData({
       ...formData,
       [name]: value
     });
+
+
     setTeamFormData({
       ...teamFormData,
       [name]: value
     });
+
     setEventTypeData({
       ...eventTypeData,
       [name]: value
@@ -43,25 +57,23 @@ export const CreateEvent = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    //IF THE TIME IS EMPTY, CONCAT ZEROS INTO THE DATETIME
-    var startDateTime;
-    var endDateTime;
-    if (formData.start_time == "") {
-      startDateTime = `${formData.start_date}T06:00:00`;
-      endDateTime = `${formData.end_date}T07:00:00`;
+    // console.log('Team Form Data: ', teamFormData)
+    // console.log('Team Options: ', teamOptions)
+    // console.log('Event Type: ', eventTypeData)
+    // console.log('Event Type Options: ', eventTypeOptions)
+    // console.log('Checkbox: ', checkedBox)
+    // console.log('Cookies: ', cookies)
+    // console.log('Notice: ', newNoticeData)
 
-    } else {
-      startDateTime = `${formData.start_date}T${formData.start_time}:00`;
-      endDateTime = `${formData.end_date}T${formData.end_time}:00`;
-    }
 
-    var UTCDATESTART = new Date(startDateTime);
-    var UTCDATEEND = new Date(endDateTime);
-
-    if ((UTCDATEEND > UTCDATESTART) == false) {
+    if ((startDate < endDate) == false) {
       alert("Please select a beginning date that is earlier than the end date.");
       return;
     }
+
+    // console.log('All form Data: formData: ', formData)
+    // console.log('Start Date: ', startDate);
+    // console.log('End Date: ', endDate)
 
     //PUSH USER VALUES TO API
     async function sendData() {
@@ -95,8 +107,8 @@ export const CreateEvent = () => {
           body: JSON.stringify({
             title: formData.title,
             description: formData.description,
-            start_datetime: UTCDATESTART.toISOString(),
-            end_datetime: UTCDATEEND.toISOString(),
+            start_datetime: startDate,
+            end_datetime: endDate,
             all_day: checkedBox,
             team_id: teamIdToSend,
             user_id: userIdToSend,
@@ -128,7 +140,7 @@ export const CreateEvent = () => {
           body: JSON.stringify({ id: cookies.userID }),
         });
         const userTeams = await res.json();
-        console.log("RETRIEVED TEAMS ARE: ", await userTeams);
+        //console.log("RETRIEVED TEAMS ARE: ", await userTeams);
 
         //GENERATE DROPDOWN BOX OPTIONS BASED ON RETRIEVED TEAMS
         const additionalOptions = userTeams.map((team, index) => (
@@ -196,7 +208,7 @@ const handleNewNotice = () => {
           <Form.Control
             required
             type="text"
-            placeholder="Enter event title"
+            placeholder="Enter Event Title"
             name="title"
             value={formData.title}
             onChange={handleInputChange} />
@@ -208,53 +220,43 @@ const handleNewNotice = () => {
             value={eventTypeData.event_id}
             onChange={handleInputChange}
             name="event_id">
-            <option value="">Event type</option>
+            <option value="">Select an Event</option>
             {eventTypeOptions}
           </Form.Select>
         </Col>
       </Row>
 
       <Row>
+        <Col xs={{ span: 4, offset: 0 }}>
         <h6 style={{ marginTop: '15px' }}>Start Date & Time</h6>
-        <Col xs={{ span: 4, offset: 0 }}>
-          <Form.Control
-            required
-            type="date"
-            placeholder="start"
-            name="start_date"
-            value={formData.start_date}
-            onChange={handleInputChange} />
+        <DatePicker
+            className="datepicker"
+            selected={startDate}
+            onChange={handleStartDateChange}
+            showTimeSelect
+            timeFormat="HH:mm"
+            timeIntervals={15}
+            dateFormat="MMMM d, yyyy h:mm"
+            placeholderText="  Select Start"
+            value={startDate}
+            required 
+          />
         </Col>
-
+        
         <Col xs={4}>
-          <Form.Control
-            type="time"
-            placeholder="Start Time"
-            name="start_time"
-            value={formData.start_time}
-            onChange={handleInputChange} />
-        </Col>
-      </Row>
-
-      <Row>
-        <h6 style={{ marginTop: '15px' }}>End Date & Time </h6>
-        <Col xs={{ span: 4, offset: 0 }}>
-          <Form.Control
-            required
-            type="date"
-            placeholder="YYYY-MM-DD"
-            name="end_date"
-            value={formData.end_date}
-            onChange={handleInputChange} />
-        </Col>
-
-        <Col xs={4}>
-          <Form.Control
-            type="time"
-            placeholder="End Time"
-            name="end_time"
-            value={formData.end_time}
-            onChange={handleInputChange} />
+        <h6 style={{ marginTop: '15px' }}>End Date & Time</h6>
+        <DatePicker
+            className="datepicker"
+            selected={endDate}
+            onChange={handleEndDateChange}
+            showTimeSelect
+            timeFormat="HH:mm"
+            timeIntervals={15}
+            dateFormat="MMMM d, yyyy h:mm"
+            placeholderText="  Select End"
+            value={endDate}
+            required 
+          />
         </Col>
       </Row>
 
@@ -266,7 +268,7 @@ const handleNewNotice = () => {
             value={teamFormData.team_id}
             onChange={handleInputChange}
             name="team_id">
-            <option value="">Select A Team</option>
+            <option value="">Select a Team</option>
             <option>Just Me</option>
             {teamOptions}
           </Form.Select>

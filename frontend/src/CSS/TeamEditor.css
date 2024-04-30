@@ -1,0 +1,64 @@
+.form-select {
+  background-color: lightgrey;
+}
+
+.addDeleteButtons {
+  margin-top:25px;
+  margin-bottom:25px
+}
+
+.submitAddTeamMember {
+  margin-left:10px
+}
+
+.addUserId {
+  background-color: lightgrey;
+  border-radius: 5px;
+  border: none;
+  border-color: none;
+  min-width: 100px;
+  min-height: 35px;
+}
+
+.addUserId::placeholder {
+  color: black; 
+}
+
+.addTeamName {
+  background-color: lightgrey;
+  border-radius: 5px;
+  border: none;
+  border-color: none;
+  min-width: 100px;
+  min-height: 35px;
+  margin-right: 5px;
+}
+
+.addTeamName::placeholder {
+  color: black; 
+}
+
+.addTeamDescription {
+  background-color: lightgrey;
+  border-radius: 5px;
+  border: none;
+  border-color: none;
+  min-width: 100px;
+  min-height: 35px;
+}
+
+.addTeamDescription::placeholder {
+  color: black; 
+}
+
+
+
+
+/* .addUserDiv{
+  margin-top:25px;
+}
+
+.cancelAddTeamMember {
+  margin-left
+
+}  */

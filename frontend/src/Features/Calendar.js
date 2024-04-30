@@ -40,29 +40,34 @@ export const Calendar = () => {
 
 
   useEffect(() => {
-    fetch(`http://localhost:8080/mycalendar?userId=${userId}&teamId=${cookies.teamID}`)
-      .then(response => response.json())
-      .then(data => {
-        setAllData(data);
-        const formattedEvents = data.map(event => ({
-          title: event.title,
-          start: new Date(event.start_datetime),
-          end: new Date(event.end_datetime),
-          description: event.description,
-          id: event.event_id,
+    //Added an async function fetchEventData as a wrapper, it terminates on line 53 then self-invokes
+    async function fetchEventData() {
+      await fetch(`http://localhost:8080/mycalendar?userId=${userId}&teamId=${cookies.teamID}`)
+        .then(response => response.json())
+        .then(data => {
+          setAllData(data);
+          console.log("RECEIVED DATA IS: ", data);
+          const formattedEvents = data.map(event => ({
+            id: event.event_id,
+            title: event.title,
+            start: event.start_datetime,
+            end: event.end_datetime,
+            description: event.description,
           color: event.color_code,
           team_id: event.team_id,
           allDay: event.all_day,
           backgroundColor: `#${event.color_code}`,
           borderColor: `#${event.color_code}`
-        }));
-        setEvents(formattedEvents);
+          }));
+          setEvents(formattedEvents);
         // console.log(data);
-        // setDescription(formattedEvents.description)
-      })
-      .catch(error => console.error('Error fetching events: ', error));
-  }, [editedEvent]);
-//  console.log('all data: ', allData)
+          // setDescription(formattedEvents.description)
+        })
+        .catch(error => console.error('Error fetching events: ', error));
+    }
+    fetchEventData();
+  }, [isEditing]);
+// 
 
  const openModal = async (event) => {
   try {
@@ -77,7 +82,7 @@ export const Calendar = () => {
     }
 
     //console.log('event: ', event);
-    //console.log('event id: ', event.event.id);
+    ////console.log('event id: ', event.event.id);
     //console.log(selectedEvent);
   } catch (error) {
     console.error('Error opening modal:', error);
@@ -107,6 +112,7 @@ export const Calendar = () => {
 
   const handleSaveClick = () => {
     const editedEventData = {
+      id: eventId,
       id: eventId,
       title: title,
       start: startDateTime,
@@ -146,21 +152,21 @@ export const Calendar = () => {
       },
       body: JSON.stringify(editedEventData)
     })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Failed to edit event');
-      }
-      return response.json();
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to edit event');
+        }
+        return response.json();
+      })
+      .then(data => {
+        //console.log('Edit Successful:', data, editedEventData);
+        setIsEditing(false);
+        //window.location.reload();
     })
-    .then(data => {
-      //console.log('Edit Successful:', data, editedEventData);
-      setIsEditing(false);
-      //window.location.reload();
-    })
-    .catch(error => {
-      console.error('Error editing event:', error);
-      // Handle error
-    });
+      .catch(error => {
+        console.error('Error editing event:', error);
+        // Handle error
+      });
 
   };
 
@@ -356,4 +362,3 @@ export const Calendar = () => {
     </>
   );
 };
-
