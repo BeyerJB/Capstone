@@ -1,6 +1,6 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
-import { redirect } from "react-router-dom";
+
 
 export const MyProfile = () => {
   const [cookies] = useCookies([
@@ -11,9 +11,9 @@ export const MyProfile = () => {
     "supervisorID",
     "isSupervisor",
     "isManager",
+    "enabled"
   ]);
   const [rank, setRank] = useState("");
-  const [userData, setUserData] = useState({});
 
   useEffect(() => {
     fetch(`http://localhost:8080/api/ranks/`)

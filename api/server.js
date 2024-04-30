@@ -253,6 +253,7 @@ app.get("/api/teamview", async (req, res) => {
     const users = await knex('calendar_users')
     .select(
       "calendar_users.team_id",
+      "calendar_users.user_id",
       "calendar_teams.name AS team_name",
       "first_name",
       "last_name",
@@ -262,7 +263,8 @@ app.get("/api/teamview", async (req, res) => {
     .join("calendar_teams", "calendar_teams.team_id", "calendar_users.team_id");
     const userEvents = await knex('calendar_events')
     .select(
-      "user_id",
+      "calendar_events.user_id",
+      "calendar_teams.name",
       "title",
       "start_datetime",
       "end_datetime",
@@ -271,7 +273,9 @@ app.get("/api/teamview", async (req, res) => {
       "event_type.name AS event_type"
     )
     .join("event_type", "calendar_events.event_type", "=", "event_type.event_id")
-    .whereNotNull("user_id")
+    .join("calendar_users", "calendar_users.user_id", "calendar_events.user_id")
+    .join("calendar_teams", "calendar_teams.team_id", "calendar_users.team_id")
+    .whereNotNull("calendar_events.user_id")
 
     const teamEvents = await knex('calendar_events')
     .select(
@@ -288,7 +292,10 @@ app.get("/api/teamview", async (req, res) => {
     .join("calendar_teams", "calendar_events.team_id", "=", "calendar_teams.team_id")
     .whereNotNull("calendar_events.team_id")
 
-    res.status(200).json({users:users, userEvents:userEvents, teamEvents:teamEvents})
+    const teams = await knex('calendar_teams')
+    .select("*")
+
+    res.status(200).json({users:users, userEvents:userEvents, teamEvents:teamEvents, teams: teams})
   } catch(err) {
     res.status(500).json({ err: "Internal server error : ", err });
   }

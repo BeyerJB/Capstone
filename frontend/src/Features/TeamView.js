@@ -18,21 +18,16 @@ export const TeamView = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [filteredUsers, setFilteredUsers] = useState([])
-  const [teamEvents, setTeamEvents ] = useState([])
-  const [userEvents, setUserEvents ] = useState([])
-  const [users, setUsers] = useState([])
+  const [resourceInfo, setResourceInfo ] = useState([])
+
 
 
   useEffect(() => {
-<<<<<<< HEAD
     fetch(`http://localhost:8080/api/teamview`)
       .then(result => result.json())
-      .then((result) => {
-        //setTeamEvents(jsonRes))
-        setUserEvents(modifyUsers(result.users));
-        setUserEvents(result.userEvents);
-        setUsers(result.teamEvents);
-  })}, [])
+      .then((result) => setResourceInfo(result)
+
+    )}, [])
 
   // useEffect(() => {
   //   fetch(`http://localhost:8080/api/teamview`)
@@ -49,29 +44,22 @@ export const TeamView = () => {
 
 
 const modifyUsers = (users) => {
-  const usersByTeam = Object.groupBy(users, user => user.team_name)
-  console.log(usersByTeam)
+    return Object.groupBy(users, user => user.team_name)
+
 }
 
-=======
-    console.log("cookie id", `http://localhost:8080/api/teamview/${cookies.userID}`)
-    fetch(`http://localhost:8080/api/teamview/${cookies.userID}`)
-      .then(res => res.json())
-      .then(jsonRes => setTeamEvents(jsonRes))
-    console.log(teamEvents);
-  }, [cookies.userID])
->>>>>>> origin/main
 
-  const openModal = (event) => {
+const openModal = (event) => {
     setSelectedEvent(event);
     setIsModalOpen(true);
+
   };
 
-  const closeModal = () => {
+const closeModal = () => {
     setIsModalOpen(false);
   };
 
-  const handleGuardianClick = (info) => {
+const handleGuardianClick = (info) => {
       const filteredGuardian = {
       resourceid: info.el.dataset.resourceId,
       title: info.fieldValue,
@@ -85,6 +73,7 @@ const modifyUsers = (users) => {
 
   return (
     <div className="teamview-calendar">
+      {resourceInfo.users ?
       <FullCalendar
         plugins={[
           dayGridPlugin,
@@ -148,41 +137,39 @@ const modifyUsers = (users) => {
         eventClick={openModal}
         resourceAreaHeaderContent="Guardians"
         resourceAreaWidth = "10vw"
-        resourceGroupField={['team_name']}
-        resources={[
-          ...filteredUsers,
-          ...teamEvents.map(user => {
-              return ({
-                id: user.user_id,
-                title: `${user.rank} ${user.first_name} ${user.last_name}`,
-                team_name : user.team_name
-              })
-            })
+        resources={
+          resourceInfo.teams.map(team => ({
+             id: team.team_id,
+             title: team.name,
+                children: (resourceInfo.users.filter(user => user.team_id === team.team_id)).map(user => ({
+                  id: `${user.team_name}${user.user_id}`,
+                  title: `${user.rank} ${user.first_name} ${user.last_name}`
+             })),
+          }))
+         }
+        events={[
+              ...resourceInfo.teamEvents.map(event => ({
+                resourceId:event.team_id,
+                title:event.title,
+                start: event.start_datetime,
+                end:event.end_datetime
+            })),
+              ...resourceInfo.userEvents.map(event => ({
+              resourceId: `${event.name}${event.user_id}`,
+              title:event.title,
+              start:event.start_datetime,
+              end:event.end_datetime
 
-          ]
-        }
-        resourceLabelDidMount={(info) => {
-          info.el.addEventListener("click", function() {
-              handleGuardianClick(info)
-
-              console.log('clicked', info.fieldValue, 'id:', info.el.dataset.resourceId,'allinfo:', info )    //.el.dataset.resourceId   el.dataset
-          })}}
-
-        events={
-          teamEvents.map(user => {
-            return ({
-              resourceId: user.user_id,
-              title: user.title,
-              start: user.start_datetime,
-              end: user.end_datetime,
-              allDay: user.all_day,
-              description: user.description,
-              event_type: user.event_type,
-
-            })
-          })
-        }
+            }))
+          ]}
+          resourceLabelDidMount={(info) => {
+            info.el.addEventListener("click", function() {
+                // handleGuardianClick(info)
+                console.log('clicked', info.fieldValue, 'id:', info.el.dataset.resourceId,'allinfo:', info )
+            })}}
       />
+      : <></>
+        }
       <div style={{ position: 'absolute', visibility: 'hidden', zIndex: 12001, width: '158px', padding: '2px 0 0 0',  textDecoration: 'none' }}>
       <Modal show={isModalOpen} onHide={closeModal} size='lg' aria-labelledby='contained-modal-title-vcenter' centered>
         <Modal.Header closeButton>
@@ -196,6 +183,7 @@ const modifyUsers = (users) => {
         <Modal.Footer>
         <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
           <div>
+            {console.log('resourceInfo', resourceInfo)}
             <Button variant="primary">Button 1</Button>
             <Button variant="secondary" style={{ marginLeft: '10px' }}>Button 2</Button>
           </div>
@@ -224,6 +212,13 @@ const modifyUsers = (users) => {
       }
     ]
   },
+
+
+  usersByTeam.map(team => ({
+    id: team.team_id,
+    title: team.team_name,
+    children: users.filter(user => user.team_id === team.team_id),
+  }));
 
 {
     "users": [
@@ -258,4 +253,18 @@ const modifyUsers = (users) => {
             "event_type": "Meeting"
         }
       ]
+
+      teamEvents.map(user => {
+            return ({
+              resourceId: user.user_id,
+              title: user.title,
+              start: user.start_datetime,
+              end: user.end_datetime,
+              allDay: user.all_day,
+              description: user.description,
+              event_type: user.event_type,
+
+            })
+          })
 */
+
