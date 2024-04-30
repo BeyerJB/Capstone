@@ -543,11 +543,19 @@ app.delete("/teams/purge", (req, res) => {
     .where({ team_id: team_id })
     .update({ team_id: null })
     .then(function () {
-      // NOW THAT FOREIGN KEYS ARE GONE, IT IS POSSIBLE TO DELETE THE TEAM
-      console.log("NOW ATTEMPTING TEAM DELETE");
-      return knex("calendar_teams")
+      //PURGE ANY EVENTS THAT CALL THE TEAMS ID
+      knex("calendar_events")
+        .select("team_id")
         .where({ team_id: team_id })
-        .del();
+        .update({ team_id: null })
+        .then(function () {
+          // NOW THAT FOREIGN KEYS ARE GONE, IT IS POSSIBLE TO DELETE THE TEAM
+          console.log("NOW ATTEMPTING TEAM DELETE");
+          return knex("calendar_teams")
+            .where({ team_id: team_id })
+            .del();
+        })
+
     })
     .then(function () {
       res.status(200).json({

@@ -14,12 +14,38 @@ export const TeamEditor = () => {
     const [selectedTeamMember, setSelectedTeamMember] = useState('');
     const [teamOptions, setTeamOptions] = useState('');
     const [addButtonClicked, setAddButtonClicked] = useState(false);
+    const [addTeamButtonClicked, setAddTeamButtonClicked] = useState(false);
     const [addUser, setAddUser] = useState(0);
+    const [teamName, setTeamName] = useState('');
+    const [teamDescription, setTeamDescription] = useState('');
 
     const addTeamMemberButton = () => {
         setAddButtonClicked(!addButtonClicked)
     }
 
+    const addTeamButton = () => {
+        setAddTeamButtonClicked(!addTeamButtonClicked)
+    }
+
+    const handleTeamMemberChange = async (e) => {
+        let selectedTeamMember = e.target.value;
+        setSelectedTeamMember(selectedTeamMember)
+    }
+
+    const handleAddUserChange = async (e) => {
+        let selectedUser = e.target.value;
+        setAddUser(selectedUser);
+    }
+
+    const handleTeamNameChange = async (e) => {
+        let teamName = e.target.value;
+        setTeamName(teamName);
+    }
+
+    const handleTeamDescriptionChange = async (e) => {
+        let teamDesc = e.target.value;
+        setTeamDescription(teamDesc);
+    }
 
     useEffect(() => {
         async function fetchTeams() {
@@ -29,14 +55,11 @@ export const TeamEditor = () => {
                     headers: { 'Content-Type': 'application/json' },
                 });
                 const teamsData = await res.json();
+
                 //console.log("List Teams:", teamsData);
 
-                // const additionalOptions = teams.map((team, index) => (
-                //   <option key={index} value={team.team_id}>{team.name}</option>
-                // ));
                 setTeams(teamsData);
-                //<option key={index} value={event.event_id}>{event.name}</option>
-                //LOAD TEAMS INTO OPTION BUBBLES
+                //LOAD TEAMS INTO OPTIONS
                 const teamOptions = teamsData.map((team, index) => (
                     <option key={index} value={team.team_id}>{team.name}, {team.description}</option>
                 ));
@@ -87,17 +110,10 @@ export const TeamEditor = () => {
         setTeamMembers(userNames);
     };
 
-    const handleTeamMemberChange = async (e) => {
-        let selectedTeamMember = e.target.value;
-        setSelectedTeamMember(selectedTeamMember)
-    }
-
-    const handleAddUserChange = async (e) => {
-        let selectedUser = e.target.value;
-        setAddUser(selectedUser);
-    }
-
     const deleteTeamMember = async () => {
+        if (selectedTeamMember == '' || selectedTeam == '') {
+            return;
+        }
         try {
             //REMOVE STRING DATA FROM selectedTeamMember, THEN CAST AS INT
             var userInt = 0;
@@ -107,7 +123,6 @@ export const TeamEditor = () => {
             // console.log("SELECTED TEAM MEMBER: ", selectedTeamMember);
             // console.log("userint:", userInt);
             // console.log(typeof(userInt));
-
 
             const res = await fetch('http://localhost:8080/teams/remove_member', {
                 method: "POST",
@@ -124,11 +139,13 @@ export const TeamEditor = () => {
 
         } catch (error) {
             console.error("error removing user:", error)
+        } finally {
+            window.location.reload();
         }
     }
 
     const addTeamMember = async () => {
-        if(addUser == 0){return};
+        if (addUser == 0) { return };
 
         console.log("ATTEMPTING TO ADD USER: ", addUser, " TO TEAM: ", selectedTeam);
         try {
@@ -148,6 +165,63 @@ export const TeamEditor = () => {
 
         } catch (error) {
             console.error("error adding user:", error)
+        } finally {
+            window.location.reload();
+        }
+    }
+
+    const deleteTeam = async () => {
+        if (selectedTeam == '') {
+            return;
+        }
+        try {
+            console.log("ATTEMPTING PURGE OF TEAM: ", selectedTeam);
+
+            const res = await fetch('http://localhost:8080/teams/purge', {
+                method: "DELETE",
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    team_id: selectedTeam
+                })
+            })
+            if (!res.ok) {
+                const error = await res.json();
+                throw new Error(error.message)
+            }
+            console.log("success")
+
+        } catch (error) {
+            console.error("error removing team:", error)
+        } finally {
+            window.location.reload();
+        }
+    }
+
+    const addTeam = async () => {
+        if (teamName == '' || teamDescription == '') {
+            return;
+        }
+
+        console.log("ATTEMPTING TO ADD TEAM: ", teamName, " WITH DESC: ", teamDescription);
+        try {
+            const res = await fetch('http://localhost:8080/teams/add', {
+                method: "POST",
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: teamName,
+                    description: teamDescription
+                })
+            })
+            if (!res.ok) {
+                const error = await res.json();
+                throw new Error(error.message)
+            }
+            console.log("success adding the team")
+
+        } catch (error) {
+            console.error("error adding team:", error)
+        } finally {
+            window.location.reload();
         }
     }
 
@@ -180,54 +254,76 @@ export const TeamEditor = () => {
                         {teamMembers.map((member, index) => (
                             <option key={index}>{member}</option>
                         ))}
+
                     </Form.Select>
-                    <Button type="submit1" variant="dark" className="delete_team_member" onClick={deleteTeamMember}>Delete Team Member</Button>
-                    <div>
-                        <Button variant="dark" className="add_team_member" onClick={addTeamMemberButton}>Add Team Member</Button>
-                    </div>
+                    <Row className="addDeleteButtons">
+                        <Col xs={{ span: 6, offset: 0 }}>
+                            <Button type="submit1" variant="dark" className="delete_team_member" onClick={deleteTeamMember}>Delete Team Member</Button>
+                        </Col>
+                        <Col xs={{ span: 6, offset: 0 }}>
+                            <Button variant="dark" className="add_team_member" onClick={addTeamMemberButton}>Add Team Member</Button>
+                        </Col>
+                    </Row>
                 </Form>
 
-                {/*const [addButtonClicked, setAddButtonClicked] = useState(false);*/}
 
                 <div>
                     <b>
                         {addButtonClicked ?
                             <div className="addUserDiv">
                                 <Form>
-                                    <input type="number" id="addUserId" name="addUserId" onChange={handleAddUserChange} min="1" max="999999999" placeholder="User Id" />
-                                    <Button variant="dark" className="cancelAddTeamMember" onClick={addTeamMember}>Cancel</Button>
+                                    <input type="number" id="addUserId" className="addUserId" onChange={handleAddUserChange} min="1" max="999999999" placeholder="User Id" />
                                     <Button variant="dark" className="submitAddTeamMember" onClick={addTeamMember}>Submit</Button>
                                 </Form>
-
                             </div>
                             :
                             <></>} {/*THIS LINE IS LEFT BLANK TO HIDE THE ADD TEAM MEMBER DIV WHEN FALSE*/}
                     </b>
                 </div>
-
-
                 {/* END OF USER MANAGEMENT */}
             </Col>
 
-
-
-
-
-
-
             {/* TEAM MANAGEMENT */}
-            <Col xs={{ span: 5, offset: 0 }}>
+            <Col xs={{ span: 3, offset: 1 }}>
                 <h3 style={{ marginTop: '15px', color: 'lightgrey' }}>Team Management </h3>
 
-                {/* ADD / REMOVE BUTTONS */}
-                <div>
-                    <button type="button" className="add_team_button">Add Team</button>
-                    <button type="button" className="delete_team_button">Delete Team</button>
-                </div>
+                <Form>
+                    <h6 style={{ marginTop: '15px', color: 'lightgrey' }}>Teams</h6>
+                    <Form.Select
+                        required
+                        value={selectedTeam}
+                        onChange={handleTeamChange}
+                        name="team_id">
+                        <option value="">Select a Team</option>
+                        {teams.map((team, index) => (
+                            <option key={index} value={team.team_id}>{team.name}</option>
+                        ))}
+                    </Form.Select>
+                </Form>
 
-                {/*ADD IN ALL EXISTING TEAMS*/}
+                <Row className="addDeleteButtons">
+                    <Col xs={{ span: 6, offset: 0 }}>
+                        <Button type="submit1" variant="dark" className="delete_team_member" onClick={deleteTeam}>Delete Team</Button>
+                    </Col>
+                    <Col xs={{ span: 6, offset: 0 }}>
+                        <Button variant="dark" className="add_team_member" onClick={addTeamButton}>Add Team</Button>
+                    </Col>
+                </Row>
+
                 <div>
-                    {teamOptions}
+                    <b>
+                        {addTeamButtonClicked ?
+                            <div className="addUserDiv">
+                                <Form>
+                                    <input type="text" id="addTeamName" className="addTeamName" onChange={handleTeamNameChange} placeholder="Team Name" />
+                                    <input type="text" id="addTeamDescription" className="addTeamDescription" onChange={handleTeamDescriptionChange} placeholder="Team Description" />
+                                    <Button variant="dark" className="submitAddTeamMember" onClick={addTeam}>Submit</Button>
+                                </Form>
+
+                            </div>
+                            :
+                            <></>} {/*THIS LINE IS LEFT BLANK TO HIDE THE ADD TEAM DIV WHEN FALSE*/}
+                    </b>
                 </div>
             </Col>
         </Row>
