@@ -86,9 +86,11 @@ function App() {
 
                 </>
               )}
+              </ul>
             </div>
-          </div>
+
         </nav>
+
         <Routes>
           <Route element={<PrivateRoutes/>}>
             <Route path='/mycalendar' element={<Calendar />} />
