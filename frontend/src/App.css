@@ -204,13 +204,13 @@ body {
   padding: 0;
 }
 
-.navbar li {
+.navbar Link {
   margin-right: 10px;
   color: white;
 }
 
 .navbar a {
-  color: white;
+  color: white !important;
   text-decoration: none;
   padding: 10px 15px;
 }
@@ -220,5 +220,6 @@ body {
   border-radius: 5px;
   cursor: pointer;
 }
+
 
 

@@ -14,10 +14,10 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import Form from 'react-bootstrap/Form';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import '../CSS/Calendar.css'
+import '../CSS/calendar.css'
 
 export const Calendar = () => {
-  const [cookies] = useCookies(['userID', 'firstName', 'lastName', 'rank']);
+  const [cookies] = useCookies(['userID', 'firstName', 'lastName', 'rank', 'isManager']);
   const [events, setEvents] = useState([]);
   const [allData, setAllData] = useState([]);
   const userId = cookies.userID;
@@ -31,12 +31,18 @@ export const Calendar = () => {
   const [title, setTitle] = useState(null);
   const [description, setDescription] = useState(null);
   const [eventId, setEventId] = useState(null);
-  ///
+  // const [color, setColor] = useState(null)
+  const [oldStartDateTime, setOldStartDateTime] = useState('');
+  const [oldEndDateTime, setOldEndDateTime] = useState('');
+  const [oldTitle, setOldTitle] = useState('');
+  const [oldDescription, setOldDescription] = useState('');
+  const [teamMemberIDs, setTeamMemberIDs] = useState({});
+
 
   useEffect(() => {
     //Added an async function fetchEventData as a wrapper, it terminates on line 53 then self-invokes
     async function fetchEventData() {
-      await fetch(`http://localhost:8080/mycalendar?userId=${userId}`)
+      await fetch(`http://localhost:8080/mycalendar?userId=${userId}&teamId=${cookies.teamID}`)
         .then(response => response.json())
         .then(data => {
           setAllData(data);
@@ -46,29 +52,48 @@ export const Calendar = () => {
             title: event.title,
             start: event.start_datetime,
             end: event.end_datetime,
-            description: event.description
+            description: event.description,
+          color: event.color_code,
+          team_id: event.team_id,
+          allDay: event.all_day,
+          backgroundColor: `#${event.color_code}`,
+          borderColor: `#${event.color_code}`
           }));
           setEvents(formattedEvents);
+        // console.log(data);
           // setDescription(formattedEvents.description)
         })
         .catch(error => console.error('Error fetching events: ', error));
     }
     fetchEventData();
-  }, [userId, isEditing]);
+  }, [isEditing]);
+// 
 
-
-  const openModal = (event) => {
+ const openModal = async (event) => {
+  try {
     setSelectedEvent(event);
     setIsModalOpen(true);
-    console.log('event: ', event)
-    //console.log('event id: ', selectedEvent.event.id)
-  };
+
+    let modalEvent = events.find((thisEvent) => thisEvent.id == event.event.id);
+
+    // Check if the selected event has a user_id assigned
+    if (modalEvent && modalEvent.team_id !== null) {
+      await handleTeamEvent(modalEvent.team_id);
+    }
+
+    //console.log('event: ', event);
+    ////console.log('event id: ', event.event.id);
+    //console.log(selectedEvent);
+  } catch (error) {
+    console.error('Error opening modal:', error);
+    // Handle error
+  }
+}
 
   const closeModal = () => {
     setIsModalOpen(false);
     setIsEditing(false);
   };
-
 
   const handleEditClick = () => {
     setIsEditing(true);
@@ -76,7 +101,13 @@ export const Calendar = () => {
     setDescription(selectedEvent.event.extendedProps.description)
     setStartDateTime(selectedEvent.event.start)
     setEndDateTime(selectedEvent.event.end)
-    setEventId(selectedEvent.event.id)
+    setEventId( selectedEvent.event.id)
+    // setColor(selectedEvent.event.backgroundColor)
+    setOldTitle(selectedEvent.event.title);
+    setOldDescription(selectedEvent.event.extendedProps.description);
+    setOldStartDateTime(selectedEvent.event.start);
+    setOldEndDateTime(selectedEvent.event.end);
+
   };
 
   const handleSaveClick = () => {
@@ -88,6 +119,31 @@ export const Calendar = () => {
       end: endDateTime,
       description: description
     };
+
+    if (
+      oldTitle !== editedEventData.title ||
+      oldDescription !== editedEventData.description ||
+      oldStartDateTime !== editedEventData.startDateTime ||
+      oldEndDateTime !== editedEventData.endDateTime
+    ) {
+      // Update newNoticeData
+      var newBody = `Event '${oldTitle}' has been updated.\n\nChanges:\n\nTitle: ${oldTitle} -> ${title}\nDescription: ${oldDescription} -> ${description}\nStart Date and Time: ${oldStartDateTime} -> ${startDateTime}\nEnd Date and Time: ${oldEndDateTime} -> ${endDateTime}`;
+    }
+
+    // If the event does not have a user_id assigned, send new notices
+    if (!selectedEvent.user_id) {
+      // Loop through each team member ID and trigger sendNewNotice function
+      Object.values(teamMemberIDs).forEach(teamMemberId => {
+        const noticeData = {
+          submitter_id: cookies.userID,
+          body: newBody,
+          notice_type: 4,
+          event_id: null,
+          recipient_id: teamMemberId.user_id
+        };
+        sendNewNotice(noticeData);
+      });
+    }
 
     fetch('http://localhost:8080/edit_event', {
       method: 'PATCH',
@@ -103,13 +159,15 @@ export const Calendar = () => {
         return response.json();
       })
       .then(data => {
-        console.log('Edit Successful:', data, editedEventData);
+        //console.log('Edit Successful:', data, editedEventData);
         setIsEditing(false);
-      })
+        //window.location.reload();
+    })
       .catch(error => {
         console.error('Error editing event:', error);
         // Handle error
       });
+
   };
 
   const handleCancelClick = () => {
@@ -123,15 +181,48 @@ export const Calendar = () => {
   };
 
   const handleButton2Click = () => {
-    console.log('button 2 clicked');
+    //console.log('button 2 clicked');
   };
 
   const handleStartDateChange = (date) => {
+    // console.log(date)
+    const utcStartDate = date.toISOString();
+    // console.log('utc time: ', utcStartDate)
     setStartDateTime(date);
+    // console.log('start date time: ',startDateTime)
   };
 
   const handleEndDateChange = (date) => {
     setEndDateTime(date);
+  };
+
+  const sendNewNotice = (noticeData) => {
+    fetch('http://localhost:8080/api/notices/auto', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(noticeData),
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+      })
+      .catch(error => {
+        console.error('Error adding new notice:', error);
+        alert('Error adding new notice. Please try again.');
+      });
+  };
+
+  const handleTeamEvent = async (teamId) => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/teammembers/${teamId}`)
+      const data = await response.json();
+      setTeamMemberIDs(data);
+    } catch (error) {
+      console.error('Error fetching team member user IDs:', error);
+    }
   };
 
   return (
@@ -145,17 +236,17 @@ export const Calendar = () => {
             start: "today prev,next",
             center: 'title',
             end: 'timeGridWeek,dayGridMonth,multiMonthYear'
-            // end: 'timeGridDay,timeGridWeek,dayGridMonth'
+
           }}
           views = {{
             timeGridWeek: {
               buttonText: 'Week',
               slotDuration: '01:00',
-              expandRows: true
+              expandRows: true,
+              allDaySlot: true
             },
             dayGridMonth: {
               buttonText: 'Month',
-              // duration: {days: 35}
               fixedWeekCount: false,
               showNonCurrentDates: false
             },
@@ -163,85 +254,110 @@ export const Calendar = () => {
               buttonText: 'Year',
             }
           }}
-          // fixedWeekCount = 'false'
-          // showNonCurrentDates = 'false'
+
+          allDaySlot= {true}
           themeSystem= 'bootstrap5'
           eventClick={openModal}
           nowIndicator='true'
           dayMaxEvents='true'
+
           selectable='true'
           handleWindowResize='true'
           aspectRatio='2'
-          // multiMonthMaxColumns='12'
+          eventColor= 'red'
+
+          eventDisplay = "block"
+
           events={events}
+          eventContent={(eventInfo) => {
+            return (
+              <div style={{
+                backgroundColor: `#${eventInfo.event.backgroundColor}`,
+                borderColor: `#${eventInfo.event.backgroundColor}`,
+                display: `#${eventInfo.event.backgroundColor}`
+
+                }}>
+                {eventInfo.timeText} - {eventInfo.event.title}
+              </div>
+            );
+          }}
+          // eventContent={(eventInfo) => {
+          //   return {
+          //     ...eventInfo,
+          //     backgroundColor: eventInfo.event.backgroundColor
+          //   }
+          // }}
+
+
         />
       </div>
-      <div style={{ position: 'absolute', visibility: 'hidden', zIndex: 12001, width: '158px', padding: '2px 0 0 0', textDecoration: 'none' }}>
-        <Modal show={isModalOpen} onHide={closeModal} size='lg' aria-labelledby='contained-modal-title-vcenter' centered>
-          <Modal.Header closeButton>
-            <Modal.Title>Event: {selectedEvent ? selectedEvent.event.title : ''}</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
+      <div style={{ position: 'absolute', visibility: 'hidden', zIndex: 12001, width: '158px', padding: '2px 0 0 0',  textDecoration: 'none' }}>
+      <Modal show={isModalOpen} onHide={closeModal} size='lg' aria-labelledby='contained-modal-title-vcenter' centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Event: {selectedEvent ? selectedEvent.event.title : ''}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {isEditing ? (
+            <Form>
+              <Form.Group controlId="formTitle">
+                <Form.Label>Title</Form.Label>
+                <Form.Control type="text" placeholder={selectedEvent.event.title} value={title} onChange={(e) => setTitle(e.target.value)}/>
+              </Form.Group>
+              <Form.Group controlId="formStart">
+                <Form.Label>Start</Form.Label>
+                <DatePicker
+                  selected={startDateTime}
+                  onChange={handleStartDateChange}
+                  showTimeSelect
+                  timeFormat="HH:mm"
+                  timeIntervals={15}
+                  dateFormat="MMMM d, yyyy h:mm aa"
+                  placeholderText="Select start date and time"
+                />
+              </Form.Group>
+              <Form.Group controlId="formEnd">
+                <Form.Label>End</Form.Label>
+                <DatePicker
+                  selected={endDateTime}
+                  onChange={handleEndDateChange}
+                  showTimeSelect
+                  timeFormat="HH:mm"
+                  timeIntervals={15}
+                  dateFormat="MMMM d, yyyy h:mm aa"
+                  placeholderText="Select end date and time"
+                />
+              </Form.Group>
+              <Form.Group controlId="formDescription">
+                <Form.Label>Description</Form.Label>
+                <Form.Control as="textarea" rows={3} placeholder={selectedEvent.event.extendedProps.description} value={description} onChange={(e) => setDescription(e.target.value)}/>
+              </Form.Group>
+            </Form>
+          ) : (
+            <>
+              <p>Start: {selectedEvent ? selectedEvent.event.start.toString() : ''}</p>
+              <p>End: {selectedEvent ? selectedEvent.event.end.toString() : ''}</p>
+              <p>Description: {selectedEvent ? selectedEvent.event.extendedProps.description : ''}</p>
+            </>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
             {isEditing ? (
-              <Form>
-                <Form.Group controlId="formTitle">
-                  <Form.Label>Title</Form.Label>
-                  <Form.Control type="text" placeholder={selectedEvent.event.title} value={title} onChange={(e) => setTitle(e.target.value)} />
-                </Form.Group>
-                <Form.Group controlId="formStart">
-                  <Form.Label>Start</Form.Label>
-                  <DatePicker
-                    selected={startDateTime}
-                    onChange={handleStartDateChange}
-                    showTimeSelect
-                    timeFormat="HH:mm"
-                    timeIntervals={15}
-                    dateFormat="MMMM d, yyyy h:mm"
-                    placeholderText="Select start date and time"
-                  />
-                </Form.Group>
-                <Form.Group controlId="formEnd">
-                  <Form.Label>End</Form.Label>
-                  <DatePicker
-                    selected={endDateTime}
-                    onChange={handleEndDateChange}
-                    showTimeSelect
-                    timeFormat="HH:mm"
-                    timeIntervals={15}
-                    dateFormat="MMMM d, yyyy h:mm"
-                    placeholderText="Select end date and time"
-                  />
-                </Form.Group>
-                <Form.Group controlId="formDescription">
-                  <Form.Label>Description</Form.Label>
-                  <Form.Control as="textarea" rows={3} placeholder={selectedEvent.event.extendedProps.description} value={description} onChange={(e) => setDescription(e.target.value)} />
-                </Form.Group>
-              </Form>
+              <>
+                <Button variant="success" onClick={handleSaveClick}>Save</Button>
+                <Button variant="secondary" onClick={handleCancelClick}>Cancel</Button>
+                <Button variant="danger" onClick={handleCancelEventClick}>Send Cancel Notice</Button>
+              </>
             ) : (
               <>
-                <p>Start: {selectedEvent ? selectedEvent.event.start.toString() : ''}</p>
-                <p>End: {selectedEvent ? selectedEvent.event.end.toString() : ''}</p>
-                <p>Description: {selectedEvent ? selectedEvent.event.extendedProps.description : ''}</p>
+              {cookies.isManager && (<Button variant="secondary" onClick={handleEditClick}>Edit event</Button>) }
+
               </>
             )}
-          </Modal.Body>
-          <Modal.Footer>
-            <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-              {isEditing ? (
-                <>
-                  <Button variant="success" onClick={handleSaveClick}>Save</Button>
-                  <Button variant="secondary" onClick={handleCancelClick}>Cancel</Button>
-                  <Button variant="danger" onClick={handleCancelEventClick}>Send Cancel Notice</Button>
-                </>
-              ) : (
-                <>
-                  <Button variant="secondary" onClick={handleEditClick}>Edit event</Button>
-                </>
-              )}
-              <Button variant="danger" onClick={closeModal}>Close</Button>
-            </div>
-          </Modal.Footer>
-        </Modal>
+            <Button variant="danger" onClick={closeModal}>Close</Button>
+          </div>
+        </Modal.Footer>
+      </Modal>
       </div>
     </>
   );
