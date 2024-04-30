@@ -270,7 +270,8 @@ app.get("/api/teamview", async (req, res) => {
       "end_datetime",
       "all_day",
       "calendar_events.description",
-      "event_type.name AS event_type"
+      "event_type.name AS event_type",
+      "event_type.color_code"
     )
     .join("event_type", "calendar_events.event_type", "=", "event_type.event_id")
     .join("calendar_users", "calendar_users.user_id", "calendar_events.user_id")
@@ -286,7 +287,8 @@ app.get("/api/teamview", async (req, res) => {
       "end_datetime",
       "all_day",
       "calendar_events.description",
-      "event_type.name AS event_type"
+      "event_type.name AS event_type",
+      "event_type.color_code"
     )
     .join("event_type", "calendar_events.event_type", "=", "event_type.event_id")
     .join("calendar_teams", "calendar_events.team_id", "=", "calendar_teams.team_id")
@@ -312,7 +314,7 @@ app.post("/calendar_team/userid", (req, res) => {
 
   knex("calendar_users")
     .where({ user_id: userid })
-    .select("team_id")
+    .select("*")
     .then((team_id) => {
       //console.log("LOOKUP GAVE TEAM ID: ", team_id[0].team_id);
       knex("calendar_teams")
@@ -325,6 +327,17 @@ app.post("/calendar_team/userid", (req, res) => {
       res.status(500).send("TEAM LOOKUP FAILURE");
     });
 });
+//does the same thing as the api end point above, but using an actual get instead of a post....
+app.get("/calendar_team/:userid", (req, res) => {
+  knex("calendar_teams")
+  .select("name")
+  .join("calendar_users", "calendar_users.team_id", "calendar_teams.team_id")
+  .where("calendar_users.user_id", '=', req.params.userid)
+  .then(team_name => res.status(200).json(team_name))
+  .catch(err => {
+    res.status(500).send("Failed")
+  })
+})
 
 //THIS CALL CREATES A CALENDAR EVENT, YOU MUST PASS IT A USERS ID IN ADDITION TO ALL RELEVANT EVENT FIELDS
 app.post("/create_event", (req, res) => {

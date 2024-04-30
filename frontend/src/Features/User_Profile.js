@@ -14,6 +14,8 @@ export const MyProfile = () => {
     "enabled"
   ]);
   const [rank, setRank] = useState("");
+  const [teams, setTeams ] = useState([])
+  const [teamName, setTeamName] = useState([])
 
   useEffect(() => {
     fetch(`http://localhost:8080/api/ranks/`)
@@ -21,9 +23,21 @@ export const MyProfile = () => {
       .then((data) => {
         setRank(data.filter(ranks => ranks.rank_id === cookies.rank));
       });
+      fetch(`http://localhost:8080/api/teams`)
+        .then(res => res.json())
+        .then(data => {
+          setTeams(data)
+        });
+      fetch(`http://localhost:8080/calendar_team/${cookies.userID}`)
+        .then((res) => res.json())
+        .then(data => {
+          setTeamName(data)
+        });
   }, []);
 
   return (
+    <>
+    { teamName[0] ?
     <>
       <h1>{`${rank[0].name} ${cookies.firstName} ${cookies.lastName}'s Profile`}</h1>
       <div className="user_profile-box">
@@ -39,7 +53,7 @@ export const MyProfile = () => {
           </dd>
           <dt>Rank:</dt>
           <dd>
-            <input type="text" id="rank" name="rank" value={rank} disabled />
+            <input type="text" id="rank" name="rank" value={rank[0].name} disabled />
           </dd>
           <dt>Username:</dt>
           <dd>
@@ -47,10 +61,13 @@ export const MyProfile = () => {
           </dd>
           <dt>Team:</dt>
           <dd>
-            <select id="tname" name="tname" disabled>
-              <option value="John" selected="selected">
-                John
-              </option>
+            <select id="tname" name="tname" defaultValue={teamName[0].name} disabled>
+              {teams.map(eaTeam => (
+                 <option value={eaTeam}>
+                 {eaTeam.name}
+               </option>
+              ))}
+
             </select>
           </dd>
           <dt>Account Status:</dt>
@@ -58,5 +75,8 @@ export const MyProfile = () => {
         </dl>
       </div>
     </>
+    : []
+  }
+  </>
   );
 };
