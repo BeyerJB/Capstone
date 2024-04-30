@@ -68,9 +68,7 @@ const handleGuardianClick = (info) => {
     setDescription(selectedEvent.event.extendedProps.description)
     setStartDateTime(selectedEvent.event.start)
     setEndDateTime(selectedEvent.event.end)
-    console.log(selectedEvent.event)
-    setEventId(selectedEvent.event.id)
-
+    setEventId(selectedEvent.event.eventId)
 
   };
 
@@ -82,28 +80,29 @@ const handleGuardianClick = (info) => {
       end: endDateTime,
       description: description
     };
-    fetch('http://localhost:8080/edit_event', {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(editedEventData)
-    })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Failed to edit event');
-      }
-      return response.json();
-    })
-    .then(data => {
-      console.log('Edit Successful:', data, editedEventData);
-      setIsEditing(false);
-      window.location.reload();
-    })
-    .catch(error => {
-      console.error('Error editing event:', error);
-      // Handle error
-    });
+    console.log(editedEventData)
+    // fetch('http://localhost:8080/edit_event', {
+    //   method: 'PATCH',
+    //   headers: {
+    //     'Content-Type': 'application/json' cx
+    //   },
+    //   body: JSON.stringify(editedEventData)
+    // })
+    // .then(response => {
+    //   if (!response.ok) {
+    //     throw new Error('Failed to edit event');
+    //   }
+    //   return response.json();
+    // })
+    // .then(data => {
+    //   console.log('Edit Successful:', data, editedEventData);
+    //   setIsEditing(false);
+    //   window.location.reload();
+    // })
+    // .catch(error => {
+    //   console.error('Error editing event:', error);
+    //   // Handle error
+    // });
 
   };
 
@@ -196,7 +195,6 @@ const handleGuardianClick = (info) => {
         contentHeight= 'auto'
         scrollTime="00:00"
         aspectRatio={2}
-        // expandRows={false}
         nowIndicator = {true}
         editable={false}
         eventClick={openModal}
@@ -215,7 +213,7 @@ const handleGuardianClick = (info) => {
         events={[
               ...resourceInfo.teamEvents.map(event => ({
                 resourceId:event.team_id,
-                id:event.event_id,
+                eventId:event.event_id,
                 title:event.title,
                 start: event.start_datetime,
                 end:event.end_datetime,
@@ -226,7 +224,7 @@ const handleGuardianClick = (info) => {
             })),
               ...resourceInfo.userEvents.map(event => ({
               resourceId: `${event.name}${event.user_id}`,
-              id:event.event_id,
+              eventId:event.event_id,
               title:event.title,
               start: event.start_datetime,
               end:event.end_datetime,
