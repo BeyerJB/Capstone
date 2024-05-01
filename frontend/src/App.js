@@ -55,8 +55,9 @@ function App() {
         <nav>
           <div className="navbarcontainer">
 
-          <img src={icon} className="app-logo" alt="spacetime" style={{ width: '75px', height: ' 75px ', padding:'3px', backgroundColor: 'Gray', position: 'relative', right: 'auto', left: 10}}/>
-          <img src={logo} className="app-logo" alt="TIMEWEAVE" style={{ width: '75px', height: ' 75px ', padding:'5px', backgroundColor: 'Gray', position: 'absolute', right: 10, left: 'auto'}} />
+          <img src={logo} className="app-logo" alt="TIMEWEAVE" style={{ width: '100px', height: '50px ', padding:'5px', marginLeft: '10px'}} />
+          <img src={icon} className="app-logo" alt="spacetime" style={{ width: '75px', height: '75px ', padding:'3px', marginRight: '10px'}}/>
+
             <ul className="navbar">
               {/* <li><Link to="/">Home</Link></li> */}
 
@@ -76,12 +77,10 @@ function App() {
                     )}
                   </li>
                   <li><a onClick={handleOpenEvents}>Create Event</a></li>
-                  {cookies.isManager ? (
-                  <li><Link to="/teameditor">Team Editor</Link></li>
-                  ) :
-                  <>
-                  </>
-                  }
+                  {cookies.isManager && (
+                    <li><Link to="/teameditor">Team Editor</Link></li>
+                  )}
+                  <li><Link to="/userprofile">Profile</Link></li>
                   <li><a onClick={() => {
                     logout();
                     setCalendarRequestsCount(0);
