@@ -1,0 +1,31 @@
+h1, p {
+  color: #c1c1c1
+}
+
+img {
+height: 200px;
+width: 200px;
+}
+
+.Container{
+  display: flex;
+  flex-direction: column;
+  row-gap: 30px;
+  padding-inline: 8%;
+  overflow-y: auto;
+  max-height: 90vh;
+}
+
+.AllMembers{
+  display: grid;
+  flex-direction: row;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+}
+
+.Member{
+  color: #c1c1c1;
+  padding-block: 2%;
+}

@@ -13,14 +13,15 @@ import { AuthContext } from './Features/AuthContext';
 import { useCookies } from 'react-cookie'
 import { UserNotices } from './Features/UserNotices';
 import { TeamView } from './Features/TeamView';
-import { TeamEditor } from './Features/TeamEditor'
+import { TeamEditor } from './Features/TeamEditor';
+import  { About }  from './Features/About';
 
 
 import { NotificationsContext } from './Features/NotificationContext';
 
 
 import { MyProfile } from './Features/User_Profile';
-import {PrivateRoutes} from './Features/PrivateRoutes'
+import { PrivateRoutes } from './Features/PrivateRoutes'
 
 
 function App() {
@@ -55,14 +56,19 @@ function App() {
         <nav>
           <div className="navbarcontainer">
 
+
           <img src={logo} className="app-logo" alt="TIMEWEAVE" style={{ width: '100px', height: '50px ', padding:'5px', marginLeft: '10px'}} />
           <img src={icon} className="app-logo" alt="spacetime" style={{ width: '75px', height: '75px ', padding:'3px', marginRight: '10px'}}/>
+
 
             <ul className="navbar">
               {/* <li><Link to="/">Home</Link></li> */}
 
               {!cookies.userID ? (
-                <li><Link to="/Login">Login</Link></li>
+                <>
+                  <li><Link to="/Login">Login</Link></li>
+                  <li><Link to="/about">About</Link></li>
+                </>
               ) : (
                 <>
 
@@ -77,10 +83,14 @@ function App() {
                     )}
                   </li>
                   <li><a onClick={handleOpenEvents}>Create Event</a></li>
+
+                
                   {cookies.isManager && (
                     <li><Link to="/teameditor">Team Editor</Link></li>
                   )}
                   <li><Link to="/userprofile">Profile</Link></li>
+                  <Link to="/about">About</Link>
+
                   <li><a onClick={() => {
                     logout();
                     setCalendarRequestsCount(0);
@@ -89,6 +99,7 @@ function App() {
                     setUserNoticesCount(0);
                     setTotalNoticeCount(0);
                     }}>Log out</a></li>
+
                 </>
               )}
               </ul>
@@ -97,13 +108,15 @@ function App() {
         </nav>
 
         <Routes>
+        <Route path='/about' element={<About />} />
           <Route element={<PrivateRoutes/>}>
             <Route path='/mycalendar' element={<Calendar />} />
             <Route path='/TeamView' element={<TeamView /> } />
             <Route path='/createevent' element={<CreateEvent />} />
             <Route path='/userprofile' element={<MyProfile />} />
+            <Route path='/about' element={<About />} />
           </Route>
-          {!cookies.userID ? <Route path='/' element={<Login/>} /> : <Route path='/' element={<Calendar />} />}
+          {!cookies.userID ? <Route path='/' element={<Login/>} /> : <Route path='/' element={<Calendar />} /> }
           <Route path="*" element={<Navigate to="/" />} />
           <Route path='/teameditor' element={<TeamEditor/>} />
         </Routes>

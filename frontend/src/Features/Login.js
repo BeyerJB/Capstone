@@ -194,8 +194,8 @@ const CreateAccount = () => {
 };
 
   return (
-    <div className="log-form">
-      <h2>Request your account</h2>
+    <div className="log-form" style={{padding: "10px"}}>
+      <h2 style={{ color: '#c1c1c1', padding: '10px'}}>Request your account</h2>
       <form onSubmit={handleNewAccount} id="newaccountform">
         <input
           type="text"
@@ -203,6 +203,7 @@ const CreateAccount = () => {
           name="first_name"
           value={newUserInfo.first_name}
           onChange={handleInputChange}
+          style={{ marginRight: '5px' }}
         />
         <input
           type="text"
@@ -210,6 +211,7 @@ const CreateAccount = () => {
           name="last_name"
           value={newUserInfo.last_name}
           onChange={handleInputChange}
+          style={{ marginRight: '5px'  }}
         />
         <input
           type="text"
@@ -217,6 +219,7 @@ const CreateAccount = () => {
           name="username"
           value={newUserInfo.username}
           onChange={handleInputChange}
+          style={{ marginRight: '5px' }}
         />
         <input
           type="password"
@@ -224,39 +227,60 @@ const CreateAccount = () => {
           name="password"
           value={newUserInfo.password}
           onChange={handleInputChange}
+          style={{ marginRight: '5px' }}
+
         />
-        <button type="submit" className="btn">
+        <button type="submit" className="btn"style={{
+                '--bs-btn-color': '#fff',
+                '--bs-btn-bg': '#2c3e50',
+                '--bs-btn-border-color': '#2c3e50',
+                '--bs-btn-hover-color': '#fff',
+                '--bs-btn-hover-bg': '#1e2b37',
+                '--bs-btn-hover-border-color': '#2c3e50',
+                '--bs-btn-focus-shadow-rgb': '49, 132, 253',
+                '--bs-btn-active-color': '#fff',
+                '--bs-btn-active-bg': '#2c3e50',
+                '--bs-btn-active-border-color': '#2c3e50',
+                '--bs-btn-active-shadow': 'inset 0 3px 5px rgba(0, 0, 0, 0.125)',
+                '--bs-btn-disabled-color': '#fff',
+                '--bs-btn-disabled-bg': '#303b47',
+                '--bs-btn-disabled-border-color': '#1e2b37',
+                marginRight: '5 px'
+              }}>
           Submit
         </button>
       </form>
-      <label for="team_id">Choose your team:</label>
+      <label for="team_id " style={{ color: '#c1c1c1'}}>Choose your team:</label>
       <select
         name="team_id"
         form="newaccountform"
         value={newUserInfo.team_id}
         onChange={handleInputChange}
+        style={{ marginRight: '5px' }}
       >
         {teamNames.map((eachTeam) => {
           return <option value={eachTeam.team_id}>{eachTeam.name}</option>;
         })}
       </select>
-      <label for="rank_id">Choose your rank:</label>
+      <label for="rank_id" style={{ color: '#c1c1c1'}}>Choose your rank:</label>
       <select
         name="rank"
         form="newaccountform"
         value={newUserInfo.rank_id}
         onChange={handleInputChange}
+        style={{ marginRight: '5px' }}
       >
         {ranks.map((eachrank) => {
           return <option value={eachrank.rank_id}>{eachrank.name}</option>;
         })}
       </select>
-      <label for="user_type">Choose User Type:</label>
+      <label for="user_type" style={{ color: '#c1c1c1'}}>Choose User Type:</label>
       <select
         name="user_type"
         form="newaccountform"
         value={newUserInfo.user_type}
         onChange={handleInputChange}
+        style={{ marginRight: '5px' }}
       >
         {userType.map((eachtype) => {
           return <option value={eachtype.user_type_id}>{eachtype.name}</option>;
