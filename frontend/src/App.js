@@ -28,7 +28,7 @@ function App() {
   const [cookies] = useCookies(['userID', 'firstName', 'lastName', 'rank', 'isManager']);
   const [noticePaneOpened, setNoticePaneOpened] = useState(false);
   const [eventPaneOpened, setEventPaneOpened] = useState(false);
-  const { totalNoticeCount, calendarRequestsCount, supervisorNoticesCount, accountRequestsCount, userNoticesCount, setTotalNoticeCount, setCalendarRequestsCount, setSupervisorNoticesCount, setAccountRequestsCount, setUserNoticesCount } = useContext(NotificationsContext);
+  const { totalNoticeCount, setTotalNoticeCount, setCalendarRequestsCount, setSupervisorNoticesCount, setAccountRequestsCount, setUserNoticesCount } = useContext(NotificationsContext);
 
 
 
@@ -77,6 +77,7 @@ function App() {
                   </li>
                   <li><a onClick={handleOpenEvents}>Create Event</a></li>
                   <li><Link to="/teameditor">Team Editor</Link></li>
+                  <li><Link to="/userprofile">Profile</Link></li>
                   <li><a onClick={() => {
                     logout();
                     setCalendarRequestsCount(0);
@@ -85,8 +86,6 @@ function App() {
                     setUserNoticesCount(0);
                     setTotalNoticeCount(0);
                     }}>Log out</a></li>
-                      <Link to="/userprofile">Profile</Link>
-
                 </>
               )}
               </ul>

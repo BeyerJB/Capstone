@@ -17,7 +17,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import '../CSS/calendar.css'
 
 export const Calendar = () => {
-  const [cookies] = useCookies(['userID', 'firstName', 'lastName', 'rank', 'isManager']);
+  const [cookies] = useCookies(['userID', 'firstName', 'lastName', 'rank', 'isManager', 'isSupervisor']);
   const [events, setEvents] = useState([]);
   const [allData, setAllData] = useState([]);
   const userId = cookies.userID;
@@ -38,6 +38,7 @@ export const Calendar = () => {
   const [oldDescription, setOldDescription] = useState('');
   const [teamMemberIDs, setTeamMemberIDs] = useState({});
 
+  console.log(`am I a manager: ${cookies.isSupervisor}`)
 
   useEffect(() => {
     //Added an async function fetchEventData as a wrapper, it terminates on line 53 then self-invokes
@@ -67,7 +68,7 @@ export const Calendar = () => {
     }
     fetchEventData();
   }, [isEditing]);
-// 
+//
 
  const openModal = async (event) => {
   try {
@@ -350,7 +351,7 @@ export const Calendar = () => {
               </>
             ) : (
               <>
-              {cookies.isManager && (<Button variant="secondary" onClick={handleEditClick}>Edit event</Button>) }
+              {(cookies.isManager || cookies.isSupervisor) && (<Button variant="secondary" onClick={handleEditClick}>Edit event</Button>) }
 
               </>
             )}

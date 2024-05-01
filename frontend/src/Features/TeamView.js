@@ -16,7 +16,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 export const TeamView = () => {
-  const [cookies] = useCookies(['userID', 'firstName', 'lastName', 'rank', 'isManager']);
+  const [cookies] = useCookies(['userID', 'firstName', 'lastName', 'rank', 'isManager', 'isSupervisor', 'teamID']);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [filteredUsers, setFilteredUsers] = useState([])
@@ -36,7 +36,10 @@ export const TeamView = () => {
   const [teamMemberIDs, setTeamMemberIDs] = useState({});
   const [userIDNotice, setUserIDNotice] = useState(null);
   const [teamIDNotice, setTeamIDNotice] = useState(null);
-
+  const [subordinateIDList, setSubordinateIDList] = useState([]);
+  const [subordinateFound, setSubordinateFound] = useState(false);
+  const [teamSupervisor, setTeamSupervisor] = useState(false);
+  const [isTeamEvent, setIsTeamEvent] = useState(false);
 
   useEffect(() => {
     fetch(`http://localhost:8080/api/teamview`)
@@ -45,19 +48,32 @@ export const TeamView = () => {
 
     )}, [editedEvent])
 
+    useEffect(() => {
+      fetch(`http://localhost:8080/api/subordinates/${cookies.userID}`)
+        .then(result => result.json())
+        .then((data) => {
+          if (Array.isArray(data.subordinateIds)) {
+            setSubordinateIDList(data.subordinateIds);
+          } else {
+            console.error("Invalid data format for subordinate IDs:", data);
+          }
+        })
+        .catch(error => console.error("Error fetching subordinate IDs:", error));
+    }, []);
+
 
 const modifyUsers = (users) => {
     return Object.groupBy(users, user => user.team_name)
 
 }
 
-
 const openModal = async (event) => {
   setSelectedEvent(event);
   setIsModalOpen(true);
 
-  console.log(resourceInfo)
-  console.log(event.event.id)
+  // console.log(resourceInfo)
+  // console.log(event.event.id)
+  // console.log(subordinateIDList)
 
   let userId = null;
   let teamId = null;
@@ -78,22 +94,39 @@ const openModal = async (event) => {
   if (userId !== null) {
       // Handle user event
       setUserIDNotice(userId);
-      console.log("User event found with user_id:", userId);
+      // console.log("User event found with user_id:", userId);
+
+      // Check if userId is in subordinateIDList
+      if (subordinateIDList.includes(userId)) {
+        setSubordinateFound(true);
+      } else {
+        setSubordinateFound(false);
+      }
+
       // Handle user event with the found user_id
   } else if (teamId !== null) {
       // Handle team event
       await setTeamIDNotice(teamId);
       await handleTeamEvent(teamId); // Use teamId directly here
-      console.log("Team event found with team_id:", teamId);
+      setIsTeamEvent(true);
+      if(cookies.isSupervisor && cookies.teamID === teamId) {
+        setTeamSupervisor(true);
+      }
+
+      // console.log("Team event found with team_id:", teamId);
       // Handle team event with the found team_id
   } else {
-      console.log("Event not found in userEvents or teamEvents.");
+      // console.log("Event not found in userEvents or teamEvents.");
   }
 };
 
 
+
 const closeModal = () => {
     setIsModalOpen(false);
+    setSubordinateFound(false);
+    setTeamSupervisor(false);
+    setIsTeamEvent(false);
   };
 
 const handleGuardianClick = (info) => {
@@ -110,7 +143,7 @@ const handleGuardianClick = (info) => {
     setDescription(selectedEvent.event.extendedProps.description)
     setStartDateTime(selectedEvent.event.start)
     setEndDateTime(selectedEvent.event.end)
-    console.log(selectedEvent.event)
+    // console.log(selectedEvent.event)
     setEventId(selectedEvent.event.id)
 
     setOldTitle(selectedEvent.event.title);
@@ -185,7 +218,7 @@ const handleGuardianClick = (info) => {
       return response.json();
     })
     .then(data => {
-      console.log('Edit Successful:', data, editedEventData);
+      // console.log('Edit Successful:', data, editedEventData);
       setIsEditing(false);
       window.location.reload();
     })
@@ -207,15 +240,15 @@ const handleGuardianClick = (info) => {
   };
 
   const handleButton2Click = () => {
-    console.log('button 2 clicked');
+    // console.log('button 2 clicked');
   };
 
   const handleStartDateChange = (date) => {
-    console.log(date)
+    // console.log(date)
     const utcStartDate = date.toISOString();
-    console.log('utc time: ', utcStartDate)
+    // console.log('utc time: ', utcStartDate)
     setStartDateTime(date);
-    console.log('start date time: ',startDateTime)
+    // console.log('start date time: ',startDateTime)
   };
 
   const handleEndDateChange = (date) => {
@@ -356,7 +389,7 @@ const handleGuardianClick = (info) => {
           resourceLabelDidMount={(info) => {
             info.el.addEventListener("click", function() {
                 // handleGuardianClick(info)
-                console.log('clicked', info.fieldValue, 'id:', info.el.dataset.resourceId,'allinfo:', info )
+                // console.log('clicked', info.fieldValue, 'id:', info.el.dataset.resourceId,'allinfo:', info )
             })}}
       />
       : <></>
@@ -420,7 +453,7 @@ const handleGuardianClick = (info) => {
               </>
             ) : (
               <>
-                <Button variant="secondary" onClick={handleEditClick}>Edit event</Button>
+                {(cookies.isManager || (isTeamEvent && teamSupervisor) || (!isTeamEvent && subordinateFound)) && <Button variant="secondary" onClick={handleEditClick}>Edit event</Button>}
               </>
             )}
             <Button variant="danger" onClick={closeModal}>Close</Button>
