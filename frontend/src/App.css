@@ -221,6 +221,10 @@ body {
   cursor: pointer;
 }
 
+.user_profile-box {
+  display: inline-block
+}
+
 
 .modal {
   border-style: solid;

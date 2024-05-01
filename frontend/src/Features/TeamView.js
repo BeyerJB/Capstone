@@ -129,14 +129,14 @@ const closeModal = () => {
     setIsTeamEvent(false);
   };
 
-const handleGuardianClick = (info) => {
-      const filteredGuardian = {
-      resourceid: info.el.dataset.resourceId,
-      title: info.fieldValue,
-      team_name: 'A FilteredUsers'
-      }
-    setFilteredUsers([...filteredUsers, filteredGuardian])
-  }
+// const handleGuardianClick = (info) => {
+//       const comparedGuardian = {
+//       resourceid: info.el.dataset.resourceId,
+//       title: info.fieldValue,
+//       team_name: 'A FilteredUsers'
+//       }
+//     setCompaUsers([...filteredUsers, filteredGuardian])
+//   }
   const handleEditClick = () => {
     setIsEditing(true);
     setTitle(selectedEvent.event.title)
