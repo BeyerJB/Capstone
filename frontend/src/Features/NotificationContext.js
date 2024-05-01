@@ -14,7 +14,7 @@ export const NotificationsProvider = ({ children }) => {
   const [accountRequestsCount, setAccountRequestsCount] = useState(0);
   const [userNoticesCount, setUserNoticesCount] = useState(0);
   const [totalNoticeCount, setTotalNoticeCount] = useState(0);
-
+  const [comparedGuardian, setComparedGuardian] = useState([])
 
 
 
@@ -102,7 +102,10 @@ export const NotificationsProvider = ({ children }) => {
     setUserNoticesCount,
     totalNoticeCount,
     updateCount,
-    setTotalNoticeCount
+    totalNoticeCount,
+    setTotalNoticeCount,
+    comparedGuardian,
+    setComparedGuardian
   };
 
   return (

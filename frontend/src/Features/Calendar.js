@@ -23,7 +23,6 @@ export const Calendar = () => {
   const userId = cookies.userID;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
-  ///
   const [isEditing, setIsEditing] = useState(false);
   const [editedEvent, setEditedEvent] = useState(null)
   const [startDateTime, setStartDateTime] = useState('');
@@ -333,9 +332,31 @@ export const Calendar = () => {
             </Form>
           ) : (
             <>
-              <p>Start: {selectedEvent ? selectedEvent.event.start.toString() : ''}</p>
-              <p>End: {selectedEvent ? selectedEvent.event.end.toString() : ''}</p>
-              <p>Description: {selectedEvent ? selectedEvent.event.extendedProps.description : ''}</p>
+              {isModalOpen ?
+                  <>
+                   {selectedEvent.event.allDay != null ?
+                    <>
+                    <h4>Event Times:</h4>
+                    <p>All Day</p>
+
+                    <h4>Description:</h4>
+                    <p> {selectedEvent ? selectedEvent.event.extendedProps.description : ''}</p>
+                    </>
+                  :
+                    <>
+                      <h4>Event Times:</h4>
+                      <p>Start: {selectedEvent ? `${selectedEvent.event.start}` : ''}</p>
+                      <p>End: {selectedEvent ? `${selectedEvent.event.end}` : ''}</p>
+                      <h4>Description:</h4>
+                      <p> {selectedEvent ? selectedEvent.event.extendedProps.description : ''}</p>
+                    </>
+                  }
+                  </>
+                :
+                  <>
+                  </>
+
+              }
             </>
           )}
         </Modal.Body>

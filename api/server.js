@@ -658,3 +658,12 @@ app.get('/api/subordinates/:supervisorId', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+//allows users to change their first/last names and rank
+app.patch('/userprofile/edit/:userId', (req,res) => {
+  knex('calendar_users')
+  .where('user_id', req.params.userId)
+  .update(req.body)
+  .then(res.status(201))
+  .catch(err => res.status(500).json(err))
+})
