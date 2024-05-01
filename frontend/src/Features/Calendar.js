@@ -262,7 +262,7 @@ export const Calendar = () => {
 
           selectable='true'
           handleWindowResize='true'
-          aspectRatio='2'
+          aspectRatio='2.5'
           eventColor= 'red'
 
           eventDisplay = "block"
