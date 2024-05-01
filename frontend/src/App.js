@@ -12,7 +12,9 @@ import { CreateEvent } from './Features/CreateEvent'
 import { AuthContext } from './Features/AuthContext';
 import { useCookies } from 'react-cookie'
 import { UserNotices } from './Features/UserNotices';
-import { TeamView } from './Features/TeamView'
+import { TeamView } from './Features/TeamView';
+import { TeamEditor } from './Features/TeamEditor'
+
 
 import { NotificationsContext } from './Features/NotificationContext';
 
@@ -74,6 +76,7 @@ function App() {
                     )}
                   </li>
                   <li><a onClick={handleOpenEvents}>Create Event</a></li>
+                  <li><Link to="/teameditor">Team Editor</Link></li>
                   <li><a onClick={() => {
                     logout();
                     setCalendarRequestsCount(0);
@@ -100,9 +103,10 @@ function App() {
           </Route>
           {!cookies.userID ? <Route path='/' element={<Login/>} /> : <Route path='/' element={<Calendar />} />}
           <Route path="*" element={<Navigate to="/" />} />
+          <Route path='/teameditor' element={<TeamEditor/>} />
         </Routes>
 
-        <SlidingPane isOpen={noticePaneOpened} onRequestClose={handleOpenNotices} width="1000px" title="User Notices">
+        <SlidingPane isOpen={noticePaneOpened} onRequestClose={handleOpenNotices} width="1400px" title="User Notices">
           <UserNotices />
         </SlidingPane>
         <SlidingPane isOpen={eventPaneOpened} onRequestClose={handleOpenEvents} width="1000px" title="Create Event">
