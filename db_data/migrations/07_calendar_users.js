@@ -10,7 +10,7 @@ exports.up = function(knex) {
     table.foreign('user_type').references('user_type.user_type_id');
     table.integer('team_id').unsigned();
     table.foreign('team_id').references('calendar_teams.team_id');
-    table.boolean('enabled').defaultTo(false);
+    table.boolean('enabled').defaultTo(true);
     table.boolean('pending').defaultTo(true);
   });
 };

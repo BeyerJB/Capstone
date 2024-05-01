@@ -12,7 +12,9 @@ import { CreateEvent } from './Features/CreateEvent'
 import { AuthContext } from './Features/AuthContext';
 import { useCookies } from 'react-cookie'
 import { UserNotices } from './Features/UserNotices';
-import { TeamView } from './Features/TeamView'
+import { TeamView } from './Features/TeamView';
+import { TeamEditor } from './Features/TeamEditor'
+
 
 import { NotificationsContext } from './Features/NotificationContext';
 
@@ -26,7 +28,7 @@ function App() {
   const [cookies] = useCookies(['userID', 'firstName', 'lastName', 'rank', 'isManager']);
   const [noticePaneOpened, setNoticePaneOpened] = useState(false);
   const [eventPaneOpened, setEventPaneOpened] = useState(false);
-  const { totalNoticeCount, calendarRequestsCount, supervisorNoticesCount, accountRequestsCount, userNoticesCount, setTotalNoticeCount, setCalendarRequestsCount, setSupervisorNoticesCount, setAccountRequestsCount, setUserNoticesCount } = useContext(NotificationsContext);
+  const { totalNoticeCount, setTotalNoticeCount, setCalendarRequestsCount, setSupervisorNoticesCount, setAccountRequestsCount, setUserNoticesCount } = useContext(NotificationsContext);
 
 
 
@@ -53,8 +55,8 @@ function App() {
         <nav>
           <div className="navbarcontainer">
 
-          <img src={icon} className="app-logo" alt="spacetime" style={{ width: '4vw', height: ' 3vw ', backgroundColor: 'Gray'}}/>
-          <img src={logo} className="app-logo" alt="TIMEWEAVE" style={{ width: '4vw', height: ' 3vw ', backgroundColor: 'Gray'}} />
+          <img src={icon} className="app-logo" alt="spacetime" style={{ width: '75px', height: ' 75px ', padding:'3px', backgroundColor: 'Gray', position: 'relative', right: 'auto', left: 10}}/>
+          <img src={logo} className="app-logo" alt="TIMEWEAVE" style={{ width: '75px', height: ' 75px ', padding:'5px', backgroundColor: 'Gray', position: 'absolute', right: 10, left: 'auto'}} />
             <ul className="navbar">
               {/* <li><Link to="/">Home</Link></li> */}
 
@@ -74,6 +76,12 @@ function App() {
                     )}
                   </li>
                   <li><a onClick={handleOpenEvents}>Create Event</a></li>
+                  {cookies.isManager ? (
+                  <li><Link to="/teameditor">Team Editor</Link></li>
+                  ) :
+                  <>
+                  </>
+                  }
                   <li><a onClick={() => {
                     logout();
                     setCalendarRequestsCount(0);
@@ -82,8 +90,6 @@ function App() {
                     setUserNoticesCount(0);
                     setTotalNoticeCount(0);
                     }}>Log out</a></li>
-                      <Link to="/userprofile">Profile</Link>
-
                 </>
               )}
               </ul>
@@ -100,9 +106,10 @@ function App() {
           </Route>
           {!cookies.userID ? <Route path='/' element={<Login/>} /> : <Route path='/' element={<Calendar />} />}
           <Route path="*" element={<Navigate to="/" />} />
+          <Route path='/teameditor' element={<TeamEditor/>} />
         </Routes>
 
-        <SlidingPane isOpen={noticePaneOpened} onRequestClose={handleOpenNotices} width="1000px" title="User Notices">
+        <SlidingPane isOpen={noticePaneOpened} onRequestClose={handleOpenNotices} width="1400px" title="User Notices">
           <UserNotices />
         </SlidingPane>
         <SlidingPane isOpen={eventPaneOpened} onRequestClose={handleOpenEvents} width="1000px" title="Create Event">
