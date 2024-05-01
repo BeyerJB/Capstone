@@ -77,12 +77,10 @@ function App() {
                     )}
                   </li>
                   <li><a onClick={handleOpenEvents}>Create Event</a></li>
-                  {cookies.isManager ? (
-                  <li><Link to="/teameditor">Team Editor</Link></li>
-                  ) :
-                  <>
-                  </>
-                  }
+                  {cookies.isManager && (
+                    <li><Link to="/teameditor">Team Editor</Link></li>
+                  )}
+                  <li><Link to="/userprofile">Profile</Link></li>
                   <li><a onClick={() => {
                     logout();
                     setCalendarRequestsCount(0);
