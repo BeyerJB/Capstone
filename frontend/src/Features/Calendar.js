@@ -38,8 +38,6 @@ export const Calendar = () => {
   const [oldDescription, setOldDescription] = useState('');
   const [teamMemberIDs, setTeamMemberIDs] = useState({});
 
-  console.log(`am I a manager: ${cookies.isSupervisor}`)
-
   useEffect(() => {
     //Added an async function fetchEventData as a wrapper, it terminates on line 53 then self-invokes
     async function fetchEventData() {
@@ -47,7 +45,7 @@ export const Calendar = () => {
         .then(response => response.json())
         .then(data => {
           setAllData(data);
-          console.log("RECEIVED DATA IS: ", data);
+          //console.log("RECEIVED DATA IS: ", data);
           const formattedEvents = data.map(event => ({
             id: event.event_id,
             title: event.title,

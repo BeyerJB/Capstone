@@ -60,11 +60,19 @@ export const NotificationsProvider = ({ children }) => {
   // };
 
   const fetchPendingEventsCount = async () => {
-    if (cookies.isManager){
+    if (cookies.isManager || cookies.isSupervisor){
     try {
       const response = await fetch(`http://localhost:8080/api/events/pending`);
       const data = await response.json();
-      setCalendarRequestsCount(data.length);
+      if (cookies.isManager) {
+        setCalendarRequestsCount(data.length);
+      } else {
+        if (Array.isArray(data)) {
+          const filteredData = data.filter(notice => notice.recipient_id === cookies.userID);
+          setCalendarRequestsCount(filteredData.length);
+        }
+      }
+
     } catch (error) {
       console.error('Error fetching pending events:', error);
     }
@@ -94,7 +102,6 @@ export const NotificationsProvider = ({ children }) => {
     setUserNoticesCount,
     totalNoticeCount,
     updateCount,
-    totalNoticeCount,
     setTotalNoticeCount
   };
 

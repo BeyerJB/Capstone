@@ -85,11 +85,12 @@ exports.seed = async function(knex) {
     { first_name: 'Jane', last_name: 'Brown', rank: 1, username: 'janebrown', user_type: 1, team_id: 2, password: await bcrypt.hash('password', 10), enabled: true, pending: false },
     { first_name: 'Ava', last_name: 'Garcia', rank: 1, username: 'avagarcia', user_type: 1, team_id: 2, password: await bcrypt.hash('password', 10), enabled: true, pending: false },
     { first_name: 'Olivia', last_name: 'Thomas', rank: 1, username: 'oliviathomas', user_type: 1, team_id: 2, password: await bcrypt.hash('password', 10), enabled: true, pending: false }
-
   ]);
 
   // Seed chain_of_command table
   await knex('chain_of_command').insert([
+    { supervisor_id: 1, subordinate_id: 2},
+    { supervisor_id: 1, subordinate_id: 12},
     { supervisor_id: 2, subordinate_id: 3 },
     { supervisor_id: 3, subordinate_id: 4 },
     { supervisor_id: 3, subordinate_id: 8 },
@@ -111,15 +112,18 @@ exports.seed = async function(knex) {
 
   // Seed user_notice table
   await knex('user_notice').insert([
-    { notice_status: 1, submitter_id: 10, recipient_id: 14, body: 'Test notice 1', notice_type: 1 },
-    { notice_status: 1, submitter_id: 13, recipient_id: 14, body: 'Test notice 2', notice_type: 2 },
-    { notice_status: 1, submitter_id: 5, recipient_id: 8, body: 'Test notice 3', notice_type: 3 },
-    { notice_status: 1, submitter_id: 7, recipient_id: 8, body: 'Test notice 3', notice_type: 3 },
-    { notice_status: 1, submitter_id: 17, recipient_id: 20, body: 'Test notice 4', notice_type: 1 },
-    { notice_status: 1, submitter_id: 20, recipient_id: 15, body: 'Test notice 5', notice_type: 2 },
-    { notice_status: 1, submitter_id: 20, recipient_id: 15, body: 'Event Creation', notice_type: 4, event_id: 30 },
-    { notice_status: 1, submitter_id: 17, recipient_id: 20, body: 'Event Creation', notice_type: 4, event_id: 31 },
-    { notice_status: 1, submitter_id: 9, recipient_id: 2, body: 'Event Creation', notice_type: 4, event_id: 32 }
+    { notice_status: 1, submitter_id: 10, recipient_id: 8, body: 'Test notice 1', notice_type: 1 },
+    { notice_status: 1, submitter_id: 13, recipient_id: 12, body: 'Test notice 2', notice_type: 2 },
+    { notice_status: 1, submitter_id: 5, recipient_id: 4, body: 'Test notice 3', notice_type: 3 },
+    { notice_status: 1, submitter_id: 7, recipient_id: 4, body: 'Test notice 4', notice_type: 3 },
+    { notice_status: 1, submitter_id: 17, recipient_id: 14, body: 'Test notice 5', notice_type: 1 },
+    { notice_status: 1, submitter_id: 2, recipient_id: 1, body: 'Test notice 6', notice_type: 2 },
+    { notice_status: 1, submitter_id: 12, recipient_id: 4, body: 'Test notice 7', notice_type: 2 },
+    { notice_status: 1, submitter_id: 13, recipient_id: 12, body: 'Test notice 8', notice_type: 2 },
+    { notice_status: 1, submitter_id: 20, recipient_id: 14, body: 'Test notice 9', notice_type: 2 },
+    { notice_status: 1, submitter_id: 4, recipient_id: 3, body: 'Event Creation', notice_type: 4, event_id: 34 },
+    { notice_status: 1, submitter_id: 5, recipient_id: 4, body: 'Event Creation', notice_type: 4, event_id: 35 },
+    { notice_status: 1, submitter_id: 6, recipient_id: 2, body: 'Event Creation', notice_type: 4, event_id: 36 }
   ]);
 
   // Seed calendar_events table
@@ -157,8 +161,8 @@ exports.seed = async function(knex) {
     { title: "Training 4", start_datetime: "2024-05-03T13:00:00", end_datetime: "2024-05-03T16:00:00", user_id: 12, description: "Training session on communication skills", event_type: 3, creator_id: 3, pending: false, approved: true },
     { title: "Training 5", start_datetime: "2024-05-03T09:00:00", end_datetime: "2024-05-03T11:00:00", user_id: 15, description: "Training session on project management", event_type: 3, creator_id: 3, pending: false, approved: true },
     { title: "Training 6", start_datetime: "2024-05-07T10:00:00", end_datetime: "2024-05-07T12:00:00", user_id: 19, description: "Training session on customer service", event_type: 3, creator_id: 1, pending: false, approved: true },
-    { title: "Training 7", start_datetime: "2024-05-10T13:00:00", end_datetime: "2024-05-10T16:00:00", team_id: 2, description: "Training session on sales techniques", event_type: 3, creator_id: 1, pending: false, approved: true },
-    { title: "Training 8", start_datetime: "2024-05-13T10:00:00", end_datetime: "2024-05-13T12:00:00", user_id: 5, description: "Training session on time management", event_type: 3, creator_id: 1, pending: false, approved: true },
-    { title: "Training 9", start_datetime: "2024-05-01T10:00:00", end_datetime: "2024-05-01T12:00:00", user_id: 9, description: "Training session on leadership skills", event_type: 3, creator_id: 2, pending: false, approved: true }
+    { title: "Training 7", start_datetime: "2024-05-10T13:00:00", end_datetime: "2024-05-10T16:00:00", team_id: 1, description: "Training session on sales techniques", event_type: 3, creator_id: 4,},
+    { title: "Training 8", start_datetime: "2024-05-13T10:00:00", end_datetime: "2024-05-13T12:00:00", user_id: 5, description: "Training session on time management", event_type: 3, creator_id: 5, },
+    { title: "Training 9", start_datetime: "2024-05-01T10:00:00", end_datetime: "2024-05-01T12:00:00", user_id: 6, description: "Training session on leadership skills", event_type: 3, creator_id: 6 }
   ]);
 };
