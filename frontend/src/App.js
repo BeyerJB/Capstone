@@ -55,8 +55,8 @@ function App() {
         <nav>
           <div className="navbarcontainer">
 
-          <img src={icon} className="app-logo" alt="spacetime" style={{ width: '5vw', height: ' 3vw ', backgroundColor: 'Gray'}}/>
-          {/* <img src={logo} className="app-logo" alt="TIMEWEAVE" style={{ width: '4vw', height: ' 3vw ', backgroundColor: 'Gray'}} /> */}
+          <img src={icon} className="app-logo" alt="spacetime" style={{ width: '75px', height: ' 75px ', padding:'3px', backgroundColor: 'Gray', position: 'relative', right: 'auto', left: 10}}/>
+          <img src={logo} className="app-logo" alt="TIMEWEAVE" style={{ width: '75px', height: ' 75px ', padding:'5px', backgroundColor: 'Gray', position: 'absolute', right: 10, left: 'auto'}} />
             <ul className="navbar">
               {/* <li><Link to="/">Home</Link></li> */}
 
