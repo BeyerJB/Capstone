@@ -35,33 +35,41 @@ export const MyProfile = () => {
         });
   }, []);
 
+  const inputStyle = {
+    background: "white",
+    color: "Black"
+  };
+  const textStyle = {
+    color: "white"
+  };
+
   return (
     <>
     { teamName[0] ?
     <>
-      <h1>{`${rank[0].name} ${cookies.firstName} ${cookies.lastName}'s Profile`}</h1>
-      <div className="user_profile-box">
+      <h1 style={textStyle}>{`${rank[0].name} ${cookies.firstName} ${cookies.lastName}'s Profile`}</h1>
+      <div className="user_profile-box" style={textStyle}>
         User Profile:
         <dl>
           <dt>First Name:</dt>
           <dd>
-            <input type="text" id="fname" name="fname" value={cookies.firstName} disabled />
+            <input style={inputStyle} type="text" id="fname" name="fname" value={cookies.firstName} disabled />
           </dd>
           <dt>Last Name:</dt>
           <dd>
-            <input type="text" id="lname" name="lname" value={cookies.lastName} disabled />
+            <input style={inputStyle} type="text" id="lname" name="lname" value={cookies.lastName} disabled />
           </dd>
           <dt>Rank:</dt>
           <dd>
-            <input type="text" id="rank" name="rank" value={rank[0].name} disabled />
+            <input style={inputStyle} type="text" id="rank" name="rank" value={rank[0].name} disabled />
           </dd>
           <dt>Username:</dt>
           <dd>
-            <input type="text" id="uname" name="uname" value="johndoe" disabled />
+            <input style={inputStyle} type="text" id="uname" name="uname" value="johndoe" disabled />
           </dd>
           <dt>Team:</dt>
           <dd>
-            <select id="tname" name="tname" defaultValue={teamName[0].name} disabled>
+            <select style={inputStyle} id="tname" name="tname" defaultValue={teamName[0].name} disabled>
               {teams.map(eaTeam => (
                  <option value={eaTeam}>
                  {eaTeam.name}
