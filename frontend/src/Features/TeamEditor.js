@@ -3,6 +3,7 @@ import { Row, Col, Button, Form } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css'
 import '../CSS/TeamEditor.css'
 
+
 export const TeamEditor = () => {
     const [teamMember, setTeamMember] = useState({
         team_id: '',
@@ -103,7 +104,7 @@ export const TeamEditor = () => {
             });
             var teamMembers = await firstLast.json();
             //console.log("NAME IS: ", await teamMembers[0].first_name);
-            userNames.push(`${await teamMembers[0].first_name} ${await teamMembers[0].last_name} ${userIds[i].user_id}`)
+            userNames.push(`${userIds[i].user_id} ${await teamMembers[0].first_name} ${await teamMembers[0].last_name} `)
 
         }
         console.log("ALL USERNAMES: ", userNames);
@@ -117,7 +118,7 @@ export const TeamEditor = () => {
         try {
             //REMOVE STRING DATA FROM selectedTeamMember, THEN CAST AS INT
             var userInt = 0;
-            // userInt = 
+            // userInt =
             userInt = selectedTeamMember.replace(/\D/g, '');
             userInt = parseInt(userInt);
             // console.log("SELECTED TEAM MEMBER: ", selectedTeamMember);
@@ -284,7 +285,7 @@ export const TeamEditor = () => {
             </Col>
 
             {/* TEAM MANAGEMENT */}
-            <Col xs={{ span: 3, offset: 1 }}>
+            <Col xs={{ span: 3, offset: 2 }}>
                 <h3 style={{ marginTop: '15px', color: 'lightgrey' }}>Team Management </h3>
 
                 <Form>
