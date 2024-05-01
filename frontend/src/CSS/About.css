@@ -7,7 +7,7 @@ height: 200px;
 width: 200px;
 }
 
-.Container{
+.aboutContainer{
   display: flex;
   flex-direction: column;
   row-gap: 30px;

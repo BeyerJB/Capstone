@@ -8,7 +8,7 @@ export const About = () => {
 
 
   return(
-   <div className = 'Container'>
+   <div className = 'aboutContainer'>
     <div className = 'Problem'>
       <h1>Problem Statement</h1>
       <p>In our squadron, we currently face challenges with disparate files and programs used to track schedules, resulting in inefficiencies and miscommunications among members. The absence of a centralized platform leads to confusion, as different versions of schedules exist and updates are not communicated effectively to all members. This lack of cohesion often results in missed events and misunderstandings within the squadron.</p>
@@ -50,7 +50,7 @@ export const About = () => {
 
         <div className = 'Member'>
           <img src={process.env.PUBLIC_URL + '/trinh3.jpeg'} alt='Trinh'/>
-          <h3>Trinh Trinh</h3>
+          <h3>Tuan Trinh</h3>
         </div>
 
         <div className = 'Member'>

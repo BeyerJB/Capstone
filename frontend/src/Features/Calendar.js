@@ -226,7 +226,7 @@ export const Calendar = () => {
 
   return (
     <>
-      <div className="calendar" style={{ paddingInline: '50px' }}>
+      <div className="calendar" style={{ paddingInline: '50px'}}>
         <h1 style={{ color: '#c1c1c1' }}> {cookies.firstName} {cookies.lastName}'s Calendar</h1>
         <Fullcalendar
           plugins={[dayGridPlugin, timeGridPlugin, multiMonthPlugin, interactionPlugin, bootstrap5Plugin]}
@@ -242,15 +242,20 @@ export const Calendar = () => {
               buttonText: 'Week',
               slotDuration: '01:00',
               expandRows: true,
-              allDaySlot: true
+              allDaySlot: true,
+              overflow: 'auto'
+
             },
             dayGridMonth: {
               buttonText: 'Month',
               fixedWeekCount: false,
-              showNonCurrentDates: false
+              showNonCurrentDates: false,
+              overflow: 'auto'
+
             },
             multiMonthYear: {
               buttonText: 'Year',
+
             }
           }}
 
@@ -262,7 +267,7 @@ export const Calendar = () => {
 
           selectable='true'
           handleWindowResize='true'
-          aspectRatio='2'
+          aspectRatio='2.5'
           eventColor= 'red'
 
           eventDisplay = "block"
