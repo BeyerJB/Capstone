@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
+import { Button } from "react-bootstrap";
 
 
 export const MyProfile = () => {
@@ -35,13 +36,25 @@ export const MyProfile = () => {
         });
   }, []);
 
+  const handleEdit = () => {
+    if(document.getElementById("editButton").innerHTML === "Edit Personal Info") {
+    document.querySelectorAll('input[type=text]').forEach(element => element.disabled = false)
+    document.getElementById("editButton").innerHTML = "Save Personal Info"
+
+  }
+    else{
+      document.querySelectorAll('input[type=text]').forEach(element => element.disabled = true)
+      document.getElementById("editButton").innerHTML = "Edit Personal Info"
+    }
+  }
+
   return (
     <>
     { teamName[0] ?
     <>
       <h1>{`${rank[0].name} ${cookies.firstName} ${cookies.lastName}'s Profile`}</h1>
       <div className="user_profile-box">
-        User Profile:
+        <h2>User Profile:</h2>
         <dl>
           <dt>First Name:</dt>
           <dd>
@@ -61,18 +74,13 @@ export const MyProfile = () => {
           </dd>
           <dt>Team:</dt>
           <dd>
-            <select id="tname" name="tname" defaultValue={teamName[0].name} disabled>
-              {teams.map(eaTeam => (
-                 <option value={eaTeam}>
-                 {eaTeam.name}
-               </option>
-              ))}
+            {teamName[0].name}
 
-            </select>
           </dd>
           <dt>Account Status:</dt>
           <dd>{cookies.enabled === false ? "Disabled" : "Active"}</dd>
         </dl>
+        <Button id="editButton" onClick={() => handleEdit()}>Edit Personal Info</Button>
       </div>
     </>
     : []
