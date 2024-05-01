@@ -106,7 +106,7 @@ function App() {
           <Route path='/teameditor' element={<TeamEditor/>} />
         </Routes>
 
-        <SlidingPane isOpen={noticePaneOpened} onRequestClose={handleOpenNotices} width="1000px" title="User Notices">
+        <SlidingPane isOpen={noticePaneOpened} onRequestClose={handleOpenNotices} width="1400px" title="User Notices">
           <UserNotices />
         </SlidingPane>
         <SlidingPane isOpen={eventPaneOpened} onRequestClose={handleOpenEvents} width="1000px" title="Create Event">
