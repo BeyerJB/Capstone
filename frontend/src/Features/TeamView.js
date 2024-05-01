@@ -19,7 +19,7 @@ export const TeamView = () => {
   const [cookies] = useCookies(['userID', 'firstName', 'lastName', 'rank']);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const [filteredUsers, setFilteredUsers] = useState([])
+  const [comparedUsers, setComparedUsers] = useState([])
   const [resourceInfo, setResourceInfo ] = useState([])
   const [isEditing, setIsEditing] = useState(false);
   const [editedEvent, setEditedEvent] = useState(null)
@@ -54,21 +54,14 @@ const closeModal = () => {
     setIsModalOpen(false);
   };
 
-const handleGuardianClick = (info) => {
-      const filteredGuardian = {
-      resourceid: info.el.dataset.resourceId,
-      title: info.fieldValue,
-      team_name: 'A FilteredUsers'
-      }
-    setFilteredUsers([...filteredUsers, filteredGuardian])
-  }
+
   const handleEditClick = () => {
     setIsEditing(true);
     setTitle(selectedEvent.event.title)
     setDescription(selectedEvent.event.extendedProps.description)
     setStartDateTime(selectedEvent.event.start)
     setEndDateTime(selectedEvent.event.end)
-    setEventId(selectedEvent.event.eventId)
+    setEventId(selectedEvent.event.id)
 
   };
 
@@ -80,29 +73,28 @@ const handleGuardianClick = (info) => {
       end: endDateTime,
       description: description
     };
-    console.log(editedEventData)
-    // fetch('http://localhost:8080/edit_event', {
-    //   method: 'PATCH',
-    //   headers: {
-    //     'Content-Type': 'application/json' cx
-    //   },
-    //   body: JSON.stringify(editedEventData)
-    // })
-    // .then(response => {
-    //   if (!response.ok) {
-    //     throw new Error('Failed to edit event');
-    //   }
-    //   return response.json();
-    // })
-    // .then(data => {
-    //   console.log('Edit Successful:', data, editedEventData);
-    //   setIsEditing(false);
-    //   window.location.reload();
-    // })
-    // .catch(error => {
-    //   console.error('Error editing event:', error);
-    //   // Handle error
-    // });
+    fetch('http://localhost:8080/edit_event', {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(editedEventData)
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Failed to edit event');
+      }
+      return response.json();
+    })
+    .then(data => {
+      console.log('Edit Successful:', data, editedEventData);
+      setIsEditing(false);
+      window.location.reload();
+    })
+    .catch(error => {
+      console.error('Error editing event:', error);
+      // Handle error
+    });
 
   };
 
@@ -132,6 +124,15 @@ const handleGuardianClick = (info) => {
     setEndDateTime(date);
   };
 
+  const handleGuardianClick = (info) => {
+    if (info.resource.parentId !== "") {
+      let filteredGuardian = {
+        id: info.resource.id,
+        title: info.fieldValue,
+        }
+        setComparedUsers([...comparedUsers, filteredGuardian])
+      }
+  }
 
 
   return (
@@ -200,20 +201,27 @@ const handleGuardianClick = (info) => {
         eventClick={openModal}
         resourceAreaHeaderContent="Guardians"
         resourceAreaWidth = "10vw"
-        resources={
-          resourceInfo.teams.map(team => ({
+        resources={[
+          ...resourceInfo.teams.map(team => ({
              id: team.team_id,
              title: team.name,
                 children: (resourceInfo.users.filter(user => user.team_id === team.team_id)).map(user => ({
                   id: `${user.team_name}${user.user_id}`,
                   title: `${user.rank} ${user.first_name} ${user.last_name}`
-             })),
-          }))
-         }
+             }))
+
+          })),
+          {
+            id: '01.CompareUser',
+            title:'CompareUser',
+            children:[]
+          }
+
+        ]}
         events={[
               ...resourceInfo.teamEvents.map(event => ({
                 resourceId:event.team_id,
-                eventId:event.event_id,
+                id:event.event_id,
                 title:event.title,
                 start: event.start_datetime,
                 end:event.end_datetime,
@@ -224,7 +232,7 @@ const handleGuardianClick = (info) => {
             })),
               ...resourceInfo.userEvents.map(event => ({
               resourceId: `${event.name}${event.user_id}`,
-              eventId:event.event_id,
+              id:event.event_id,
               title:event.title,
               start: event.start_datetime,
               end:event.end_datetime,
@@ -235,10 +243,7 @@ const handleGuardianClick = (info) => {
             }))
           ]}
           resourceLabelDidMount={(info) => {
-            info.el.addEventListener("click", function() {
-                // handleGuardianClick(info)
-                console.log('clicked', info.fieldValue, 'id:', info.el.dataset.resourceId,'allinfo:', info )
-            })}}
+            info.el.addEventListener("click", () => handleGuardianClick(info))}}
       />
       : <></>
         }
