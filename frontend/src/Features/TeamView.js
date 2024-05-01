@@ -1,4 +1,4 @@
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect, useContext} from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
@@ -14,15 +14,16 @@ import '../CSS/TeamView.css'
 import Form from 'react-bootstrap/Form';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import {NotificationsContext} from './NotificationContext'
 
 export const TeamView = () => {
   const [cookies] = useCookies(['userID', 'firstName', 'lastName', 'rank', 'isManager']);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const [filteredUsers, setFilteredUsers] = useState([])
-  const [resourceInfo, setResourceInfo ] = useState([])
+  const {comparedGuardian, setComparedGuardian} = useContext(NotificationsContext);
+  const [resourceInfo, setResourceInfo ] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
-  const [editedEvent, setEditedEvent] = useState(null)
+  const [editedEvent, setEditedEvent] = useState(null);
   const [startDateTime, setStartDateTime] = useState('');
   const [endDateTime, setEndDateTime] = useState(null);
   const [title, setTitle] = useState(null);
@@ -96,14 +97,7 @@ const closeModal = () => {
     setIsModalOpen(false);
   };
 
-const handleGuardianClick = (info) => {
-      const filteredGuardian = {
-      resourceid: info.el.dataset.resourceId,
-      title: info.fieldValue,
-      team_name: 'A FilteredUsers'
-      }
-    setFilteredUsers([...filteredUsers, filteredGuardian])
-  }
+
   const handleEditClick = () => {
     setIsEditing(true);
     setTitle(selectedEvent.event.title)
@@ -252,6 +246,24 @@ const handleGuardianClick = (info) => {
     }
   };
 
+
+
+// console.log('outsidefunction', comparedGuardian)
+
+  // const handleGuardianClick = (info) => {
+  //   const guardianIndex = comparedGuardian.findIndex(guardian => guardian.id === info.resource.id )
+  //   console.log('insidefunction', comparedGuardian)
+  //   console.log(info.resource.id)
+
+  //   console.log(guardianIndex)
+  //   if ((info.resource.id).length > 4 && guardianIndex === -1) {
+  //       setComparedGuardian(comparedGuardian => [...comparedGuardian, {id: info.resource.id, title: info.fieldValue}])
+  //     } else {
+  //       setComparedGuardian(comparedGuardian => comparedGuardian.filter(guardian =>!(guardian.id === info.resource.id)));
+  //     }
+  //  }
+
+
   return (
     <div className="teamview-calendar">
       {resourceInfo.users ?
@@ -306,11 +318,11 @@ const handleGuardianClick = (info) => {
                 {weekday: 'short',day: 'numeric'}
               ]
             }
-                  }}
+          }}
         schedulerLicenseKey="CC-Attribution-NonCommercial-NoDerivatives"
         timeZone="local"
         height="90vh"
-        contentHeight= 'auto'
+        //contentHeight= 'auto' ---> this changes the scrollibility
         scrollTime="00:00"
         aspectRatio={2}
         // expandRows={false}
@@ -320,6 +332,14 @@ const handleGuardianClick = (info) => {
         resourceAreaHeaderContent="Guardians"
         resourceAreaWidth = "10vw"
         resources={
+          // {
+          //   id : "01. ComparedGuardians",
+          //   title: 'Compared Guardians',
+          //   children: comparedGuardian.map(guardian => ({
+          //     id: guardian.id,
+          //     title:guardian.title
+          //   }))
+          // },
           resourceInfo.teams.map(team => ({
              id: team.team_id,
              title: team.name,
@@ -353,11 +373,12 @@ const handleGuardianClick = (info) => {
               borderColor: `#${event.color_code}`
             }))
           ]}
-          resourceLabelDidMount={(info) => {
-            info.el.addEventListener("click", function() {
-                // handleGuardianClick(info)
-                console.log('clicked', info.fieldValue, 'id:', info.el.dataset.resourceId,'allinfo:', info )
-            })}}
+          // resourceLabelDidMount={(info) => {
+          //   info.el.addEventListener("click", () => {
+          //     console.log(info)
+          //     handleGuardianClick(info)
+          //   }
+          //   )}}
       />
       : <></>
         }
@@ -404,9 +425,31 @@ const handleGuardianClick = (info) => {
             </Form>
           ) : (
             <>
-              <p>Start: {selectedEvent ? selectedEvent.event.start.toString() : ''}</p>
-              <p>End: {selectedEvent ? selectedEvent.event.end.toString() : ''}</p>
-              <p>Description: {selectedEvent ? selectedEvent.event.extendedProps.description : ''}</p>
+              {isModalOpen ?
+                  <>
+                   {selectedEvent.event.allDay != null ?
+                    <>
+                    <h4>Event Times:</h4>
+                    <p>All Day</p>
+
+                    <h4>Description:</h4>
+                    <p> {selectedEvent ? selectedEvent.event.extendedProps.description : ''}</p>
+                    </>
+                  :
+                    <>
+                      <h4>Event Times:</h4>
+                      <p>Start: {selectedEvent ? `${selectedEvent.event.start}` : ''}</p>
+                      <p>End: {selectedEvent ? `${selectedEvent.event.end}` : ''}</p>
+                      <h4>Description:</h4>
+                      <p> {selectedEvent ? selectedEvent.event.extendedProps.description : ''}</p>
+                    </>
+                  }
+                  </>
+                :
+                  <>
+                  </>
+
+              }
             </>
           )}
         </Modal.Body>
