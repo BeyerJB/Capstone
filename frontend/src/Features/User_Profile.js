@@ -69,7 +69,7 @@ export const MyProfile = () => {
           </dd>
           <dt>Team:</dt>
           <dd>
-            <select style={inputStyle} id="tname" name="tname" defaultValue={teamName[0].name} disabled>
+            <select style={{appearance:'none', paddingleft: '10px', paddingRight: '10px', color: 'black'}} id="tname" name="tname" defaultValue={teamName[0].name} disabled>
               {teams.map(eaTeam => (
                  <option value={eaTeam}>
                  {eaTeam.name}
