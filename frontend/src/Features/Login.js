@@ -57,6 +57,7 @@ function Login() {
               name="username"
               value={loginData.username}
               onChange={handleInputChange}
+              style = {{marginRight: "10px", marginBottom: "10px"}}
             />
             <input
               type="password"
@@ -64,6 +65,7 @@ function Login() {
               name="password"
               value={loginData.password}
               onChange={handleInputChange}
+              style = {{marginRight: "10px", marginBottom: "10px"}}
             />
             <button type="submit" className="btn"
             style={{

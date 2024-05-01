@@ -221,5 +221,53 @@ body {
   cursor: pointer;
 }
 
+.user_profile-box {
+  display: inline-block
+}
 
+
+.modal {
+  border-style: solid;
+  border-width: 1px;
+  border-color: #212121;
+  border-right: 0;
+  border-bottom: 0;
+  color: #212121;
+  font-family: 'Times New Roman', Times, serif;
+
+}
+
+.modal-header {
+  border-style: solid;
+  border-width: .3px;
+  border-right: 0;
+  border-color: #212121;
+  background-color: #212121;
+  color: #c1c1c1
+}
+
+.modal-body {
+  border-style: solid;
+  border-width: 1px;
+  border-color: #212121;
+  border-right: 0;
+  border-bottom: 0;
+  color: #c1c1c1;
+  background-color: #212121;
+  font-family: 'Times New Roman', Times, serif;
+}
+
+.modal-footer {
+  border-style: solid;
+  border-width: .3px;
+  border-right: 0;
+  border-color: #212121;
+  background-color: #212121 !important;
+  color: #212121
+}
+
+.modal-header .btn-close {
+ background-color: white !important
+
+}
 
