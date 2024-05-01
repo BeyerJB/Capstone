@@ -32,7 +32,6 @@ export const UserNotices = () => {
         .then(response => response.json())
         .then(data => {
           setSupervisorNotices(data);
-          // setNoticeCount(prevCount => prevCount + data.length)
         })
         .catch(error => console.error('Error fetching supervisor notices:', error));
     }
@@ -44,7 +43,6 @@ export const UserNotices = () => {
         .then(response => response.json())
         .then(data => {
           setSubmittedNotices(data);
-          // setNoticeCount(prevCount => prevCount + data.length)
         })
         .catch(error => console.error('Error fetching submitted notices:', error));
     }
@@ -61,7 +59,6 @@ export const UserNotices = () => {
         if (Array.isArray(data)) {
           const filteredData = data.filter(notice => notice.recipient_id === cookies.userID);
           setSupervisorNoticeData(filteredData);
-          // setNoticeCount(prevCount => prevCount + data.length)
         } else {
           setSupervisorNoticeData([]);
         }
@@ -77,11 +74,10 @@ export const UserNotices = () => {
         .then(response => response.json())
         .then(data => {
           setPendingAccounts(data);
-          // setNoticeCount(prevCount => prevCount + data.length)
         })
         .catch(error => console.error('Error fetching submitted notices:', error));
     }
-    //console.log(pendingAccounts)
+    console.log(pendingAccounts)
   };
 
   useEffect(() => {
