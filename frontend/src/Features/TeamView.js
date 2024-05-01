@@ -346,14 +346,10 @@ const closeModal = () => {
                   title: `${user.rank} ${user.first_name} ${user.last_name}`
              }))
 
-          })),
-          {
-            id: '01.CompareUser',
-            title:'CompareUser',
-            children:[]
-          }
+          }))
 
-        ]}
+
+        }
         events={[
               ...resourceInfo.teamEvents.map(event => ({
                 resourceId:event.team_id,
