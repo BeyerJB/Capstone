@@ -623,3 +623,38 @@ app.post("/teams/add", (req, res) => {
       });
     });
 })
+
+// Get all subordinate user_id's for anyone the user supervises recursively
+app.get('/api/subordinates/:supervisorId', async (req, res) => {
+  try {
+    const supervisorId = req.params.supervisorId;
+
+    // Retrieve direct subordinates
+    const directSubordinates = await knex('chain_of_command')
+      .select('subordinate_id')
+      .where('supervisor_id', supervisorId);
+
+    // Retrieve subordinates' subordinates recursively
+    async function getSubordinatesRecursive(subordinateIds) {
+      const subordinates = await knex('chain_of_command')
+        .select('subordinate_id')
+        .whereIn('supervisor_id', subordinateIds);
+
+      if (subordinates.length === 0) {
+        return [];
+      }
+
+      const nestedSubordinates = await getSubordinatesRecursive(subordinates.map(sub => sub.subordinate_id));
+      return [...subordinates, ...nestedSubordinates];
+    }
+
+    const allSubordinates = await getSubordinatesRecursive(directSubordinates.map(sub => sub.subordinate_id));
+
+    // Combine and return results
+    const allSubordinateIds = [...directSubordinates, ...allSubordinates].map(sub => sub.subordinate_id);
+    res.json({ subordinateIds: allSubordinateIds });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});

@@ -20,9 +20,6 @@ export const UserNotices = () => {
   const [supervisorNoticeData, setSupervisorNoticeData] = useState([]);
   const { updateCount } = useContext(NotificationsContext);
 
-  // const notificationContext = useContext(NotificationsContext);
-
-
   const [noticeTypeOptions] = useState([
     { value: 1, label: 'General' },
     { value: 2, label: 'Urgent' },
@@ -35,7 +32,6 @@ export const UserNotices = () => {
         .then(response => response.json())
         .then(data => {
           setSupervisorNotices(data);
-          // setNoticeCount(prevCount => prevCount + data.length)
         })
         .catch(error => console.error('Error fetching supervisor notices:', error));
     }
@@ -47,7 +43,6 @@ export const UserNotices = () => {
         .then(response => response.json())
         .then(data => {
           setSubmittedNotices(data);
-          // setNoticeCount(prevCount => prevCount + data.length)
         })
         .catch(error => console.error('Error fetching submitted notices:', error));
     }
@@ -64,7 +59,6 @@ export const UserNotices = () => {
         if (Array.isArray(data)) {
           const filteredData = data.filter(notice => notice.recipient_id === cookies.userID);
           setSupervisorNoticeData(filteredData);
-          // setNoticeCount(prevCount => prevCount + data.length)
         } else {
           setSupervisorNoticeData([]);
         }
@@ -80,7 +74,6 @@ export const UserNotices = () => {
         .then(response => response.json())
         .then(data => {
           setPendingAccounts(data);
-          // setNoticeCount(prevCount => prevCount + data.length)
         })
         .catch(error => console.error('Error fetching submitted notices:', error));
     }
@@ -291,7 +284,7 @@ export const UserNotices = () => {
       });
   };
 
-  // console.log('notice count: ', noticeCount)
+  //console.log('notice count: ', noticeCount)
 
   return (
     <>
@@ -627,111 +620,3 @@ export const UserNotices = () => {
     </>
   );
 };
-
-
-
-/*
-
-
-const [newNoticeData, setNewNoticeData] = useState({ submitter_id: cookies.userID, body: '', notice_type: 4, event_id: 0, recipient_id: 0 });
-const [oldStartDateTime, setOldStartDateTime] = useState('');
-const [oldEndDateTime, setOldEndDateTime] = useState('');
-const [oldTitle, setOldTitle] = useState('');
-const [oldDescription, setOldDescription] = useState('');
-const [teamMemberIDs, setTeamMemberIDs] = useState({});
-
-
-setOldTitle(selectedEvent.event.title);
-setOldDescription(selectedEvent.event.extendedProps.description);
-setOldStartDateTime(selectedEvent.event.start);
-setOldEndDateTime(selectedEvent.event.end);
-
-
-if (
-        oldTitle !== editedEventData.title ||
-        oldDescription !== editedEventData.description ||
-        oldStartDateTime !== editedEventData.startDateTime ||
-        oldEndDateTime !== editedEventData.endDateTime
-      ) {
-        // Update newNoticeData
-        const newBody = `Event "${oldTitle}" has been updated.\n\nChanges:\n\nTitle: ${oldTitle} -> ${title}\nDescription: ${oldDescription} -> ${description}\nStart Date and Time: ${oldStartDateTime} -> ${startDateTime}\nEnd Date and Time: ${oldEndDateTime} -> ${endDateTime}`;
-
-        setNewNoticeData(prevData => ({
-          ...prevData,
-          body: newBody,
-          recipient_id: selectedEvent.event.creator_id
-        }));
-      }
-
-
-
-
-const handleNewNotice = async () => {
-    try {
-      if (!selectedEvent.event.user_id) {
-        await handleTeamEvent(selectedEvent.event.team_id);
-        Object.values(teamMemberIDs).forEach(teamMemberId => {
-          const noticeData = {
-            submitter_id: cookies.userID,
-            body: '',
-            notice_type: 4,
-            event_id: selectedEvent.event.id,
-            recipient_id: teamMemberId
-          };
-          sendNewNotice(noticeData);
-        });
-      } else {
-        const noticeData = {
-          submitter_id: cookies.userID,
-          body: '',
-          notice_type: 4,
-          event_id: selectedEvent.event.id,
-          recipient_id: selectedEvent.event.user_id
-        };
-        sendNewNotice(noticeData);
-      }
-    } catch (error) {
-      console.error('Error sending new notice:', error);
-      alert('Error sending new notice. Please try again.');
-    }
-  };
-
-  const sendNewNotice = (noticeData) => {
-    fetch('http://localhost:8080/api/notices/auto', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(noticeData),
-    })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        setNewNoticeData({ submitter_id: cookies.userID, body: '', notice_type: 4, event_id: 0, recipient_id: 0 });
-      })
-      .catch(error => {
-        console.error('Error adding new notice:', error);
-        alert('Error adding new notice. Please try again.');
-      });
-  };
-
-  useEffect(() => {
-    if (newNoticeData.event_id !== 0 && newNoticeData.body !== '') {
-      handleNewNotice();
-    }
-  }, [newNoticeData]);
-
-  const handleTeamEvent = async (teamId) => {
-    try {
-      const response = await fetch(`http://localhost:8080/api/notices/${teamId}`)
-      const data = await response.json();
-      setTeamMemberIDs(data);
-    } catch (error) {
-      console.error('Error fetching team member user IDs:', error);
-    }
-  };
-
-
-
-*/
