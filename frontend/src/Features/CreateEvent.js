@@ -18,8 +18,8 @@ export const CreateEvent = () => {
   const [eventTypeData, setEventTypeData] = useState({ event_type: '' });
   const [eventTypeOptions, setEventTypeOptions] = useState([]);
   const [checkedBox, setCheckedBox] = useState(false);
-  const [cookies] = useCookies(['userID', 'firstName', 'lastName', 'rank', 'isManager']);
-  const [newNoticeData, setNewNoticeData] = useState({ submitter_id: cookies.userID, body: '', notice_type: 4, event_id: 0 });
+  const [cookies] = useCookies(['userID', 'firstName', 'lastName', 'rank', 'isManager', 'supervisorID']);
+  const [newNoticeData, setNewNoticeData] = useState({ submitter_id: cookies.userID, recipient_id: cookies.supervisorID, body: '', notice_type: 4, event_id: 0 });
   const [startDate, setStartDate] = useState(null)
   const [endDate, setEndDate] = useState(null)
 
@@ -121,7 +121,7 @@ export const CreateEvent = () => {
         const eventData = await res.json();
         console.log(eventData);
         if (!cookies.isManager) {
-          await setNewNoticeData({ submitter_id: cookies.userID, body: `Event Request: ${formData.title}`, notice_type: 4, event_id: eventData.new_event_id.event_id });
+          await setNewNoticeData({ submitter_id: cookies.userID, recipient_id: cookies.supervisorID, body: `Event Request: ${formData.title}`, notice_type: 4, event_id: eventData.new_event_id.event_id });
         }
         window.location.href = "http://localhost:3000/mycalendar";
       } catch (error) {
@@ -194,7 +194,7 @@ const handleNewNotice = () => {
       setNewNoticeData({ submitter_id: cookies.userID, body: '', notice_type: 4, event_id: 0, recipient_id: cookies.supervisorID });
     })
     .catch(error => {
-      console.error('Error adding new notice:', error);
+      //console.error('Error adding new notice:', error);
       alert('Error adding new notice. Please try again.');
     });
 };
@@ -239,10 +239,10 @@ const handleNewNotice = () => {
             dateFormat="MMMM d, yyyy h:mm"
             placeholderText="  Select Start"
             value={startDate}
-            required 
+            required
           />
         </Col>
-        
+
         <Col xs={4}>
         <h6 style={{ marginTop: '15px' }}>End Date & Time</h6>
         <DatePicker
@@ -255,7 +255,7 @@ const handleNewNotice = () => {
             dateFormat="MMMM d, yyyy h:mm"
             placeholderText="  Select End"
             value={endDate}
-            required 
+            required
           />
         </Col>
       </Row>
