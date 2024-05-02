@@ -14,13 +14,13 @@ import '../CSS/TeamView.css'
 import Form from 'react-bootstrap/Form';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import {NotificationsContext} from './NotificationContext'
+//import {NotificationsContext} from './NotificationContext'
 
 export const TeamView = () => {
   const [cookies] = useCookies(['userID', 'firstName', 'lastName', 'rank', 'isManager', 'isSupervisor', 'teamID']);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const {comparedGuardian, setComparedGuardian} = useContext(NotificationsContext);
+ // const {comparedGuardian, setComparedGuardian} = useContext(NotificationsContext);
   const [resourceInfo, setResourceInfo ] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [editedEvent, setEditedEvent] = useState(null);
@@ -41,6 +41,7 @@ export const TeamView = () => {
   const [subordinateFound, setSubordinateFound] = useState(false);
   const [teamSupervisor, setTeamSupervisor] = useState(false);
   const [isTeamEvent, setIsTeamEvent] = useState(false);
+  const [comparedGuardian, setComparedGuardian] = useState([])
 
   useEffect(() => {
     fetch(`http://localhost:8080/api/teamview`)
@@ -130,14 +131,6 @@ const closeModal = () => {
     setIsTeamEvent(false);
   };
 
-// const handleGuardianClick = (info) => {
-//       const comparedGuardian = {
-//       resourceid: info.el.dataset.resourceId,
-//       title: info.fieldValue,
-//       team_name: 'A FilteredUsers'
-//       }
-//     setCompaUsers([...filteredUsers, filteredGuardian])
-//   }
   const handleEditClick = () => {
     setIsEditing(true);
     setTitle(selectedEvent.event.title)
@@ -287,20 +280,21 @@ const closeModal = () => {
 
 
 
-// console.log('outsidefunction', comparedGuardian)
 
-  // const handleGuardianClick = (info) => {
-  //   const guardianIndex = comparedGuardian.findIndex(guardian => guardian.id === info.resource.id )
-  //   console.log('insidefunction', comparedGuardian)
-  //   console.log(info.resource.id)
 
-  //   console.log(guardianIndex)
-  //   if ((info.resource.id).length > 4 && guardianIndex === -1) {
-  //       setComparedGuardian(comparedGuardian => [...comparedGuardian, {id: info.resource.id, title: info.fieldValue}])
-  //     } else {
-  //       setComparedGuardian(comparedGuardian => comparedGuardian.filter(guardian =>!(guardian.id === info.resource.id)));
-  //     }
-  //  }
+  const handleGuardianClick = (info) => {
+    setComparedGuardian(currentComparedGuardian => {
+       const guardianIndex = currentComparedGuardian.findIndex(guardian => guardian.id === info.resource.id);
+       console.log('insidefunction', currentComparedGuardian);
+       console.log(info.resource.id);
+       console.log(guardianIndex);
+       if ((info.resource.id).length > 4 && guardianIndex === -1) {
+         return [...currentComparedGuardian, {id: info.resource.id, title: info.fieldValue}];
+       } else {
+         return currentComparedGuardian.filter(guardian => !(guardian.id === info.resource.id));
+       }
+    });
+   };
 
 
   return (
@@ -314,12 +308,12 @@ const closeModal = () => {
           resourceTimelinePlugin,
         ]}
         initialView="TenDay"
-
+        scrollTime = 'today'
         headerToolbar={{
           left: "today prev,next",
           center: "",
           right:
-            "resourceTimelineDay,TenDay,resourceTimelineMonth,resourceTimelineYear",
+            "resourceTimelineDay,resourceTimelineMonth,resourceTimelineYear", //removed tenday - > ",TenDay"
         }}
         views = {{
           //dayView
@@ -360,8 +354,9 @@ const closeModal = () => {
           }}
         schedulerLicenseKey="CC-Attribution-NonCommercial-NoDerivatives"
         timeZone="local"
-        height="90vh"
-        //contentHeight= 'auto' ---> this changes the scrollibility
+        // height="90vh"
+        contentHeight= 'auto'
+
         scrollTime="00:00"
         aspectRatio={2}
         nowIndicator = {true}
@@ -369,16 +364,24 @@ const closeModal = () => {
         eventClick={openModal}
         resourceAreaHeaderContent="Guardians"
         resourceAreaWidth = "10vw"
-        resources={
-          // {
-          //   id : "01. ComparedGuardians",
-          //   title: 'Compared Guardians',
-          //   children: comparedGuardian.map(guardian => ({
-          //     id: guardian.id,
-          //     title:guardian.title
-          //   }))
-          // },
-          resourceInfo.teams.map(team => ({
+
+        resourceRender = {function(renderInfo) {
+          if (renderInfo.resource.children && renderInfo.resource.children.length > 0) {
+            renderInfo.el.style.backgroundColor = 'lightblue';
+            renderInfo.el.style.color = 'black';
+            renderInfo.el.closest('tr').style.backgroundColor = 'lightblue';
+            }
+          }}
+        resources={comparedGuardian.length > 0 ? [
+          {
+            id : "01. ComparedGuardians",
+            title: 'Compared Guardians',
+            children: comparedGuardian.map(guardian => ({
+              id: guardian.id,
+              title:guardian.title
+            }))
+          },
+          ...resourceInfo.teams.map(team => ({
              id: team.team_id,
              title: team.name,
                 children: (resourceInfo.users.filter(user => user.team_id === team.team_id)).map(user => ({
@@ -386,10 +389,19 @@ const closeModal = () => {
                   title: `${user.rank} ${user.first_name} ${user.last_name}`
              }))
 
-          }))
+          }))]
+          :
+          resourceInfo.teams.map(team => ({
+            id: team.team_id,
+            title: team.name,
+               children: (resourceInfo.users.filter(user => user.team_id === team.team_id)).map(user => ({
+                 id: `${user.team_name}${user.user_id}`,
+                 title: `${user.rank} ${user.first_name} ${user.last_name}`
+            }))
 
-
+         }))
         }
+
         events={[
               ...resourceInfo.teamEvents.map(event => ({
                 resourceId:event.team_id,
@@ -414,12 +426,13 @@ const closeModal = () => {
               borderColor: `#${event.color_code}`
             }))
           ]}
-          // resourceLabelDidMount={(info) => {
-          //   info.el.addEventListener("click", () => {
-          //     console.log(info)
-          //     handleGuardianClick(info)
-          //   }
-          //   )}}
+          resourceLabelDidMount={(info) => {
+            //resourceInfo.teams.map((team)=> document.querySelector(`td [data-resource-id="${team.team_id}"])`))
+            info.el.addEventListener("click", () => {
+              console.log(info)
+               handleGuardianClick(info)
+            }
+            )}}
       />
       : <></>
         }
