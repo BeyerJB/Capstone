@@ -78,7 +78,7 @@ export const MyProfile = () => {
 
   return (
     <>
-      {teamName[0] ? (
+      {teamName[0] && rank[0] && ranks[0] ? (
         <>
           <h1
             style={textStyle}
