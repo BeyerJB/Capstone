@@ -53,7 +53,7 @@ exports.seed = async function(knex) {
 
   // Seed event_type table
   await knex('event_type').insert([
-    { name: 'Shift Work'. description: '12 Hour Shift', color_code: '99A3A4'},
+    { name: 'Shift Work', description: '12 Hour Shift', color_code: '99A3A4'},
     { name: 'Appointment', description: 'Offical Appointment', color_code: 'FF5733' },
     { name: 'Meeting', description: 'Regular Meeting', color_code: '3498DB' },
     { name: 'Training', description: 'Training Session', color_code: '2ECC71' },
