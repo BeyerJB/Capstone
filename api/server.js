@@ -508,11 +508,11 @@ app.post("/api/notices/auto", async (req, res) => {
 
 // Approve/Deny account request
 app.put("/api/accounts/choice", async (req, res) => {
-  const { user_id, approved, pending } = req.body;
+  const { user_id, choice } = req.body;
   try {
     const pendingAccounts = await knex("calendar_users")
       .where("user_id", user_id)
-      .update({ pending: pending, approved: approved });
+      .update({ pending: false, enabled: choice });
     res.status(200).json(pendingAccounts);
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });

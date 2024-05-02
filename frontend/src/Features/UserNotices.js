@@ -152,13 +152,13 @@ export const UserNotices = () => {
   };
 
   const handleRejectAccount = (userId) => {
-    setAccountUpdateData({ user_id: userId, approved: false, pending: false });
+    setAccountUpdateData({ user_id: userId, choice: false });
     fetchPendingAccounts();
     updateCount()
   };
 
   const handleAcceptAccount = (userId) => {
-    setAccountUpdateData({ user_id: userId, approved: true, pending: false });
+    setAccountUpdateData({ user_id: userId, choice: true });
     fetchPendingAccounts();
     updateCount()
   };
@@ -190,16 +190,18 @@ export const UserNotices = () => {
   }, [eventUpdateData]);
 
   useEffect(() => {
+    console.log(accountUpdateData);
     if (accountUpdateData.user_id !== undefined && accountUpdateData.choice !== undefined) {
       handleUpdateAccount()
         .then(() => {
-          if (accountUpdateData.choice) {
-            handleAcceptAccount(accountUpdateData.event_id);
+          if (accountUpdateData.approved) {
+            handleAcceptAccount(accountUpdateData.user_id);
+            console.log(accountUpdateData);
           } else {
-            handleRejectAccount(accountUpdateData.event_id);
+            handleRejectAccount(accountUpdateData.user_id);
           }
 
-          fetchPendingEvents();
+          fetchPendingAccounts();
         })
         .catch(error => {
           console.error('Error handling event action:', error);
@@ -265,6 +267,7 @@ export const UserNotices = () => {
   };
 
   const handleUpdateAccount = () => {
+    console.log('i am inside handleupdateaccount')
     return fetch('http://localhost:8080/api/accounts/choice', {
       method: 'PUT',
       headers: {
@@ -277,6 +280,7 @@ export const UserNotices = () => {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         setAccountUpdateData({});
+        fetchPendingAccounts();
       })
       .catch(error => {
         console.error('Error updating account:', error);
