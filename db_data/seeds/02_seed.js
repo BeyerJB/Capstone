@@ -53,6 +53,7 @@ exports.seed = async function(knex) {
 
   // Seed event_type table
   await knex('event_type').insert([
+    { name: 'Shift Work', description: '12 Hour Shift', color_code: '99A3A4'},
     { name: 'Appointment', description: 'Offical Appointment', color_code: 'FF5733' },
     { name: 'Meeting', description: 'Regular Meeting', color_code: '3498DB' },
     { name: 'Training', description: 'Training Session', color_code: '2ECC71' },
@@ -60,7 +61,7 @@ exports.seed = async function(knex) {
     { name: 'Leave', description: 'Personal Leave', color_code: '9B59B6' },
     { name: 'TDY', description: 'Member TDY', color_code: 'F1C40F' },
     { name: 'Deployed', description: 'Member Deployed', color_code: '1ABC9C'},
-    { name: 'Misc', description: 'All Other Events', color_code: '95A5A6'}
+    { name: 'Misc', description: 'All Other Events', color_code: '0E9FAE'}
   ]);
 
   // Seed calendar_users table
@@ -84,7 +85,8 @@ exports.seed = async function(knex) {
     { first_name: 'Michael', last_name: 'Davis', rank: 2, username: 'michaeldavis', user_type: 1, team_id: 2, password: await bcrypt.hash('password', 10), enabled: true, pending: false },
     { first_name: 'Jane', last_name: 'Brown', rank: 1, username: 'janebrown', user_type: 1, team_id: 2, password: await bcrypt.hash('password', 10), enabled: true, pending: false },
     { first_name: 'Ava', last_name: 'Garcia', rank: 1, username: 'avagarcia', user_type: 1, team_id: 2, password: await bcrypt.hash('password', 10), enabled: true, pending: false },
-    { first_name: 'Olivia', last_name: 'Thomas', rank: 1, username: 'oliviathomas', user_type: 1, team_id: 2, password: await bcrypt.hash('password', 10), enabled: true, pending: false }
+    { first_name: 'Olivia', last_name: 'Thomas', rank: 1, username: 'oliviathomas', user_type: 1, team_id: 2, password: await bcrypt.hash('password', 10), enabled: true, pending: false },
+    { first_name: 'James', last_name: 'Allen', rank: 4, username: 'jamesallen', user_type: 1, team_id: 2, password: await bcrypt.hash('password', 10), enabled: false, pending: true }
   ]);
 
   // Seed chain_of_command table
@@ -107,62 +109,80 @@ exports.seed = async function(knex) {
     { supervisor_id: 14, subordinate_id: 17 },
     { supervisor_id: 14, subordinate_id: 18 },
     { supervisor_id: 14, subordinate_id: 19 },
-    { supervisor_id: 14, subordinate_id: 20 }
+    { supervisor_id: 14, subordinate_id: 20 },
+    { supervisor_id: 1, subordinate_id: 21 }
   ]);
 
   // Seed user_notice table
   await knex('user_notice').insert([
-    { notice_status: 1, submitter_id: 10, recipient_id: 8, body: 'Test notice 1', notice_type: 1 },
-    { notice_status: 1, submitter_id: 13, recipient_id: 12, body: 'Test notice 2', notice_type: 2 },
-    { notice_status: 1, submitter_id: 5, recipient_id: 4, body: 'Test notice 3', notice_type: 3 },
-    { notice_status: 1, submitter_id: 7, recipient_id: 4, body: 'Test notice 4', notice_type: 3 },
-    { notice_status: 1, submitter_id: 17, recipient_id: 14, body: 'Test notice 5', notice_type: 1 },
-    { notice_status: 1, submitter_id: 2, recipient_id: 1, body: 'Test notice 6', notice_type: 2 },
-    { notice_status: 1, submitter_id: 12, recipient_id: 4, body: 'Test notice 7', notice_type: 2 },
-    { notice_status: 1, submitter_id: 13, recipient_id: 12, body: 'Test notice 8', notice_type: 2 },
-    { notice_status: 1, submitter_id: 20, recipient_id: 14, body: 'Test notice 9', notice_type: 2 },
-    { notice_status: 1, submitter_id: 4, recipient_id: 3, body: 'Event Creation', notice_type: 4, event_id: 34 },
-    { notice_status: 1, submitter_id: 5, recipient_id: 4, body: 'Event Creation', notice_type: 4, event_id: 35 },
-    { notice_status: 1, submitter_id: 6, recipient_id: 2, body: 'Event Creation', notice_type: 4, event_id: 36 }
+    { notice_status: 1, submitter_id: 8, recipient_id: 3, body: 'Is team lunch still on?', notice_type: 1 },
+    { notice_status: 1, submitter_id: 9, recipient_id: 8, body: 'Have any details about the Networking event?', notice_type: 2 },
+    { notice_status: 1, submitter_id: 10, recipient_id: 8, body: 'Is Mentorship training open to everyone?', notice_type: 3 },
+    { notice_status: 1, submitter_id: 5, recipient_id: 4, body: "Any upcoming TDYs?", notice_type: 3 },
+    { notice_status: 1, submitter_id: 6, recipient_id: 4, body: 'Can I deploy?', notice_type: 1 },
+    { notice_status: 1, submitter_id: 3, recipient_id: 1, body: "Spc Allen's account is still pending approval.", notice_type: 2 },
+    { notice_status: 1, submitter_id: 13, recipient_id: 12, body: 'Can I be signed up for SABC training?', notice_type: 2 },
+    { notice_status: 1, submitter_id: 15, recipient_id: 14, body: 'What is the software development workshop going to be about?', notice_type: 2 },
+    { notice_status: 1, submitter_id: 16, recipient_id: 14, body: 'Is the product dev meeting still on?', notice_type: 2 },
+    { notice_status: 1, submitter_id: 4, recipient_id: 3, body: 'Event Creation', notice_type: 4, event_id: 53 },
+    { notice_status: 1, submitter_id: 5, recipient_id: 4, body: 'Event Creation', notice_type: 4, event_id: 54 },
+    { notice_status: 1, submitter_id: 3, recipient_id: 2, body: 'Event Creation', notice_type: 4, event_id: 55 }
   ]);
 
   // Seed calendar_events table
   await knex('calendar_events').insert([
-    { title: "Brainstorming Session", start_datetime: "2024-05-10T09:00:00", end_datetime: "2024-05-10T11:00:00", team_id: 1, description: "Brainstorming ideas for upcoming project", event_type: 2, creator_id: 1, pending: false, approved: true },
-    { title: "Client Feedback Session", start_datetime: "2024-05-14T14:00:00", end_datetime: "2024-05-14T16:00:00", team_id: 1, description: "Gathering feedback from client interactions", event_type: 2, creator_id: 1, pending: false, approved: true },
-    { title: "Client Presentation Preparation", start_datetime: "2024-05-04T13:00:00", end_datetime: "2024-05-04T15:00:00", team_id: 1, description: "Preparing slides and materials for client presentation", event_type: 2, creator_id: 1, pending: false, approved: true },
-    { title: "Client Presentation", start_datetime: "2024-05-02T10:00:00", end_datetime: "2024-05-02T12:00:00", user_id: 14, description: "Presenting project updates to client ABC", event_type: 2, creator_id: 2, pending: false, approved: true },
-    { title: "Holiday 2", start_datetime: "2024-05-05T00:00:00", end_datetime: "2024-05-05T23:59:59", team_id: 1, description: "Public holiday", event_type: 4, creator_id: 2, pending: false, approved: true },
-    { title: "Meeting 3", start_datetime: "2024-05-01T11:00:00", end_datetime: "2024-05-01T12:00:00", team_id: 1, description: "Weekly team meeting", event_type: 2, creator_id: 1, pending: false, approved: true },
-    { title: "Meeting 4", start_datetime: "2024-05-08T11:00:00", end_datetime: "2024-05-08T12:00:00", team_id: 2, description: "Weekly team meeting", event_type: 2, creator_id: 2, pending: false, approved: true },
-    { title: "Meeting 5", start_datetime: "2024-05-12T11:00:00", end_datetime: "2024-05-12T12:00:00", team_id: 1, description: "Weekly team meeting", event_type: 2, creator_id: 3, pending: false, approved: true },
-    { title: "Product Launch", start_datetime: "2024-05-09T09:00:00", end_datetime: "2024-05-09T10:30:00", team_id: 2, description: "Launching new product", event_type: 2, creator_id: 3, pending: false, approved: true },
-    { title: "Project Deadline", start_datetime: "2024-05-02T00:00:00", end_datetime: "2024-05-02T23:59:59", team_id: 1, description: "Project ABC deadline", event_type: 2, creator_id: 2, pending: false, approved: true },
-    { title: "Project Kickoff", start_datetime: "2024-05-04T14:00:00", end_datetime: "2024-05-04T15:00:00", team_id: 2, description: "Kickoff meeting for project XYZ", event_type: 2, creator_id: 1, pending: false, approved: true },
-    { title: "Project Planning Session", start_datetime: "2024-05-02T09:00:00", end_datetime: "2024-05-02T11:00:00", team_id: 1, description: "Planning upcoming project milestones", event_type: 2, creator_id: 1, pending: false, approved: true },
-    { title: "Project Review Meeting", start_datetime: "2024-05-12T11:00:00", end_datetime: "2024-05-12T12:00:00", team_id: 1, description: "Reviewing project milestones and deliverables", event_type: 2, creator_id: 1, pending: false, approved: true },
-    { title: "Project Review", start_datetime: "2024-05-14T14:00:00", end_datetime: "2024-05-14T15:30:00", team_id: 1, description: "Reviewing project progress", event_type: 2, creator_id: 2, pending: false, approved: true },
-    { title: "Project Status Update Meeting", start_datetime: "2024-05-07T11:00:00", end_datetime: "2024-05-07T12:00:00", team_id: 1, description: "Meeting to discuss project status", event_type: 2, creator_id: 1, pending: false, approved: true },
-    { title: "Random Meeting 7", start_datetime: "2024-05-12T11:00:00", end_datetime: "2024-05-12T12:00:00", team_id: 1, description: "Weekly team meeting", event_type: 2, creator_id: 20 },
-    { title: "Random Meeting 8", start_datetime: "2024-05-13T11:00:00", end_datetime: "2024-05-13T12:00:00", team_id: 2, description: "Weekly team meeting", event_type: 2, creator_id: 17 },
-    { title: "Team Bonding Activity", start_datetime: "2024-05-17T13:00:00", end_datetime: "2024-05-17T15:00:00", team_id: 1, description: "Team bonding activity at local park", event_type: 2, creator_id: 1, pending: false, approved: true },
-    { title: "Team Building Exercise", start_datetime: "2024-05-05T09:00:00", end_datetime: "2024-05-05T12:00:00", team_id: 1, description: "Outdoor team building activities", event_type: 2, creator_id: 1, pending: false, approved: true },
-    { title: "Team Lunch 2", start_datetime: "2024-05-11T12:30:00", end_datetime: "2024-05-11T13:30:00", team_id: 1, description: "Team lunch at local restaurant", event_type: 2, creator_id: 2, pending: false, approved: true },
-    { title: "Team Lunch 3", start_datetime: "2024-05-08T12:30:00", end_datetime: "2024-05-08T13:30:00", team_id: 1, description: "Team lunch at new restaurant", event_type: 2, creator_id: 1, pending: false, approved: true },
-    { title: "Team Lunch", start_datetime: "2024-05-01T12:30:00", end_datetime: "2024-05-01T13:30:00", team_id: 2, description: "Team lunch at local restaurant", event_type: 2, creator_id: 1, pending: false, approved: true },
-    { title: "Team Presentation Practice", start_datetime: "2024-05-15T09:00:00", end_datetime: "2024-05-15T11:00:00", team_id: 1, description: "Practicing presentation for upcoming conference", event_type: 2, creator_id: 1, pending: false, approved: true },
-    { title: "Team Retreat", start_datetime: "2024-05-06T09:00:00", end_datetime: "2024-05-06T17:00:00", team_id: 2, description: "Team building retreat", event_type: 2, creator_id: 3, pending: false, approved: true },
-    { title: "Team Training Workshop", start_datetime: "2024-05-03T10:00:00", end_datetime: "2024-05-03T14:00:00", team_id: 1, description: "Workshop on team communication skills", event_type: 3, creator_id: 1, pending: false, approved: true },
-    { title: "Training 10", start_datetime: "2024-05-06T10:00:00", end_datetime: "2024-05-06T12:00:00", user_id: 5, description: "Training session on conflict resolution", event_type: 3, creator_id: 1, pending: false, approved: true },
-    { title: "Training 11", start_datetime: "2024-05-09T10:00:00", end_datetime: "2024-05-09T12:00:00", user_id: 9, description: "Training session on project management tools", event_type: 3, creator_id: 1, pending: false, approved: true },
-    { title: "Training 12", start_datetime: "2024-05-11T13:00:00", end_datetime: "2024-05-11T15:00:00", user_id: 12, description: "Training session on presentation skills", event_type: 3, creator_id: 1, pending: false, approved: true },
-    { title: "Training 13", start_datetime: "2024-05-13T10:00:00", end_datetime: "2024-05-13T12:00:00", user_id: 15, description: "Training session on teamwork dynamics", event_type: 3, creator_id: 1, pending: false, approved: true },
-    { title: "Training 14", start_datetime: "2024-05-16T10:00:00", end_datetime: "2024-05-16T12:00:00", user_id: 19, description: "Training session on negotiation skills", event_type: 3, creator_id: 1, pending: false, approved: true },
-    { title: "Training 4", start_datetime: "2024-05-03T13:00:00", end_datetime: "2024-05-03T16:00:00", user_id: 12, description: "Training session on communication skills", event_type: 3, creator_id: 3, pending: false, approved: true },
-    { title: "Training 5", start_datetime: "2024-05-03T09:00:00", end_datetime: "2024-05-03T11:00:00", user_id: 15, description: "Training session on project management", event_type: 3, creator_id: 3, pending: false, approved: true },
-    { title: "Training 6", start_datetime: "2024-05-07T10:00:00", end_datetime: "2024-05-07T12:00:00", user_id: 19, description: "Training session on customer service", event_type: 3, creator_id: 1, pending: false, approved: true },
-    { title: "Training 7", start_datetime: "2024-05-10T13:00:00", end_datetime: "2024-05-10T16:00:00", team_id: 1, description: "Training session on sales techniques", event_type: 3, creator_id: 4,},
-    { title: "Training 8", start_datetime: "2024-05-13T10:00:00", end_datetime: "2024-05-13T12:00:00", user_id: 5, description: "Training session on time management", event_type: 3, creator_id: 5, },
-    { title: "Training 9", start_datetime: "2024-05-01T10:00:00", end_datetime: "2024-05-01T12:00:00", user_id: 6, description: "Training session on leadership skills", event_type: 3, creator_id: 6 }
+    { title: 'Crew Ops',                      start_datetime: '2024-05-01T06:00:00', end_datetime: '2024-05-05T18:00:00', team_id: 1, description: 'Team A Crew Ops',                       event_type: 1, creator_id: 1, pending: false, approved: true, all_day: true },
+    { title: 'Crew Ops',                      start_datetime: '2024-05-08T06:00:00', end_datetime: '2024-05-12T18:00:00', team_id: 1, description: 'Team A Crew Ops',                       event_type: 1, creator_id: 1, pending: false, approved: true, all_day: true},
+    { title: 'Crew Ops',                      start_datetime: '2024-05-15T06:00:00', end_datetime: '2024-05-19T18:00:00', team_id: 1, description: 'Team A Crew Ops',                       event_type: 1, creator_id: 1, pending: false, approved: true, all_day: true },
+    { title: 'Crew Ops',                      start_datetime: '2024-05-22T06:00:00', end_datetime: '2024-05-26T18:00:00', team_id: 1, description: 'Team A Crew Ops',                       event_type: 1, creator_id: 1, pending: false, approved: true, all_day: true },
+    { title: 'Crew Ops',                      start_datetime: '2024-05-29T06:00:00', end_datetime: '2024-06-02T18:00:00', team_id: 1, description: 'Team A Crew Ops',                       event_type: 1, creator_id: 1, pending: false, approved: true, all_day: true },
+    { title: 'Crew Ops',                      start_datetime: '2024-06-05T06:00:00', end_datetime: '2024-06-09T18:00:00', team_id: 1, description: 'Team A Crew Ops',                       event_type: 1, creator_id: 1, pending: false, approved: true, all_day: true },
+    { title: 'Crew Ops',                      start_datetime: '2024-06-12T06:00:00', end_datetime: '2024-06-16T18:00:00', team_id: 1, description: 'Team A Crew Ops',                       event_type: 1, creator_id: 1, pending: false, approved: true, all_day: true },
+    { title: 'Crew Ops',                      start_datetime: '2024-06-19T06:00:00', end_datetime: '2024-06-23T18:00:00', team_id: 1, description: 'Team A Crew Ops',                       event_type: 1, creator_id: 1, pending: false, approved: true, all_day: true },
+    { title: 'Crew Ops',                      start_datetime: '2024-05-05T06:00:00', end_datetime: '2024-05-09T18:00:00', team_id: 2, description: 'Team B Crew Ops',                       event_type: 1, creator_id: 1, pending: false, approved: true, all_day: true },
+    { title: 'Crew Ops',                      start_datetime: '2024-05-12T06:00:00', end_datetime: '2024-05-16T18:00:00', team_id: 2, description: 'Team B Crew Ops',                       event_type: 1, creator_id: 1, pending: false, approved: true, all_day: true },
+    { title: 'Crew Ops',                      start_datetime: '2024-05-19T06:00:00', end_datetime: '2024-05-23T18:00:00', team_id: 2, description: 'Team B Crew Ops',                       event_type: 1, creator_id: 1, pending: false, approved: true, all_day: true },
+    { title: 'Crew Ops',                      start_datetime: '2024-05-26T06:00:00', end_datetime: '2024-05-30T18:00:00', team_id: 2, description: 'Team B Crew Ops',                       event_type: 1, creator_id: 1, pending: false, approved: true, all_day: true },
+    { title: 'Crew Ops',                      start_datetime: '2024-06-02T06:00:00', end_datetime: '2024-06-06T18:00:00', team_id: 2, description: 'Team B Crew Ops',                       event_type: 1, creator_id: 1, pending: false, approved: true, all_day: true },
+    { title: 'Crew Ops',                      start_datetime: '2024-06-09T06:00:00', end_datetime: '2024-06-13T18:00:00', team_id: 2, description: 'Team B Crew Ops',                       event_type: 1, creator_id: 1, pending: false, approved: true, all_day: true },
+    { title: 'Crew Ops',                      start_datetime: '2024-06-16T06:00:00', end_datetime: '2024-06-20T18:00:00', team_id: 2, description: 'Team B Crew Ops',                       event_type: 1, creator_id: 1, pending: false, approved: true, all_day: true },
+    { title: 'Crew Ops',                      start_datetime: '2024-06-23T06:00:00', end_datetime: '2024-06-27T18:00:00', team_id: 2, description: 'Team B Crew Ops',                       event_type: 1, creator_id: 1, pending: false, approved: true, all_day: true },
+    { title: 'Dental Appointment',            start_datetime: '2024-05-03T10:00:00', end_datetime: '2024-05-03T11:00:00', user_id: 4, description: 'Dentist Appointment',                   event_type: 2, creator_id: 4, pending: false, approved: true },
+    { title: 'Med Appointment',               start_datetime: '2024-05-10T14:00:00', end_datetime: '2024-05-10T15:00:00', user_id: 5, description: 'Med Appointment',                       event_type: 2, creator_id: 5, pending: false, approved: true },
+    { title: 'Project Review Meeting',        start_datetime: '2024-05-04T09:00:00', end_datetime: '2024-05-04T11:00:00', team_id: 1, description: 'Team G Project Review Meeting',         event_type: 3, creator_id: 6, pending: false, approved: true },
+    { title: 'First Aid Training',            start_datetime: '2024-05-03T13:00:00', end_datetime: '2024-05-03T16:00:00', user_id: 8, description: 'Team I First Aid Training',             event_type: 4, creator_id: 8, pending: false, approved: true },
+    { title: 'Leave',                         start_datetime: '2024-06-06T00:00:00', end_datetime: '2024-06-10T23:59:59', user_id: 13, description: 'Annual Leave',                         event_type: 6, creator_id: 13, pending: false, approved: true, all_day: true },
+    { title: 'Leave',                         start_datetime: '2024-06-13T00:00:00', end_datetime: '2024-06-14T23:59:59', user_id: 4, description: 'Sick Leave',                            event_type: 6, creator_id: 4, pending: false, approved: true, all_day: true },
+    { title: 'TDY',                           start_datetime: '2024-05-03T06:00:00', end_datetime: '2024-05-09T18:00:00', user_id: 14, description: 'Temporary Duty Assignment',            event_type: 7, creator_id: 14, pending: false, approved: true, all_day: true },
+    { title: 'TDY',                           start_datetime: '2024-05-10T06:00:00', end_datetime: '2024-05-16T18:00:00', user_id: 15, description: 'Temporary Duty Assignment',            event_type: 7, creator_id: 15, pending: false, approved: true, all_day: true },
+    { title: 'TDY',                           start_datetime: '2024-05-20T06:00:00', end_datetime: '2024-05-25T18:00:00', user_id: 6, description: 'Temporary Duty Assignment',             event_type: 7, creator_id: 6, pending: false, approved: true, all_day: true },
+    { title: 'TDY',                           start_datetime: '2024-05-25T06:00:00', end_datetime: '2024-05-30T18:00:00', user_id: 9, description: 'Temporary Duty Assignment',             event_type: 7, creator_id: 9, pending: false, approved: true, all_day: true },
+    { title: 'Deployment',                    start_datetime: '2024-02-17T00:00:00', end_datetime: '2024-08-02T23:59:59', user_id: 19, description: 'Deployment',                           event_type: 8, creator_id: 19, pending: false, approved: true, all_day: true },
+    { title: 'Deployment',                    start_datetime: '2024-02-25T00:00:00', end_datetime: '2024-08-02T23:59:59', user_id: 11, description: 'Deployment',                           event_type: 8, creator_id: 11, pending: false, approved: true, all_day: true },
+    { title: 'Team Building Event',           start_datetime: '2024-05-18T09:00:00', end_datetime: '2024-05-18T17:00:00', team_id: 1, description: 'Team Building Event',                   event_type: 9, creator_id: 18, pending: false, approved: true },
+    { title: 'Charity Fundraiser',            start_datetime: '2024-05-25T10:00:00', end_datetime: '2024-05-25T14:00:00', team_id: 2, description: 'Charity Fundraiser',                    event_type: 9, creator_id: 19, pending: false, approved: true },
+    { title: 'Dental Appointment',            start_datetime: '2024-05-14T11:00:00', end_datetime: '2024-05-14T12:00:00', user_id: 2, description: 'Dentist Appointment',                   event_type: 2, creator_id: 2, pending: false, approved: true },
+    { title: 'Eye Exam Appointment',          start_datetime: '2024-05-21T10:00:00', end_datetime: '2024-05-21T11:00:00', user_id: 3, description: 'Eye Exam Appointment',                  event_type: 2, creator_id: 3, pending: false, approved: true },
+    { title: 'Physical Therapy Appointment',  start_datetime: '2024-05-28T14:00:00', end_datetime: '2024-05-28T15:00:00', user_id: 4, description: 'Physical Therapy Appointment',          event_type: 2, creator_id: 4, pending: false, approved: true },
+    { title: 'Consultation',                  start_datetime: '2024-07-12T11:00:00', end_datetime: '2024-07-12T12:00:00', user_id: 6, description: 'Consultation',                          event_type: 2, creator_id: 6, pending: false, approved: true },
+    { title: 'Legal Appointment',             start_datetime: '2024-07-19T16:00:00', end_datetime: '2024-07-19T17:00:00', user_id: 7, description: 'Legal Appointment',                     event_type: 2, creator_id: 7, pending: false, approved: true },
+    { title: 'Car Service Appointment',       start_datetime: '2024-08-02T10:00:00', end_datetime: '2024-08-02T11:00:00', user_id: 9, description: 'Car Service Appointment',               event_type: 2, creator_id: 9, pending: false, approved: true },
+    { title: 'Financial Advisor Appointment', start_datetime: '2024-08-09T15:00:00', end_datetime: '2024-08-09T16:00:00', user_id: 10, description: 'Financial Advisor Appointment',        event_type: 2, creator_id: 10, pending: false, approved: true },
+    { title: 'Product Development Meeting',   start_datetime: '2024-05-20T14:00:00', end_datetime: '2024-05-20T16:00:00', team_id: 2, description: 'Product Development Meeting',           event_type: 3, creator_id: 13, pending: false, approved: true },
+    { title: 'Team Review Meeting',           start_datetime: '2024-07-04T09:00:00', end_datetime: '2024-07-04T11:00:00', team_id: 1, description: 'Team Review Meeting',                   event_type: 3, creator_id: 15, pending: false, approved: true },
+    { title: 'Budget Planning Meeting',       start_datetime: '2024-07-11T10:00:00', end_datetime: '2024-07-11T12:00:00', team_id: 1, description: 'Budget Planning Meeting',               event_type: 3, creator_id: 16, pending: false, approved: true },
+    { title: 'Quarterly Review Meeting',      start_datetime: '2024-07-18T11:00:00', end_datetime: '2024-07-18T13:00:00', team_id: 2, description: 'Quarterly Review Meeting',              event_type: 3, creator_id: 17, pending: false, approved: true },
+    { title: 'Training Program Meeting',      start_datetime: '2024-07-25T14:00:00', end_datetime: '2024-07-25T16:00:00', team_id: 2, description: 'Training Program Meeting',              event_type: 3, creator_id: 18, pending: false, approved: true },
+    { title: 'Strategic Planning Meeting',    start_datetime: '2024-08-08T09:00:00', end_datetime: '2024-08-08T11:00:00', team_id: 1, description: 'Strategic Planning Meeting',            event_type: 3, creator_id: 20, pending: false, approved: true },
+    { title: 'Team Lunch',                    start_datetime: '2024-05-09T12:00:00', end_datetime: '2024-05-09T13:00:00', team_id: 1, description: 'Team Lunch',                            event_type: 9, creator_id: 1, pending: false, approved: true },
+    { title: 'Office Party',                  start_datetime: '2024-05-14T17:00:00', end_datetime: '2024-05-14T20:00:00', team_id: 2, description: 'Office Party',                          event_type: 9, creator_id: 2, pending: false, approved: true },
+    { title: 'Networking Event',              start_datetime: '2024-05-21T18:00:00', end_datetime: '2024-05-21T20:00:00', team_id: 1, description: 'Networking Event',                      event_type: 9, creator_id: 3, pending: false, approved: true },
+    { title: 'Team Building Activity',        start_datetime: '2024-07-05T14:00:00', end_datetime: '2024-07-05T16:00:00', team_id: 1, description: 'Team Building Activity',                event_type: 9, creator_id: 5, pending: false, approved: true },
+    { title: 'Leadership Training',           start_datetime: '2024-05-08T09:00:00', end_datetime: '2024-05-08T12:00:00', user_id: 1, description: 'Leadership Training Session',           event_type: 4, creator_id: 1, pending: false, approved: true },
+    { title: 'Software Development Workshop', start_datetime: '2024-05-13T13:00:00', end_datetime: '2024-05-13T16:00:00', team_id: 2, description: 'Software Development Workshop',         event_type: 4, creator_id: 2, pending: false, approved: true },
+    { title: 'Project Management Training',   start_datetime: '2024-05-27T14:00:00', end_datetime: '2024-05-27T16:00:00', team_id: 2, description: 'Project Management Training Session',   event_type: 4, creator_id: 4, pending: false, approved: true },
+    { title: 'Mentorship Training',           start_datetime: '2024-05-10T13:00:00', end_datetime: '2024-05-10T16:00:00', team_id: 1, description: 'Training session on mentorship',        event_type: 4, creator_id: 4 },
+    { title: 'SABC Training',                 start_datetime: '2024-05-15T10:00:00', end_datetime: '2024-05-15T12:00:00', user_id: 5, description: 'Training session for SABC',             event_type: 4, creator_id: 5 },
+    { title: 'SABC Training',                 start_datetime: '2024-05-01T10:00:00', end_datetime: '2024-05-01T12:00:00', user_id: 6, description: 'Training session for SABC',             event_type: 4, creator_id: 6 }
   ]);
 };
