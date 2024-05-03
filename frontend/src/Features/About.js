@@ -50,7 +50,7 @@ export const About = () => {
 
         <div className = 'Member'>
           <img src={process.env.PUBLIC_URL + '/trinh3.jpeg'} alt='Trinh'/>
-          <h3>Trinh Trinh</h3>
+          <h3>Tuan Trinh</h3>
         </div>
 
         <div className = 'Member'>
