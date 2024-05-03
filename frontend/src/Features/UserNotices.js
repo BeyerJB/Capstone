@@ -190,17 +190,9 @@ export const UserNotices = () => {
   }, [eventUpdateData]);
 
   useEffect(() => {
-    console.log(accountUpdateData);
     if (accountUpdateData.user_id !== undefined && accountUpdateData.choice !== undefined) {
       handleUpdateAccount()
         .then(() => {
-          if (accountUpdateData.approved) {
-            handleAcceptAccount(accountUpdateData.user_id);
-            console.log(accountUpdateData);
-          } else {
-            handleRejectAccount(accountUpdateData.user_id);
-          }
-
           fetchPendingAccounts();
         })
         .catch(error => {
