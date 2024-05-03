@@ -124,9 +124,9 @@ exports.seed = async function(knex) {
     { notice_status: 1, submitter_id: 13, recipient_id: 12, body: 'Can I be signed up for SABC training?', notice_type: 2 },
     { notice_status: 1, submitter_id: 15, recipient_id: 14, body: 'What is the software development workshop going to be about?', notice_type: 2 },
     { notice_status: 1, submitter_id: 16, recipient_id: 14, body: 'Is the product dev meeting still on?', notice_type: 2 },
-    { notice_status: 1, submitter_id: 4, recipient_id: 3, body: 'Event Creation', notice_type: 4, event_id: 53 },
-    { notice_status: 1, submitter_id: 5, recipient_id: 4, body: 'Event Creation', notice_type: 4, event_id: 54 },
-    { notice_status: 1, submitter_id: 3, recipient_id: 2, body: 'Event Creation', notice_type: 4, event_id: 55 }
+    { notice_status: 1, submitter_id: 4, recipient_id: 3, body: 'Event Creation', notice_type: 4, event_id: 51 },
+    { notice_status: 1, submitter_id: 5, recipient_id: 4, body: 'Event Creation', notice_type: 4, event_id: 52 },
+    { notice_status: 1, submitter_id: 3, recipient_id: 2, body: 'Event Creation', notice_type: 4, event_id: 53 }
   ]);
 
   // Seed calendar_events table
